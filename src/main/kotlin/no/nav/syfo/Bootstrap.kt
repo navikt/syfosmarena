@@ -61,8 +61,8 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 suspend fun blockingApplicationLogic(applicationState: ApplicationState) {
     while (applicationState.running) {
         log.info("Do some Application logic here")
-        delay(100)
     }
+    delay(100)
 }
 
 fun Application.initRouting(applicationState: ApplicationState) {
