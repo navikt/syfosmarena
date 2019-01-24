@@ -6,21 +6,28 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.jackson.jackson
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.api.registerRuleApi
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
+fun doReadynessCheck(): Boolean {
+    // Do validation
+    return true
+}
+
+data class ApplicationState(var running: Boolean = true)
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -36,44 +43,22 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
         initRouting(applicationState)
-    }.start(wait = false)
+    }.start(wait = true)
 
-    try {
-        val listeners = (1..config.applicationThreads).map {
-            launch {
-                blockingApplicationLogic(applicationState)
-            }
-        }.toList()
-
-        runBlocking {
-            Runtime.getRuntime().addShutdownHook(Thread {
-                applicationServer.stop(10, 10, TimeUnit.SECONDS)
-            })
-
-            applicationState.initialized = true
-            listeners.forEach { it.join() }
-        }
-    } finally {
-        applicationState.running = false
-    }
-}
-
-suspend fun blockingApplicationLogic(applicationState: ApplicationState) {
-    while (applicationState.running) {
-        log.info("Do some Application logic here")
-    }
-    delay(100)
+    Runtime.getRuntime().addShutdownHook(Thread {
+        applicationServer.stop(10, 10, TimeUnit.SECONDS)
+    })
 }
 
 fun Application.initRouting(applicationState: ApplicationState) {
     routing {
-        registerNaisApi(
-                readynessCheck = {
-                    applicationState.initialized
-                },
-                livenessCheck = {
-                    applicationState.running
-                }
-        )
+        registerNaisApi(readynessCheck = ::doReadynessCheck, livenessCheck = { applicationState.running })
+        registerRuleApi()
     }
-}
+        install(ContentNegotiation) {
+            jackson {
+                registerKotlinModule()
+                registerModule(JavaTimeModule())
+            }
+        }
+    }
