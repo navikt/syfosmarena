@@ -1,4 +1,4 @@
-FROM navikt/java:10
+FROM navikt/java:11
 COPY build/libs/syfosmarena-*-all.jar app.jar
 COPY config/preprod/application.json application-preprod.json
 COPY config/prod/application.json application-prod.json
