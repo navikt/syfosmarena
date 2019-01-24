@@ -31,7 +31,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
     val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
-    //val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
+    // val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
