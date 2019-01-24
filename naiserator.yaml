@@ -32,9 +32,8 @@ spec:
     requests:
       cpu: 100m
       memory: 128Mi
-  secrets: true
   vault:
-    enabled: true
+    enabled: false
   env:
     - name: CONFIG_FILE
       value: {{ config_file }}
