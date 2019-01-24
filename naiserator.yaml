@@ -36,5 +36,5 @@ spec:
   vault:
     enabled: true
   env:
-  - name: CONFIG_FILE
-    value: {{ config_file }}
+    - name: CONFIG_FILE
+      value: {{ config_file }}
