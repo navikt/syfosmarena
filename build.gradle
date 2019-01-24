@@ -8,6 +8,9 @@ buildscript {
     ext.spek_version = "2.0.0-alpha.1"
     ext.jackson_version = '2.9.6'
     ext.sykmelding_version = "1.1-SNAPSHOT"
+    ext.ibm_mq_version = '9.0.5.0'
+    ext.arenaSykemdling_version = '1.0.1-SNAPSHOT'
+    ext.artemis_version = "2.6.2"
 }
 
 plugins {
@@ -64,10 +67,15 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:$logstash_encoder_version"
 
     implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
+    implementation "no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdling_version"
+
+    implementation "com.ibm.mq:com.ibm.mq.allclient:$ibm_mq_version"
 
     testImplementation "org.amshove.kluent:kluent:$kluent_version"
     testImplementation "org.spekframework.spek2:spek-dsl-jvm:$spek_version"
     testImplementation "io.ktor:ktor-server-test-host:$ktor_version"
+    testImplementation "org.apache.activemq:artemis-server:$artemis_version"
+    testImplementation "org.apache.activemq:artemis-jms-client:$artemis_version"
 
 
     testRuntimeOnly "org.spekframework.spek2:spek-runtime-jvm:$spek_version"

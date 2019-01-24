@@ -8,9 +8,16 @@ val vaultApplicationPropertiesPath: Path = Paths.get("/var/run/secrets/nais.io/v
 data class ApplicationConfig(
     val applicationPort: Int = 8080,
     val applicationThreads: Int = 1,
+    val mqHost: String,
+    val mqPort: Int,
+    val mqQueueManager: String,
+    val mqChannel: String,
+    val arenaQueue: String,
     val vaultURL: String
 )
 data class VaultCredentials(
     val serviceuserUsername: String,
-    val serviceuserPassword: String
+    val serviceuserPassword: String,
+    val mqUsername: String,
+    val mqPassword: String
 )

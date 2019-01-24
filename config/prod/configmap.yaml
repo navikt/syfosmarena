@@ -8,5 +8,10 @@ metadata:
 data:
   application.json: |+
     {
+      "mqHost": "a01apvl062.adeo.no",
+      "mqPort": "1414",
+      "mqQueueManager": "MPLSC03",
+      "mqChannel": "P_SYFOSMARENA",
+      "arenaQueue": "QA.P414.FS06_ARENA",
       "vaultURL" : "https://vault.adeo.no"
     }

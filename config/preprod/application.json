@@ -1,3 +1,8 @@
 {
+  "mqHost": "b27apvl173.preprod.local",
+  "mqPort": "1413",
+  "mqQueueManager": "MQ1LSC03",
+  "mqChannel": "Q1_SYFOSMARENA",
+  "arenaQueue": "QA.Q1_414.FS06_ARENA",
   "vaultURL" : "https://vault.adeo.no"
 }

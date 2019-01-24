@@ -7,6 +7,7 @@ import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.post
 import net.logstash.logback.argument.StructuredArguments.keyValue
+import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
 import no.nav.syfo.executeFlow
@@ -19,10 +20,11 @@ import no.nav.syfo.model.RuleInfo
 import no.nav.syfo.objectMapper
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
+import javax.jms.MessageProducer
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.smarenaRegler")
 
-fun Routing.registerRuleApi() {
+fun Routing.registerRuleApi(arenaProducer: MessageProducer) {
     post("/v1/rules/validate") {
         log.info("Got an request to validate rules")
 
@@ -53,6 +55,11 @@ fun Routing.registerRuleApi() {
         ))
 
         val results = listOf(validationAndPeriodRuleResults).flatten()
+
+        // TODO map rules to arena hendelse
+
+        val arenaSykmelding_1 = ArenaSykmelding().apply {
+        }
 
         // TODO do we need to send a respsone, fire and forget???
         call.respond(ValidationResult(
