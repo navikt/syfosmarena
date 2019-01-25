@@ -10,11 +10,20 @@ pipeline {
        }
 
      stages {
-        stage('initialize') {
-            steps {
-                init action: 'gradle'
-            }
-        }
+         stage('initialize') {
+             steps {
+                 script {
+                     init action: 'default'
+                     sh './gradlew clean'
+                     applicationVersionGradle = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
+                     if (!applicationVersionGradle.endsWith('-SNAPSHOT')) {
+                         env.DEPLOY_TO = 'production'
+                     }
+                     env.APPLICATION_VERSION = "${applicationVersionGradle}-${env.COMMIT_HASH_SHORT}"
+                     init action: 'updateStatus'
+                 }
+             }
+         }
         stage('build') {
             steps {
                 sh './gradlew build -x test'
