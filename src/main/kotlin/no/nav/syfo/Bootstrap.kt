@@ -144,7 +144,6 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                         EiaDokumentInfoType.Avsender().apply {
                             LegeType().apply {
                                 legeFnr = "1314325"
-
                             }
                         }
                     }
@@ -168,11 +167,11 @@ fun Application.initRouting(applicationState: ApplicationState) {
 }
 
 fun sendArenaSykmelding(
-        producer: MessageProducer,
-        session: Session,
-        arenaSykmelding: ArenaSykmelding,
-        logKeys: String,
-        logValues: Array<StructuredArgument>
+    producer: MessageProducer,
+    session: Session,
+    arenaSykmelding: ArenaSykmelding,
+    logKeys: String,
+    logValues: Array<StructuredArgument>
 ) = producer.send(session.createTextMessage().apply {
     text = ""
     log.info("Message is sendt to arena $logKeys", *logValues)
