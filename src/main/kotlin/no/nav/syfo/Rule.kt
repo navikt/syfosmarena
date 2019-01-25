@@ -1,14 +1,14 @@
 package no.nav.syfo
 
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
-import no.nav.syfo.model.Status
 
 data class RuleData<T>(val healthInformation: HelseOpplysningerArbeidsuforhet, val metadata: T)
 
 interface Rule<in T> {
     val name: String
     val ruleId: Int?
-    val status: Status
+    val arenaHendelseStatus: ArenaHendelseStatus
+    val arenaHendelseType: ArenaHendelseType
     val predicate: (T) -> Boolean
 }
 
