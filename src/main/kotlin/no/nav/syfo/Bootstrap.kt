@@ -17,6 +17,7 @@ import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
+import no.nav.helse.arenaSykemelding.LegeType
 import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.model.ReceivedSykmelding
@@ -67,7 +68,9 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     val consumerProperties = readConsumerConfig(config, credentials, valueDeserializer = StringDeserializer::class)
                     val kafkaconsumer = KafkaConsumer<String, String>(consumerProperties)
-                    kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
+                    // kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
+                    kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticDigitalHandlingTopic))
+
                     blockingApplicationLogic(applicationState, kafkaconsumer, arenaProducer, session)
                 }
         }.toList()
@@ -126,10 +129,12 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                             dokumentTypeVersjon = "1"
                             dokumentreferanse = receivedSykmelding.msgId
                             ediLoggId = receivedSykmelding.navLogId
+                            // TODO find out what journalReferanse should be
                             journalReferanse = "12345"
                             dokumentDato = LocalDateTime.now()
                         }
                         EiaDokumentInfoType.BehandlingInfo().apply {
+                            // TODO map rule result here
                             merknad.add(MerknadType().apply {
                                 merknadNr = "1209"
                                 merknadNr = "1"
@@ -137,6 +142,10 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                             })
                         }
                         EiaDokumentInfoType.Avsender().apply {
+                            LegeType().apply {
+                                legeFnr = "1314325"
+
+                            }
                         }
                     }
                 }
