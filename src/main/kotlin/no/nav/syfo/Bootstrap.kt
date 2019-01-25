@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
+import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.rules.RuleMetadata
@@ -116,6 +117,9 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                 // TODO map rules to arena hendelse
 
                 val arenaSykmelding_1 = ArenaSykmelding().apply {
+                    EiaDokumentInfoType().apply {
+
+                    }
                 }
             }
         }
