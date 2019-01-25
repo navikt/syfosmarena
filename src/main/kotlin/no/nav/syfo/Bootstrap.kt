@@ -16,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
+import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.rules.RuleMetadata
@@ -27,6 +28,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.Duration
+import java.time.LocalDateTime
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.jms.MessageProducer
@@ -98,9 +100,9 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
             kafkaconsumer.poll(Duration.ofMillis(0)).forEach {
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(it.value())
                 logValues = arrayOf(
-                        StructuredArguments.keyValue("msgId", receivedSykmelding.msgId),
                         StructuredArguments.keyValue("smId", receivedSykmelding.navLogId),
-                        StructuredArguments.keyValue("orgNr", receivedSykmelding.legekontorOrgNr)
+                        StructuredArguments.keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
+                        StructuredArguments.keyValue("msgId", receivedSykmelding.msgId)
                 )
 
                 log.info("Received a SM2013, going to Arena rules, $logKeys", *logValues)
@@ -118,7 +120,23 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
 
                 val arenaSykmelding_1 = ArenaSykmelding().apply {
                     EiaDokumentInfoType().apply {
-
+                        no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
+                            dokumentType = "SM2"
+                            dokumentTypeVersjon = "1"
+                            dokumentreferanse = receivedSykmelding.msgId
+                            ediLoggId = receivedSykmelding.navLogId
+                            journalReferanse = "12345"
+                            dokumentDato = LocalDateTime.now()
+                        }
+                        EiaDokumentInfoType.BehandlingInfo().apply {
+                            merknad.add(MerknadType().apply {
+                                merknadNr = "1209"
+                                merknadNr = "1"
+                                merknadBeskrivelse = "Sykmeldingen er fremdatert: Startdato ligger mer enn 30 dager etter første konsultasjon."
+                            })
+                        }
+                        EiaDokumentInfoType.Avsender().apply {
+                        }
                     }
                 }
             }
