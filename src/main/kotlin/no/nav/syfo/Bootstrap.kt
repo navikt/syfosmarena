@@ -13,6 +13,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
@@ -66,7 +67,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     val consumerProperties = readConsumerConfig(config, credentials, valueDeserializer = StringDeserializer::class)
                     val kafkaconsumer = KafkaConsumer<String, String>(consumerProperties)
-                    kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic))
+                    kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
                     blockingApplicationLogic(applicationState, kafkaconsumer, arenaProducer, session)
                 }
         }.toList()
@@ -156,3 +157,14 @@ fun Application.initRouting(applicationState: ApplicationState) {
         )
     }
 }
+
+fun sendArenaSykmelding(
+        producer: MessageProducer,
+        session: Session,
+        arenaSykmelding: ArenaSykmelding,
+        logKeys: String,
+        logValues: Array<StructuredArgument>
+) = producer.send(session.createTextMessage().apply {
+    text = ""
+    log.info("Message is sendt to arena $logKeys", *logValues)
+})
