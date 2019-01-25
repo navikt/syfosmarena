@@ -40,12 +40,6 @@ pipeline {
                 slackStatus status: 'passed'
             }
         }
-        stage('Create kafka topics') {
-            steps {
-                sh 'echo TODO'
-                // TODO
-            }
-        }
          stage('deploy to preprod') {
              steps {
                      dockerUtils action: 'createPushImage'
