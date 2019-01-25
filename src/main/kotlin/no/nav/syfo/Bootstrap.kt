@@ -120,6 +120,8 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
 
                 val results = listOf(validationRuleResults).flatten()
 
+                log.info("Finish with rules")
+
                 // TODO map rules to arena hendelse
 
                 val arenaSykmelding_1 = ArenaSykmelding().apply {

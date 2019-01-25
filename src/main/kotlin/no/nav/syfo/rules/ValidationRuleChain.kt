@@ -18,7 +18,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis sykmeldingens sluttdato er mer enn 3 måneder frem i tid skal meldingen til oppfølging i Arena")
     SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS(1603, Status.INVALID, { (healthInformation, ruleMetadata) ->
         // 	lagArenaHendelse(ArenaHendelseTypeEnum.VURDER_OPPFOLGING.toString(), "", ArenaHendelseStatusEnum.PLANLAGT.toString()
-        if (!healthInformation.aktivitet?.periode.isNullOrEmpty()) {
+        if (!healthInformation.aktivitet.periode.isNullOrEmpty()) {
             healthInformation.aktivitet.periode.sortedTOMDate().last().atStartOfDay() < ruleMetadata.signatureDate.plusMonths(3)
         } else {
             false
@@ -28,7 +28,12 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis sykmeldingsperioden er over 3 måneder skal meldingen til oppfølging i Arena")
     SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS(1606, Status.INVALID, { (healthInformation, _) ->
         // lagArenaHendelse(ArenaHendelseTypeEnum.VURDER_OPPFOLGING.toString(), "", ArenaHendelseStatusEnum.PLANLAGT.toString()
+        if (!healthInformation.aktivitet.periode.isNullOrEmpty()) {
             healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 91 }
+        }
+        else {
+            false
+        }
     }),
 
     @Description("Forlengelse ut over maxdato.")
@@ -73,26 +78,46 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
     @Description("Hvis sykmeldingen inneholder melding fra behandler skal meldingen til oppfølging i Arena.")
     MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY(1616, Status.INVALID, { (healthInformation, _) ->
         // lagArenaHendelse(ArenaHendelseTypeEnum.MELDING_FR_A_BEHANDLER.toString(), meldingSM13.meldingTilNav.beskrivBistandNAV, ArenaHendelseStatusEnum.PLANLAGT.toString()
-        healthInformation.meldingTilNav.isBistandNAVUmiddelbart
+        if (healthInformation.meldingTilNav != null) {
+            healthInformation.meldingTilNav.isBistandNAVUmiddelbart
+        }
+        else {
+            false
+        }
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske er oppgitt ved 7/8, 17, 39 uker settes merknad")
     DYNAMIC_QUESTIONS(1617, Status.INVALID, { (healthInformation, _) ->
         // lagArenaHendelse(ArenaHendelseTypeEnum.INFORMASJON_FRA_SYKMELDING.toString(), "", ArenaHendelseStatusEnum.UTFORT.toString()
-        !healthInformation.utdypendeOpplysninger.spmGruppe.isNullOrEmpty()
+        if (healthInformation.utdypendeOpplysninger != null) {
+            !healthInformation.utdypendeOpplysninger.spmGruppe.isNullOrEmpty()
+        }
+        else {
+            false
+        }
     }),
 
     @Description("Hvis sykmeldingen inneholer tiltakNAV eller andreTiltak, så skal merknad lages og hendelse sendes til Arena")
     MEASURES_OTHER_OR_NAV(1618, Status.INVALID, { (healthInformation, _) ->
         // lagArenaHendelse(ArenaHendelseTypeEnum.INFORMASJON_FRA_SYKMELDING.toString(), meldingSM13.meldingTilArbeidsgiver, ArenaHendelseStatusEnum.PLANLAGT.toString()
-        !healthInformation.tiltak.andreTiltak.isNullOrBlank() || !healthInformation.tiltak.tiltakNAV.isNullOrBlank()
+        if (healthInformation.tiltak != null) {
+            !healthInformation.tiltak.andreTiltak.isNullOrBlank() || !healthInformation.tiltak.tiltakNAV.isNullOrBlank()
+        }
+        else {
+            false
+        }
     }),
 
     @Description("Hvis utdypende opplysninger foreligger og pasienten søker om AAP")
     INVALID_FNR(1620, Status.INVALID, { (healthInformation, _) ->
         // lagArenaHendelse(ArenaHendelseTypeEnum.INFORMASJON_FRA_SYKMELDING.toString(), meldingSM13.meldingTilArbeidsgiver, ArenaHendelseStatusEnum.UTFORT.toString()
-        healthInformation.utdypendeOpplysninger.spmGruppe.any {
-            it.spmGruppeId == "6.6"
+        if (healthInformation.utdypendeOpplysninger != null) {
+            healthInformation.utdypendeOpplysninger.spmGruppe.any {
+                it.spmGruppeId == "6.6"
+            }
+        }
+        else {
+            false
         }
     }),
 }
