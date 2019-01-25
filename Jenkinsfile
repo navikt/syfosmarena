@@ -6,7 +6,6 @@ pipeline {
      environment {
            APPLICATION_NAME = 'syfosmarena'
            DOCKER_SLUG = 'syfo'
-           DISABLE_SLACK_MESSAGES = false
        }
 
      stages {
@@ -32,6 +31,7 @@ pipeline {
         stage('run tests (unit & intergration)') {
             steps {
                 sh './gradlew test'
+                slackStatus status: 'passed'
             }
         }
         stage('create uber jar') {
