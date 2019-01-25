@@ -6,7 +6,9 @@ pipeline {
      environment {
            APPLICATION_NAME = 'syfosmarena'
            DOCKER_SLUG = 'syfo'
-           DISABLE_SLACK_MESSAGES = true
+           DISABLE_SLACK_MESSAGES = false
+           ZONE = 'fss'
+           KUBECONFIG="kubeconfig-teamsykefravr"
        }
 
      stages {
@@ -31,31 +33,25 @@ pipeline {
                 slackStatus status: 'passed'
             }
         }
-       stage('push docker image') {
-              steps {
-                  dockerUtils action: 'createPushImage'
-              }
-         }
         stage('Create kafka topics') {
             steps {
                 sh 'echo TODO'
                 // TODO
             }
         }
-        stage('deploy to preprod') {
-            steps {
-                deployApp action: 'kubectlApply', cluster: 'preprod-fss', file: 'config/preprod/configmap.yaml'
-                deployApp action: 'kubectlDeploy', cluster: 'preprod-fss', placeholders: ["config_file" : "application-preprod.json"]
-            }
-        }
-        stage('deploy to production') {
-            when { environment name: 'DEPLOY_TO', value: 'production' }
-            steps {
-                deployApp action: 'kubectlApply', cluster: 'prod-fss', file: 'config/prod/configmap.yaml'
-                deployApp action: 'kubectlDeploy', cluster: 'prod-fss', placeholders: ["config_file" : "application-prod.json"]
-                githubStatus action: 'tagRelease'
-            }
-         }
+            stage('deploy to preprod') {
+                 steps {
+                     dockerUtils action: 'createPushImage'
+                     deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
+                 }
+             }
+             stage('deploy to production') {
+                 when { environment name: 'DEPLOY_TO', value: 'production' }
+
+                 steps {
+                     deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
+                 }
+             }
         }
         post {
             always {

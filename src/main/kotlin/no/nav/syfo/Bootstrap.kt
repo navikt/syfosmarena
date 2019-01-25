@@ -13,6 +13,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JSON
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.api.registerNaisApi
@@ -24,7 +25,10 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
+import java.lang.RuntimeException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.Duration
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -38,10 +42,14 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerModule(JavaTimeModule())
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 }
+
+inline fun <reified T : Any> readConfig(path: Path): T = JSON.parse(Files.readAllBytes(path).toString(Charsets.UTF_8))
+
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
-    val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
+    val configPath = System.getenv("CONFIG_FILE") ?: throw RuntimeException("Missing env variable CONFIG_FILE")
+    val config: ApplicationConfig = readConfig(Paths.get(configPath))
     val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
 
