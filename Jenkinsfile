@@ -7,8 +7,6 @@ pipeline {
            APPLICATION_NAME = 'syfosmarena'
            DOCKER_SLUG = 'syfo'
            DISABLE_SLACK_MESSAGES = false
-           ZONE = 'fss'
-           KUBECONFIG="kubeconfig-teamsykefravr"
        }
 
      stages {
@@ -39,16 +37,16 @@ pipeline {
                 // TODO
             }
         }
-            stage('deploy to preprod') {
-                 steps {
+         stage('deploy to preprod') {
+             steps {
                      dockerUtils action: 'createPushImage'
                      deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
                  }
              }
-             stage('deploy to production') {
-                 when { environment name: 'DEPLOY_TO', value: 'production' }
+         stage('deploy to production') {
+             when { environment name: 'DEPLOY_TO', value: 'production' }
 
-                 steps {
+             steps {
                      deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
                  }
              }
