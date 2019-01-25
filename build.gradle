@@ -13,7 +13,7 @@ buildscript {
     ext.artemis_version = "2.6.2"
     ext.kafka_version = '2.0.0'
     ext.kafka_embedded_version = '1.0.0'
-    ext.serialization_version = "0.8.3-rc13"
+    ext.serialization_version = "0.10.0"
 }
 
 plugins {

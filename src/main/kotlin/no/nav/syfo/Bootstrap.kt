@@ -50,7 +50,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
     val configPath = System.getenv("CONFIG_FILE") ?: throw RuntimeException("Missing env variable CONFIG_FILE")
     val config: ApplicationConfig = readConfig(Paths.get(configPath))
-    val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
+    val credentials: VaultCredentials = readConfig(vaultApplicationPropertiesPath)
     val applicationState = ApplicationState()
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {

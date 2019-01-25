@@ -21,6 +21,7 @@ data class ApplicationConfig(
     val kafkaSm2013AutomaticDigitalManuellTopic: String = "privat-syfo-sm2013-manuelBehandling",
     val kafkaBootstrapServers: String
 )
+@Serializable
 data class VaultCredentials(
     val serviceuserUsername: String,
     val serviceuserPassword: String,
