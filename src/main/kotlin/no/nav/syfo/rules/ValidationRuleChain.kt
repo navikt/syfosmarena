@@ -30,8 +30,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         // lagArenaHendelse(ArenaHendelseTypeEnum.VURDER_OPPFOLGING.toString(), "", ArenaHendelseStatusEnum.PLANLAGT.toString()
         if (!healthInformation.aktivitet.periode.isNullOrEmpty()) {
             healthInformation.aktivitet.periode.any { (it.periodeFOMDato..it.periodeTOMDato).daysBetween() > 91 }
-        }
-        else {
+        } else {
             false
         }
     }),
@@ -80,8 +79,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         // lagArenaHendelse(ArenaHendelseTypeEnum.MELDING_FR_A_BEHANDLER.toString(), meldingSM13.meldingTilNav.beskrivBistandNAV, ArenaHendelseStatusEnum.PLANLAGT.toString()
         if (healthInformation.meldingTilNav != null) {
             healthInformation.meldingTilNav.isBistandNAVUmiddelbart
-        }
-        else {
+        } else {
             false
         }
     }),
@@ -91,8 +89,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         // lagArenaHendelse(ArenaHendelseTypeEnum.INFORMASJON_FRA_SYKMELDING.toString(), "", ArenaHendelseStatusEnum.UTFORT.toString()
         if (healthInformation.utdypendeOpplysninger != null) {
             !healthInformation.utdypendeOpplysninger.spmGruppe.isNullOrEmpty()
-        }
-        else {
+        } else {
             false
         }
     }),
@@ -102,8 +99,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
         // lagArenaHendelse(ArenaHendelseTypeEnum.INFORMASJON_FRA_SYKMELDING.toString(), meldingSM13.meldingTilArbeidsgiver, ArenaHendelseStatusEnum.PLANLAGT.toString()
         if (healthInformation.tiltak != null) {
             !healthInformation.tiltak.andreTiltak.isNullOrBlank() || !healthInformation.tiltak.tiltakNAV.isNullOrBlank()
-        }
-        else {
+        } else {
             false
         }
     }),
@@ -115,8 +111,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val status: S
             healthInformation.utdypendeOpplysninger.spmGruppe.any {
                 it.spmGruppeId == "6.6"
             }
-        }
-        else {
+        } else {
             false
         }
     }),
