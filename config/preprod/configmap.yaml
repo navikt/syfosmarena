@@ -14,4 +14,5 @@ data:
         "mqChannel": "Q1_SYFOSMARENA",
         "arenaQueue": "QA.Q1_414.FS06_ARENA",
         "vaultURL" : "https://vault.adeo.no"
+        "kafkaBootstrapServers": "SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443"
     }
