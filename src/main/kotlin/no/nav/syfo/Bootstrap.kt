@@ -32,6 +32,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.io.StringWriter
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,6 +40,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.jms.MessageProducer
 import javax.jms.Session
+import javax.xml.bind.Marshaller
 
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
 
@@ -72,7 +74,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     val consumerProperties = readConsumerConfig(config, credentials, valueDeserializer = StringDeserializer::class)
                     val kafkaconsumer = KafkaConsumer<String, String>(consumerProperties)
-                    // kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
+                    // TODO after srvsyfosmarena can cosune all the topics kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
                     kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
                     blockingApplicationLogic(applicationState, kafkaconsumer, arenaProducer, session)
@@ -128,7 +130,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
 
                 // TODO map rules to arena hendelse
 
-                val arenaSykmelding_1 = ArenaSykmelding().apply {
+                val arenaSykmelding = ArenaSykmelding().apply {
                     EiaDokumentInfoType().apply {
                         no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
                             dokumentType = "SM2"
@@ -173,6 +175,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                     foersteFravaersdag = LocalDate.now()
                     identDato = LocalDate.now()
                 }
+                sendArenaSykmelding(arenaProducer, session, arenaSykmelding, logKeys, logValues)
             }
         }
         delay(100)
@@ -191,6 +194,11 @@ fun Application.initRouting(applicationState: ApplicationState) {
     }
 }
 
+fun Marshaller.toString(input: Any): String = StringWriter().use {
+    marshal(input, it)
+    it.toString()
+}
+
 fun sendArenaSykmelding(
     producer: MessageProducer,
     session: Session,
@@ -198,6 +206,6 @@ fun sendArenaSykmelding(
     logKeys: String,
     logValues: Array<StructuredArgument>
 ) = producer.send(session.createTextMessage().apply {
-    text = ""
+    text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
     log.info("Message is sendt to arena $logKeys", *logValues)
 })
