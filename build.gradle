@@ -14,6 +14,8 @@ buildscript {
     ext.kafka_version = '2.0.0'
     ext.kafka_embedded_version = '1.0.0'
     ext.jaxb_api_version = '2.1'
+    ext.jaxb_version = '2.3.0.1'
+    ext.javax_activation_version = '1.1.1'
 }
 
 plugins {
@@ -67,6 +69,8 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:$logstash_encoder_version"
 
     implementation "javax.xml.bind:jaxb-api:$jaxb_api_version"
+    implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"
+    implementation "javax.activation:activation:$javax_activation_version"
 
     implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
     implementation "no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdling_version"
