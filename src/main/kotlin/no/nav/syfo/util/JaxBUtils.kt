@@ -1,4 +1,4 @@
-package no.nav.syfo
+package no.nav.syfo.util
 
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.helse.arenaSykemelding.EiaDokumentInfoType

@@ -1,4 +1,4 @@
-package no.nav.syfo
+package no.nav.syfo.arena
 
 enum class ArenaHendelseType(val type: String) {
     VEILEDNING_TIL_ARBEIDSGIVER("VEIL_AG_AT"),

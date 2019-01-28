@@ -16,17 +16,14 @@ import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
-import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
-import no.nav.helse.arenaSykemelding.HendelseType
-import no.nav.helse.arenaSykemelding.LegeType
-import no.nav.helse.arenaSykemelding.MerknadType
-import no.nav.helse.arenaSykemelding.PasientDataType
-import no.nav.helse.arenaSykemelding.PersonType
 import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.arena.createArenaSykmelding
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
+import no.nav.syfo.util.arenaSykmeldingMarshaller
 import no.nav.syfo.util.connectionFactory
+import no.nav.syfo.util.readConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
@@ -34,8 +31,6 @@ import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.StringWriter
 import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.jms.MessageProducer
@@ -129,52 +124,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                 log.info("Finish with rules")
 
                 // TODO map rules to arena hendelse
-
-                val arenaSykmelding = ArenaSykmelding().apply {
-                    EiaDokumentInfoType().apply {
-                        no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
-                            dokumentType = "SM2"
-                            dokumentTypeVersjon = "1"
-                            dokumentreferanse = receivedSykmelding.msgId
-                            ediLoggId = receivedSykmelding.navLogId
-                            // TODO find out what journalReferanse should be
-                            journalReferanse = "12345"
-                            dokumentDato = LocalDateTime.now()
-                        }
-                        EiaDokumentInfoType.BehandlingInfo().apply {
-                            // TODO map rule result here
-                            merknad.add(MerknadType().apply {
-                                merknadNr = "1209"
-                                merknadNr = "1" // TODO denne skal være på alle merknadene
-                                merknadBeskrivelse = "Sykmeldingen er fremdatert: Startdato ligger mer enn 30 dager etter første konsultasjon."
-                            })
-                        }
-                        EiaDokumentInfoType.Avsender().apply {
-                            LegeType().apply {
-                                legeFnr = "1314325"
-                            }
-                        }
-                        EiaDokumentInfoType.AvsenderSystem().apply {
-                            systemNavn = "syfosmarena"
-                            systemVersjon = "1.0.0"
-                        }
-                    }
-                    ArenaSykmelding.ArenaHendelse().apply {
-                        HendelseType().apply {
-                            hendelsesTypeKode = "MESM_I_SM"
-                            meldingFraLege = "" // TODO here we should sendt the healthInformation field for that rule
-                            hendelseStatus = "PLANLAGT"
-                            hendelseTekst = "Informasjon fra behandler til NAV. Åpne dokumentet for å se behandlers innspill til NAV."
-                        }
-                    }
-                    PasientDataType().apply {
-                        PersonType().apply {
-                            personFnr = "1234532535"
-                        }
-                    }
-                    foersteFravaersdag = LocalDate.now()
-                    identDato = LocalDate.now()
-                }
+                val arenaSykmelding = createArenaSykmelding(receivedSykmelding)
                 sendArenaSykmelding(arenaProducer, session, arenaSykmelding, logKeys, logValues)
             }
         }

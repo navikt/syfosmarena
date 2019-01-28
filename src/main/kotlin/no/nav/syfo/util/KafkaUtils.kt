@@ -1,5 +1,7 @@
-package no.nav.syfo
+package no.nav.syfo.util
 
+import no.nav.syfo.ApplicationConfig
+import no.nav.syfo.VaultCredentials
 import org.apache.kafka.common.serialization.Deserializer
 import java.util.Properties
 import kotlin.reflect.KClass

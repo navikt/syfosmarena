@@ -22,6 +22,7 @@ pipeline {
         stage('run tests (unit & intergration)') {
             steps {
                 sh './gradlew test'
+                slackStatus status: 'passed'
             }
         }
         stage('create uber jar') {
@@ -33,7 +34,6 @@ pipeline {
              steps {
                      dockerUtils action: 'createPushImage'
                      deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
-
                  }
              }
          stage('deploy to production') {

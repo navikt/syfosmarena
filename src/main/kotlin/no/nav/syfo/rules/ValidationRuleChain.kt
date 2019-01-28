@@ -1,8 +1,8 @@
 package no.nav.syfo.rules
 
 import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
-import no.nav.syfo.ArenaHendelseStatus
-import no.nav.syfo.ArenaHendelseType
+import no.nav.syfo.arena.ArenaHendelseStatus
+import no.nav.syfo.arena.ArenaHendelseType
 import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.RuleData
