@@ -33,7 +33,6 @@ pipeline {
              steps {
                      dockerUtils action: 'createPushImage'
                      deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
-                     slackStatus status: 'deploying'
 
                  }
              }
@@ -42,7 +41,6 @@ pipeline {
 
              steps {
                      deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
-                     slackStatus status: 'deploying'
                  }
              }
         }
