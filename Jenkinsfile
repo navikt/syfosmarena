@@ -9,20 +9,11 @@ pipeline {
        }
 
      stages {
-         stage('initialize') {
-             steps {
-                 script {
-                     init action: 'default'
-                     sh './gradlew clean'
-                     applicationVersionGradle = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
-                     if (!applicationVersionGradle.endsWith('-SNAPSHOT')) {
-                         env.DEPLOY_TO = 'production'
-                     }
-                     env.APPLICATION_VERSION = "${applicationVersionGradle}-${env.COMMIT_HASH_SHORT}"
-                     init action: 'updateStatus'
-                 }
-             }
-         }
+        stage('initialize') {
+            steps {
+                init action: 'gradle'
+            }
+        }
         stage('build') {
             steps {
                 sh './gradlew build -x test'
@@ -42,7 +33,6 @@ pipeline {
              steps {
                      dockerUtils action: 'createPushImage'
                      deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
-                     env.FASIT_ENVIRONMENT = 'q1'
                      slackStatus status: 'deploying'
 
                  }
@@ -52,7 +42,6 @@ pipeline {
 
              steps {
                      deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
-                     env.FASIT_ENVIRONMENT = 'p'
                      slackStatus status: 'deploying'
                  }
              }
