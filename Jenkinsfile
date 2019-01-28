@@ -31,19 +31,20 @@ pipeline {
         stage('run tests (unit & intergration)') {
             steps {
                 sh './gradlew test'
-                slackStatus status: 'passed'
             }
         }
         stage('create uber jar') {
             steps {
                 sh './gradlew shadowJar'
-                slackStatus status: 'passed'
             }
         }
          stage('deploy to preprod') {
              steps {
                      dockerUtils action: 'createPushImage'
                      deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
+                     env.FASIT_ENVIRONMENT = 'q1'
+                     slackStatus status: 'deploying'
+
                  }
              }
          stage('deploy to production') {
@@ -51,6 +52,8 @@ pipeline {
 
              steps {
                      deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
+                     env.FASIT_ENVIRONMENT = 'p'
+                     slackStatus status: 'deploying'
                  }
              }
         }
