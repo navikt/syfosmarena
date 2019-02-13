@@ -37,6 +37,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
     @Description("Forlengelse ut over maxdato.")
     MAX_SICK_LEAVE_PAYOUT(1607, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.PLANLAGT, { (healthInformation, _) ->
         // infotrygdForesp.sMhistorikk?.sykmelding?.first()?.periode?.stans == "MAX"
+        // TODO spøre FO ang rest endepunkt, finne max dato
         false
     }),
 
