@@ -1,13 +1,12 @@
 buildscript {
     ext.coroutines_version = '1.0.0'
     ext.kluent_version = '1.39'
-    ext.ktor_version = '1.1.1'
+    ext.ktor_version = '1.1.2'
     ext.logback_version = '1.2.3'
     ext.logstash_encoder_version = '5.1'
     ext.prometheus_version = '0.5.0'
     ext.spek_version = "2.0.0-alpha.1"
     ext.jackson_version = '2.9.6'
-    ext.sykmelding_version = "1.1-SNAPSHOT"
     ext.ibm_mq_version = '9.0.5.0'
     ext.arenaSykemdling_version = '1.0.3-SNAPSHOT'
     ext.artemis_version = "2.6.2"
@@ -19,14 +18,14 @@ buildscript {
 }
 
 plugins {
-    id 'org.jmailen.kotlinter' version '1.14.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.11'
+    id 'org.jmailen.kotlinter' version '1.21.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id("com.diffplug.gradle.spotless") version "3.14.0"
     id("com.github.johnrengelman.shadow") version "4.0.3"
 }
 
 group 'no.nav.syfo'
-version '1.0-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
 jar.manifest.attributes("Main-Class" : "no.nav.syfo.BootstrapKt")
 
@@ -71,8 +70,7 @@ dependencies {
     implementation "javax.xml.bind:jaxb-api:$jaxb_api_version"
     implementation "org.glassfish.jaxb:jaxb-runtime:$jaxb_version"
     implementation "javax.activation:activation:$javax_activation_version"
-
-    implementation "no.nav.helse.xml:sm2013:$sykmelding_version"
+    
     implementation "no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdling_version"
 
     implementation "com.ibm.mq:com.ibm.mq.allclient:$ibm_mq_version"
@@ -85,7 +83,6 @@ dependencies {
     testImplementation "org.apache.activemq:artemis-server:$artemis_version"
     testImplementation "org.apache.activemq:artemis-jms-client:$artemis_version"
     testImplementation "no.nav:kafka-embedded-env:$kafka_embedded_version"
-
 
     testRuntimeOnly "org.spekframework.spek2:spek-runtime-jvm:$spek_version"
     testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$spek_version"

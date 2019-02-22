@@ -116,7 +116,8 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                         ValidationRuleChain.values().toList()
                 ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                         receivedDate = receivedSykmelding.mottattDato,
-                        signatureDate = receivedSykmelding.signaturDato
+                        signatureDate = receivedSykmelding.signaturDato,
+                        rulesetVersion = receivedSykmelding.rulesetVersion
                 ))
 
                 val results = listOf(validationRuleResults).flatten()

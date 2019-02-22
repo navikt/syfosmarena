@@ -3,17 +3,32 @@
 pipeline {
     agent any
 
+     tools {
+                jdk 'openjdk11'
+           }
+
      environment {
            APPLICATION_NAME = 'syfosmarena'
            DOCKER_SLUG = 'syfo'
        }
 
      stages {
-        stage('initialize') {
-            steps {
-                init action: 'gradle'
-            }
-        }
+         stage('initialize') {
+                    steps {
+                        init action: 'default'
+                        script {
+                            sh(script: './gradlew clean')
+                            def applicationVersionGradle = sh(script: './gradlew -q printVersion', returnStdout: true).trim()
+                            env.APPLICATION_VERSION = "${applicationVersionGradle}-${env.COMMIT_HASH_SHORT}"
+                            if (applicationVersionGradle.endsWith('-SNAPSHOT')) {
+                                env.APPLICATION_VERSION = "${applicationVersionGradle}.${env.BUILD_ID}-${env.COMMIT_HASH_SHORT}"
+                            } else {
+                                env.DEPLOY_TO = 'production'
+                            }
+                            init action: 'updateStatus', applicationName: env.APPLICATION_NAME, applicationVersion: env.APPLICATION_VERSION
+                        }
+                    }
+                }
         stage('build') {
             steps {
                 sh './gradlew build -x test'
