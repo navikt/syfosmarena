@@ -10,7 +10,7 @@ data class Sykmelding(
     val skjermesForPasient: Boolean,
     val perioder: List<Periode>,
     val prognose: Prognose?,
-    val utdypendeOpplysninger: Map<String, Map<String, SporsmalSvar>>?,
+    val utdypendeOpplysninger: Map<String, Map<String, SporsmalSvar>>,
     val tiltakArbeidsplassen: String?,
     val tiltakNAV: String?,
     val andreTiltak: String?,

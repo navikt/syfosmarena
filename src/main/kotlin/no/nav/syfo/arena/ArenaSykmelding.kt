@@ -7,11 +7,12 @@ import no.nav.helse.arenaSykemelding.LegeType
 import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.helse.arenaSykemelding.PasientDataType
 import no.nav.helse.arenaSykemelding.PersonType
+import no.nav.syfo.Rule
 import no.nav.syfo.model.ReceivedSykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding): ArenaSykmelding = ArenaSykmelding().apply {
+fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>): ArenaSykmelding = ArenaSykmelding().apply {
     EiaDokumentInfoType().apply {
         no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
             dokumentType = "SM2"
@@ -24,11 +25,9 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding): ArenaSykmeldi
         }
         EiaDokumentInfoType.BehandlingInfo().apply {
             // TODO map rule result here
-            merknad.add(MerknadType().apply {
-                merknadNr = "1209"
-                merknadNr = "1" // TODO denne skal være på alle merknadene
-                merknadBeskrivelse = "Sykmeldingen er fremdatert: Startdato ligger mer enn 30 dager etter første konsultasjon."
-            })
+            ruleResults.onEach {
+                merknad.add(it.toMerknad())
+            }
         }
         EiaDokumentInfoType.Avsender().apply {
             LegeType().apply {
@@ -53,6 +52,12 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding): ArenaSykmeldi
             personFnr = receivedSykmelding.personNrPasient
         }
     }
-    foersteFravaersdag = LocalDate.now()
+    foersteFravaersdag = receivedSykmelding.sykmelding.kontaktMedPasient.kontaktDato
     identDato = LocalDate.now()
+}
+
+fun Rule<Any>.toMerknad() = MerknadType().apply {
+    merknadNr = ruleId.toString()
+    merknadType = "2"
+    merknadBeskrivelse = name
 }

@@ -19,7 +19,7 @@ data class RuleMetadata(
 enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHendelseType: ArenaHendelseType, override val arenaHendelseStatus: ArenaHendelseStatus, override val predicate: (RuleData<RuleMetadata>) -> Boolean) : Rule<RuleData<RuleMetadata>> {
     @Description("Hvis sykmeldingens sluttdato er mer enn 3 måneder frem i tid skal meldingen til oppfølging i Arena")
     SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS(1603, ArenaHendelseType.VURDER_OPPFOLGING, ArenaHendelseStatus.PLANLAGT, { (sykmelding, ruleMetadata) ->
-        sykmelding.perioder.sortedTOMDate().last().atStartOfDay() < ruleMetadata.signatureDate.plusMonths(3)
+        sykmelding.perioder.sortedTOMDate().last().atStartOfDay() > ruleMetadata.signatureDate.plusMonths(3)
     }),
 
     @Description("Hvis sykmeldingsperioden er over 3 måneder skal meldingen til oppfølging i Arena")
@@ -63,7 +63,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
 
     @Description("Hvis utdypende opplysninger om medisinske er oppgitt ved 7/8, 17, 39 uker settes merknad")
     DYNAMIC_QUESTIONS(1617, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.UTFORT, { (sykmelding, _) ->
-        sykmelding.utdypendeOpplysninger != null && !sykmelding.utdypendeOpplysninger.any { it.key.isNullOrEmpty() }
+        !sykmelding.utdypendeOpplysninger.isEmpty()
     }),
 
     @Description("Hvis sykmeldingen inneholer tiltakNAV eller andreTiltak, så skal merknad lages og hendelse sendes til Arena")
@@ -72,14 +72,8 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
     }),
 
     @Description("Hvis utdypende opplysninger foreligger og pasienten søker om AAP")
-    INVALID_FNR(1620, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.UTFORT, { (sykmelding, _) ->
-        if (sykmelding.utdypendeOpplysninger != null) {
-            sykmelding.utdypendeOpplysninger.any {
-                it.key == "6.6"
-            }
-        } else {
-            false
-        }
+    DYNAMIC_QUESTIONS_AAP(1620, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.UTFORT, { (sykmelding, _) ->
+        sykmelding.utdypendeOpplysninger.any { it.key == "6.6" }
     }),
 }
 

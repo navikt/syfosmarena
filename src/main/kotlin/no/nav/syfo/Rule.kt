@@ -12,6 +12,7 @@ interface Rule<in T> {
     val arenaHendelseStatus: ArenaHendelseStatus
     val arenaHendelseType: ArenaHendelseType
     val predicate: (T) -> Boolean
+    operator fun invoke(input: T) = predicate(input)
 }
 
 inline fun <reified T, reified R : Rule<RuleData<T>>> List<R>.executeFlow(sykmelding: Sykmelding, value: T): List<Rule<Any>> =

@@ -112,9 +112,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
 
                 log.info("Received a SM2013, going to Arena rules, $logKeys", *logValues)
 
-                val validationRuleResults: List<Rule<Any>> = listOf<List<Rule<RuleData<RuleMetadata>>>>(
-                        ValidationRuleChain.values().toList()
-                ).flatten().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
+                val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                         receivedDate = receivedSykmelding.mottattDato,
                         signatureDate = receivedSykmelding.signaturDato,
                         rulesetVersion = receivedSykmelding.rulesetVersion
@@ -125,7 +123,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                 log.info("Finish with rules")
 
                 // TODO map rules to arena hendelse
-                val arenaSykmelding = createArenaSykmelding(receivedSykmelding)
+                val arenaSykmelding = createArenaSykmelding(receivedSykmelding, results)
                 sendArenaSykmelding(arenaProducer, session, arenaSykmelding, logKeys, logValues)
             }
         }
