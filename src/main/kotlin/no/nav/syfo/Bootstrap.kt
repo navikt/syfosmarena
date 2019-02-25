@@ -123,11 +123,10 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                 log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
                 // TODO map rules to arena hendelse
-                when(results.firstOrNull()) {
-                   null -> log.info("Message no rules hit $logKeys", *logValues)
-                   else ->   sendArenaSykmelding(arenaProducer, session, createArenaSykmelding(receivedSykmelding, results), logKeys, logValues)
+                when (results.firstOrNull()) {
+                    null -> log.info("Message no rules hit $logKeys", *logValues)
+                    else -> sendArenaSykmelding(arenaProducer, session, createArenaSykmelding(receivedSykmelding, results), logKeys, logValues)
                 }
-
             }
         }
         delay(100)
