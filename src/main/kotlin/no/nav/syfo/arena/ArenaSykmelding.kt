@@ -24,7 +24,6 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
             dokumentDato = LocalDateTime.now()
         }
         behandlingInfo = EiaDokumentInfoType.BehandlingInfo().apply {
-            // TODO map rule result here
             ruleResults.onEach {
                 merknad.add(it.toMerknad())
             }
