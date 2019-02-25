@@ -69,7 +69,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     val consumerProperties = readConsumerConfig(config, credentials, valueDeserializer = StringDeserializer::class)
                     val kafkaconsumer = KafkaConsumer<String, String>(consumerProperties)
-                    // TODO after srvsyfosmarena can cosune all the topics kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticPapirmottakTopic, config.kafkaSm2013AutomaticDigitalHandlingTopic, config.kafkaSm2013manuellPapirmottakTopic, config.kafkaSm2013manuelDigitalManuellTopic))
+                    // TODO read from sak topic, with journalid
                     kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
                     blockingApplicationLogic(applicationState, kafkaconsumer, arenaProducer, session)
