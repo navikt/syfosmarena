@@ -4,6 +4,7 @@ import no.nav.syfo.diagnose.Kodeverk
 import no.nav.syfo.model.Adresse
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.AnnenFraversArsak
+import no.nav.syfo.model.Arbeidsgiver
 import no.nav.syfo.model.ArbeidsrelatertArsak
 import no.nav.syfo.model.ArbeidsrelatertArsakType
 import no.nav.syfo.model.AvsenderSystem
@@ -12,6 +13,7 @@ import no.nav.syfo.model.Diagnose
 import no.nav.syfo.model.ErIArbeid
 import no.nav.syfo.model.ErIkkeIArbeid
 import no.nav.syfo.model.Gradert
+import no.nav.syfo.model.HarArbeidsgiver
 import no.nav.syfo.model.KontaktMedPasient
 import no.nav.syfo.model.MedisinskArsak
 import no.nav.syfo.model.MedisinskArsakType
@@ -42,7 +44,8 @@ fun generateSykmelding(
     kontaktMedPasient: KontaktMedPasient = generateKontaktMedPasient(),
     behandletTidspunkt: LocalDateTime = LocalDateTime.now(),
     behandler: Behandler = generateBehandler(),
-    avsenderSystem: AvsenderSystem = generateAvsenderSystem()
+    avsenderSystem: AvsenderSystem = generateAvsenderSystem(),
+    arbeidsgiver: Arbeidsgiver = generateArbeidsgiver()
 ) = Sykmelding(
         id = id,
         pasientAktoerId = pasientAktoerId,
@@ -59,7 +62,8 @@ fun generateSykmelding(
         kontaktMedPasient = kontaktMedPasient,
         behandletTidspunkt = behandletTidspunkt,
         behandler = behandler,
-        avsenderSystem = avsenderSystem
+        avsenderSystem = avsenderSystem,
+        arbeidsgiver = arbeidsgiver
 )
 
 fun generateMedisinskVurdering(
@@ -212,3 +216,14 @@ fun generateAvsenderSystem(
         navn = navn,
         versjon = versjon
 )
+
+fun generateArbeidsgiver(
+    harArbeidsgiver: HarArbeidsgiver = HarArbeidsgiver.EN_ARBEIDSGIVER,
+    legekontor: String = "HelseHus",
+    yrkesbetegnelse: String = "Maler",
+    stillingsprosent: Int = 100
+) = Arbeidsgiver(
+        harArbeidsgiver = harArbeidsgiver,
+        navn = legekontor,
+        yrkesbetegnelse = yrkesbetegnelse,
+        stillingsprosent = stillingsprosent)
