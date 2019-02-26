@@ -19,8 +19,7 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
             dokumentTypeVersjon = "1"
             dokumentreferanse = receivedSykmelding.msgId
             ediLoggId = receivedSykmelding.navLogId
-            // TODO find out what journalReferanse should be
-            journalReferanse = ""
+            journalReferanse = "" // TODO find out what journalReferanse should be
             dokumentDato = LocalDateTime.now()
         }
         behandlingInfo = EiaDokumentInfoType.BehandlingInfo().apply {
