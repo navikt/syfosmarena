@@ -7,12 +7,10 @@ import no.nav.helse.arenaSykemelding.LegeType
 import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.helse.arenaSykemelding.PasientDataType
 import no.nav.helse.arenaSykemelding.PersonType
-import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.model.ReceivedSykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.reflect.KClass
 
 fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>): ArenaSykmelding = ArenaSykmelding().apply {
     eiaDokumentInfo = EiaDokumentInfoType().apply {
@@ -58,7 +56,6 @@ fun Rule<Any>.toMerknad() = MerknadType().apply {
     merknadType = "2"
     merknadBeskrivelse = name
 }
-
 
 fun Rule<Any>.toHendelse() = HendelseType().apply {
     hendelsesTypeKode = arenaHendelseType.type
