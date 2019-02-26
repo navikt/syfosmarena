@@ -59,15 +59,10 @@ fun Rule<Any>.toMerknad() = MerknadType().apply {
     merknadBeskrivelse = name
 }
 
-fun <T : Annotation> Any.enumAnnotationValue(type: KClass<out T>, enumName: String): T? = if (javaClass.getField(enumName)?.isAnnotationPresent(type.java) == true) {
-    javaClass.getField(enumName).getAnnotation(type.java)
-} else {
-    null
-}
 
 fun Rule<Any>.toHendelse() = HendelseType().apply {
     hendelsesTypeKode = arenaHendelseType.type
     meldingFraLege = meldingFraLege
     hendelseStatus = arenaHendelseStatus.type
-    hendelseTekst = enumAnnotationValue(Description::class, name)?.description ?: ""
+    hendelseTekst = hendelseTekst
 }
