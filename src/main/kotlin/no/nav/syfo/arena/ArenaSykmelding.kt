@@ -7,10 +7,12 @@ import no.nav.helse.arenaSykemelding.LegeType
 import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.helse.arenaSykemelding.PasientDataType
 import no.nav.helse.arenaSykemelding.PersonType
+import no.nav.syfo.Description
 import no.nav.syfo.Rule
 import no.nav.syfo.model.ReceivedSykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.reflect.KClass
 
 fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>): ArenaSykmelding = ArenaSykmelding().apply {
     eiaDokumentInfo = EiaDokumentInfoType().apply {
@@ -38,12 +40,9 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
         }
     }
     ArenaSykmelding.ArenaHendelse().apply {
-        hendelse.add(HendelseType().apply {
-            hendelsesTypeKode = "MESM_I_SM"
-            meldingFraLege = "" // TODO here we should sendt the healthInformation field for that rule
-            hendelseStatus = "PLANLAGT"
-            hendelseTekst = "Informasjon fra behandler til NAV. Åpne dokumentet for å se behandlers innspill til NAV."
-        })
+        ruleResults.onEach {
+            hendelse.add(it.toHendelse())
+        }
     }
     pasientData = PasientDataType().apply {
         person = PersonType().apply {
@@ -58,4 +57,17 @@ fun Rule<Any>.toMerknad() = MerknadType().apply {
     merknadNr = ruleId.toString()
     merknadType = "2"
     merknadBeskrivelse = name
+}
+
+fun <T : Annotation> Any.enumAnnotationValue(type: KClass<out T>, enumName: String): T? = if (javaClass.getField(enumName)?.isAnnotationPresent(type.java) == true) {
+    javaClass.getField(enumName).getAnnotation(type.java)
+} else {
+    null
+}
+
+fun Rule<Any>.toHendelse() = HendelseType().apply {
+    hendelsesTypeKode = arenaHendelseType.type
+    meldingFraLege = meldingFraLege
+    hendelseStatus = arenaHendelseStatus.type
+    hendelseTekst = enumAnnotationValue(Description::class, name)?.description ?: ""
 }
