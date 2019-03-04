@@ -21,12 +21,14 @@ val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
 val spekVersion = "2.0.0-rc.1"
 val jaxwsApiVersion = "2.3.1"
-val confluentVersion = "4.1.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "1.0.3-SNAPSHOT"
+val avroVersion = "1.8.2"
+val confluentVersion = "5.0.0"
+val syfooppgaveSchemasVersion = "1.1-SNAPSHOT"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
@@ -80,7 +82,11 @@ dependencies {
     implementation ("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
 
     implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
-    implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
+    implementation("org.apache.kafka:kafka-streams:$kafkaVersion")
+
+    implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
+    implementation("io.confluent:kafka-streams-avro-serde:$confluentVersion")
+    implementation("org.apache.avro:avro:$avroVersion")
 
     implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
@@ -88,6 +94,7 @@ dependencies {
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
+    implementation ("no.nav.syfo:syfooppgave-schemas:$syfooppgaveSchemasVersion")
 
     implementation ("javax.xml.bind:jaxb-api:$jaxbApiVersion")
     implementation ("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")

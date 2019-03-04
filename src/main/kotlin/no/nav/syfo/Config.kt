@@ -19,7 +19,8 @@ data class ApplicationConfig(
     val kafkaSm2013AutomaticDigitalHandlingTopic: String,
     val kafkaSm2013manuelDigitalManuellTopic: String,
     val kafkasm2013oppgaveJournalOpprettetTopic: String,
-    val kafkaBootstrapServers: String
+    val kafkaBootstrapServers: String,
+    val applicationName: String
 )
 data class VaultCredentials(
     val serviceuserUsername: String,

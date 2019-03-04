@@ -12,14 +12,14 @@ import no.nav.syfo.model.ReceivedSykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>): ArenaSykmelding = ArenaSykmelding().apply {
+fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>, journalpostid: String): ArenaSykmelding = ArenaSykmelding().apply {
     eiaDokumentInfo = EiaDokumentInfoType().apply {
         dokumentInfo = no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
             dokumentType = "SM2"
             dokumentTypeVersjon = "1"
             dokumentreferanse = receivedSykmelding.msgId
             ediLoggId = receivedSykmelding.navLogId
-            journalReferanse = "" // TODO find out what journalReferanse should be
+            journalReferanse = journalpostid
             dokumentDato = LocalDateTime.now()
         }
         behandlingInfo = EiaDokumentInfoType.BehandlingInfo().apply {

@@ -48,7 +48,7 @@ object ArenaSykmeldingMappingSpek : Spek({
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
             val results = listOf(validationRuleChain).flatten()
 
-            createArenaSykmelding(receivedSykmelding, results).eiaDokumentInfo.dokumentInfo.ediLoggId shouldEqual receivedSykmelding.navLogId
+            createArenaSykmelding(receivedSykmelding, results, "12355234").eiaDokumentInfo.dokumentInfo.ediLoggId shouldEqual receivedSykmelding.navLogId
         }
     }
 })

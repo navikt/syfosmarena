@@ -29,14 +29,6 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
                 sykmelding.perioder.any { (it.fom..it.tom).daysBetween() > 91 }
     }),
 
-    @Description("Forlengelse ut over maxdato.")
-    MAX_SICK_LEAVE_PAYOUT(1607, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.PLANLAGT,
-            "", "Forlengelse ut over maxdato.", { (sykmelding, _) ->
-        // infotrygdForesp.sMhistorikk?.sykmelding?.first()?.periode?.stans == "MAX"
-        // TODO spøre FO ang rest endepunkt, finne max dato
-        false
-    }),
-
     @Description("Kun reisetilskudd er angitt. Melding sendt til oppfølging i Arena, skal ikke registreres i Infotrygd.")
     TRAVEL_SUBSIDY_SPECIFIED(1608, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.PLANLAGT,
             "", "Kun reisetilskudd er angitt", { (sykmelding, _) ->
