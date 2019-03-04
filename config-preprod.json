@@ -5,5 +5,12 @@
   "mqChannel": "Q1_SYFOSMARENA",
   "arenaQueue": "QA.Q1_414.FS06_ARENA",
   "vaultURL" : "https://vault.adeo.no",
-  "kafkaBootstrapServers": "SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443"
+  "kafkaBootstrapServers": "SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443",
+  "kafkaSm2013AutomaticPapirmottakTopic": "privat-syfo-smpapir-automatiskBehandling",
+  "kafkaSm2013manuellPapirmottakTopic": "privat-syfo-smpapir-manuellBehandling",
+  "kafkaSm2013AutomaticDigitalHandlingTopic": "privat-syfo-sm2013-automatiskBehandling",
+  "kafkaSm2013manuelDigitalManuellTopic": "privat-syfo-sm2013-manuelBehandling",
+  "kafkasm2013oppgaveJournalOpprettetTopic": "aapen-syfo-oppgave-journalOpprettet",
+  "applicationPort": "8080",
+  "applicationThreads": "1"
 }

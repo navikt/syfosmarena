@@ -69,7 +69,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     val consumerProperties = readConsumerConfig(config, credentials, valueDeserializer = StringDeserializer::class)
                     val kafkaconsumer = KafkaConsumer<String, String>(consumerProperties)
-                    // TODO read from sak topic, with journalid
+                    // TODO use kafka streams and read from sak topic, with journalid
                     kafkaconsumer.subscribe(listOf(config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
                     blockingApplicationLogic(applicationState, kafkaconsumer, arenaProducer, session)
@@ -124,7 +124,7 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
 
                 // TODO map rules to arena hendelse
                 when (results.firstOrNull()) {
-                    null -> log.info("Message no rules hit $logKeys", *logValues)
+                    null -> log.info("Message is NOT sendt to arena  $logKeys", *logValues)
                     else -> sendArenaSykmelding(arenaProducer, session, createArenaSykmelding(receivedSykmelding, results), logKeys, logValues)
                 }
             }
