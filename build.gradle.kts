@@ -37,7 +37,6 @@ tasks.withType<Jar> {
 
 plugins {
     java
-    id("no.nils.wsdl2java") version "0.10"
     kotlin("jvm") version "1.3.21"
     id("org.jmailen.kotlinter") version "1.21.0"
     id("com.diffplug.gradle.spotless") version "3.14.0"
@@ -47,9 +46,9 @@ plugins {
 
 buildscript {
     dependencies {
-        classpath("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-        classpath("org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438")
-        classpath("com.sun.activation:javax.activation:1.2.0")
+        classpath("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+        classpath("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
+        classpath("com.sun.activation:javax.activation:$javaxActivationVersion")
     }
 }
 
@@ -64,9 +63,6 @@ repositories {
     jcenter()
 }
 
-val navWsdl= configurations.create("navWsdl") {
-    setTransitive(false)
-}
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -124,7 +120,10 @@ tasks {
     }
 
     withType<ShadowJar> {
-        transform(ServiceFileTransformer::class.java)
+        transform(ServiceFileTransformer::class.java) {
+            setPath("META-INF/cxf")
+            include("bus-extensions.txt")
+        }
     }
 
     withType<Test> {
