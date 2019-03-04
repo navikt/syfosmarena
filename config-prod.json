@@ -11,6 +11,7 @@
   "kafkaSm2013AutomaticDigitalHandlingTopic": "privat-syfo-sm2013-automatiskBehandling",
   "kafkaSm2013manuelDigitalManuellTopic": "privat-syfo-sm2013-manuelBehandling",
   "kafkasm2013oppgaveJournalOpprettetTopic": "aapen-syfo-oppgave-journalOpprettet",
+  "kafkasm2013ArenaInput" : "privat-syfo-arena-input",
   "applicationPort": "8080",
   "applicationThreads": "1",
   "applicationName": "syfosmarena"

@@ -85,7 +85,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
                     val arenaProducer = session.createProducer(arenaQueue)
 
                     val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
-                    kafkaConsumer.subscribe(listOf("privat-syfo-arena-input"))
+                    kafkaConsumer.subscribe(listOf(config.kafkasm2013ArenaInput))
 
                     blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
                 }
@@ -120,7 +120,7 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(JournaledReceivedSykmelding(sm2013.toByteArray(Charsets.UTF_8), journalCreated.journalpostId))
-    }, JoinWindows.of(TimeUnit.HOURS.toMillis(11))).to("privat-syfo-arena-input")
+    }, JoinWindows.of(TimeUnit.HOURS.toMillis(11))).to(config.kafkasm2013ArenaInput)
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }

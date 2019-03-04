@@ -1,0 +1,12 @@
+{
+  "topics": [
+    {
+      "topicName": "privat-syfo-arena-input",
+      "members": [
+        {"member":"srvsyfosmarena", "role":"PRODUCER"},
+        {"member":"srvsyfosmarena", "role":"CONSUMER"}
+      ],
+      "numPartitions": 3
+    }
+  ]
+}
