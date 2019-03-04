@@ -128,8 +128,8 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                     else -> sendArenaSykmelding(arenaProducer, session, createArenaSykmelding(receivedSykmelding, results), logKeys, logValues)
                 }
             }
+            delay(100)
         }
-        delay(100)
     }
 
 fun Application.initRouting(applicationState: ApplicationState) {
