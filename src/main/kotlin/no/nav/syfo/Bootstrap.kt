@@ -115,7 +115,7 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
             config.kafkaSm2013manuellPapirmottakTopic,
             config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
-    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>("aapen-syfo-oppgave-journalOpprettet")
+    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(config.kafkasm2013oppgaveJournalOpprettetTopic)
     KafkaConfig.LogRetentionTimeMillisProp()
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
