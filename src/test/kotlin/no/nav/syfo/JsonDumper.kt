@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 fun main() {
 
-    val sm  = generateSykmelding(perioder = listOf(
+    val sm = generateSykmelding(perioder = listOf(
             generatePeriode(
                     fom = LocalDate.now(),
                     tom = LocalDate.now().plusMonths(3).plusDays(1)
@@ -33,7 +33,6 @@ fun main() {
             fellesformat = ""
 
     )
-
 
     println(ObjectMapper()
             .registerKotlinModule()
