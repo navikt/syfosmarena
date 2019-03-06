@@ -28,7 +28,7 @@ val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "1.0.3-SNAPSHOT"
 val avroVersion = "1.8.2"
 val confluentVersion = "5.0.0"
-val syfooppgaveSchemasVersion = "1.1-SNAPSHOT"
+val syfooppgaveSchemasVersion = "1.2-SNAPSHOT"
 
 tasks.withType<Jar> {
     manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"

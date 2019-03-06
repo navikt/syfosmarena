@@ -71,7 +71,8 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
     }.start(wait = false)
 
     val kafkaBaseConfig = loadBaseConfig(config, credentials)
-    val consumerProperties = kafkaBaseConfig.toConsumerConfig("${config.applicationName}-consumer", valueDeserializer = KafkaAvroDeserializer::class)
+    val consumerProperties = kafkaBaseConfig.toConsumerConfig(
+            "${config.applicationName}-consumer", valueDeserializer = KafkaAvroDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = GenericAvroSerde::class)
     val kafkaStream = createKafkaStream(streamProperties, config)
     kafkaStream.start()
@@ -118,20 +119,28 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
             config.kafkaSm2013manuellPapirmottakTopic,
             config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
-    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(config.kafkasm2013oppgaveJournalOpprettetTopic)
+    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
+            config.kafkasm2013oppgaveJournalOpprettetTopic)
     KafkaConfig.LogRetentionTimeMillisProp()
 
     val joinWindow = JoinWindows.of(TimeUnit.HOURS.toMillis(11))
-    val joined = Joined.with(Serdes.String(), Serdes.String(), SpecificAvroSerde<RegisterJournal>())
+    val joined = Joined.with(
+            Serdes.String(), Serdes.String(), SpecificAvroSerde<RegisterJournal>())
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
-        objectMapper.writeValueAsString(JournaledReceivedSykmelding(sm2013.toByteArray(Charsets.UTF_8), journalCreated.journalpostId))
+        objectMapper.writeValueAsString(JournaledReceivedSykmelding(sm2013.toByteArray(Charsets.UTF_8),
+                journalCreated.journalpostId))
     }, joinWindow, joined).to(config.kafkasm2013ArenaInput)
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
-suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaconsumer: KafkaConsumer<String, String>, arenaProducer: MessageProducer, session: Session) {
+suspend fun blockingApplicationLogic(
+    applicationState: ApplicationState,
+    kafkaconsumer: KafkaConsumer<String, String>,
+    arenaProducer: MessageProducer,
+    session: Session
+) {
         while (applicationState.running) {
             var logValues = arrayOf(
                     StructuredArguments.keyValue("smId", "missing"),
@@ -167,7 +176,9 @@ suspend fun blockingApplicationLogic(applicationState: ApplicationState, kafkaco
                 // TODO map rules to arena hendelse
                 when (results.firstOrNull()) {
                     null -> log.info("Message is NOT sendt to arena  $logKeys", *logValues)
-                    else -> sendArenaSykmelding(arenaProducer, session, createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId), logKeys, logValues)
+                    else -> sendArenaSykmelding(arenaProducer, session,
+                            createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
+                            logKeys, logValues)
                 }
             }
             delay(100)
