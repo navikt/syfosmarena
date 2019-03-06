@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.application.Application
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
@@ -31,9 +32,11 @@ import no.nav.syfo.util.loadBaseConfig
 import no.nav.syfo.util.toConsumerConfig
 import no.nav.syfo.util.toStreamsConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
+import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.JoinWindows
+import org.apache.kafka.streams.kstream.Joined
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -118,9 +121,12 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(config.kafkasm2013oppgaveJournalOpprettetTopic)
     KafkaConfig.LogRetentionTimeMillisProp()
 
+    val joinWindow = JoinWindows.of(TimeUnit.HOURS.toMillis(11))
+    val joined = Joined.with(Serdes.String(), Serdes.String(), SpecificAvroSerde<RegisterJournal>())
+
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(JournaledReceivedSykmelding(sm2013.toByteArray(Charsets.UTF_8), journalCreated.journalpostId))
-    }, JoinWindows.of(TimeUnit.HOURS.toMillis(11))).to(config.kafkasm2013ArenaInput)
+    }, joinWindow, joined).to(config.kafkasm2013ArenaInput)
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
