@@ -35,6 +35,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.kstream.JoinWindows
 import org.apache.kafka.streams.kstream.Joined
 import org.slf4j.Logger
@@ -111,6 +112,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 }
 
 fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): KafkaStreams {
+    streamProperties.remove(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)
     val streamsBuilder = StreamsBuilder()
 
     val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
