@@ -213,5 +213,6 @@ fun sendArenaSykmelding(
     logValues: Array<StructuredArgument>
 ) = producer.send(session.createTextMessage().apply {
     text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
+    ARENA_EVENT_COUNTER.inc()
     log.info("Message is sendt to arena $logKeys", *logValues)
 })
