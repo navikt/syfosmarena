@@ -117,8 +117,6 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
 
     val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
             config.kafkaSm2013manuelDigitalManuellTopic,
-            config.kafkaSm2013AutomaticPapirmottakTopic,
-            config.kafkaSm2013manuellPapirmottakTopic,
             config.kafkaSm2013AutomaticDigitalHandlingTopic))
 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
