@@ -47,9 +47,9 @@ fun Properties.toStreamsConfig(
 }
 
 fun Properties.toProducerConfig(
-        groupId: String,
-        valueSerializer: KClass<out Serializer<out Any>>,
-        keySerializer: KClass<out Serializer<out Any>> = StringSerializer::class
+    groupId: String,
+    valueSerializer: KClass<out Serializer<out Any>>,
+    keySerializer: KClass<out Serializer<out Any>> = StringSerializer::class
 ): Properties = Properties().also {
     it.putAll(this)
     it[ConsumerConfig.GROUP_ID_CONFIG] = groupId

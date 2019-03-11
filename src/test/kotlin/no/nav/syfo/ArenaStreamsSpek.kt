@@ -1,10 +1,8 @@
 package no.nav.syfo
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
-import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import no.nav.common.KafkaEnvironment
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.sak.avro.RegisterJournal
@@ -94,7 +92,7 @@ object ArenaStreamsSpek : Spek({
                 .overrideForTest())
 
         val smProducer = KafkaProducer<String, String>(baseProperties
-                .toProducerConfig("spek-it-producer" , StringSerializer::class)
+                .toProducerConfig("spek-it-producer", StringSerializer::class)
                 .overrideForTest())
 
         val outputConsumer = KafkaConsumer<String, String>(baseProperties
@@ -138,6 +136,5 @@ object ArenaStreamsSpek : Spek({
             journaledSykmelding.journalpostId shouldEqual "hello"
             journaledSykmelding.receivedSykmelding shouldEqual objectMapper.writeValueAsBytes(receivedSykmelding)
         }
-
     }
 })
