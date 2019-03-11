@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
 version = "1.0.0"
@@ -13,7 +14,7 @@ val jacksonVersion = "2.9.7"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.0"
-val kafkaEmbeddedVersion = "1.0.0"
+val kafkaEmbeddedVersion = "2.1.1"
 val kluentVersion = "1.39"
 val ktorVersion = "1.1.3"
 val logbackVersion = "1.2.3"
@@ -136,5 +137,9 @@ tasks {
             includeEngines("spek2")
         }
         testLogging.showStandardStreams = true
+    }
+
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
     }
 }

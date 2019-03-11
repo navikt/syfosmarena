@@ -4,9 +4,13 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import no.nav.syfo.ApplicationConfig
 import no.nav.syfo.VaultCredentials
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.common.serialization.Serializer
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.StreamsConfig
 
 import java.util.Properties
@@ -23,7 +27,7 @@ fun loadBaseConfig(config: ApplicationConfig, credentials: VaultCredentials): Pr
 fun Properties.toConsumerConfig(
     groupId: String,
     valueDeserializer: KClass<out Deserializer<out Any>>,
-    keyDeserializer: KClass<out Deserializer<out Any>> = valueDeserializer
+    keyDeserializer: KClass<out Deserializer<out Any>> = StringDeserializer::class
 ): Properties = Properties().also {
     it.putAll(this)
     it[ConsumerConfig.GROUP_ID_CONFIG] = groupId
@@ -38,6 +42,17 @@ fun Properties.toStreamsConfig(
 ): Properties = Properties().also {
     it.putAll(this)
     it[StreamsConfig.APPLICATION_ID_CONFIG] = applicationName
-    it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = valueSerde.java
     it[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = keySerde.java
+    it[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = valueSerde.java
+}
+
+fun Properties.toProducerConfig(
+        groupId: String,
+        valueSerializer: KClass<out Serializer<out Any>>,
+        keySerializer: KClass<out Serializer<out Any>> = StringSerializer::class
+): Properties = Properties().also {
+    it.putAll(this)
+    it[ConsumerConfig.GROUP_ID_CONFIG] = groupId
+    it[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = keySerializer.java
+    it[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = valueSerializer.java
 }

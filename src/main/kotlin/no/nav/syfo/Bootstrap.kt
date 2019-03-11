@@ -31,13 +31,16 @@ import no.nav.syfo.util.connectionFactory
 import no.nav.syfo.util.loadBaseConfig
 import no.nav.syfo.util.toConsumerConfig
 import no.nav.syfo.util.toStreamsConfig
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
+import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.JoinWindows
 import org.apache.kafka.streams.kstream.Joined
+import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -74,7 +77,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
     val kafkaBaseConfig = loadBaseConfig(config, credentials)
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${config.applicationName}-consumer", valueDeserializer = KafkaAvroDeserializer::class)
-    val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = GenericAvroSerde::class)
+    val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = SpecificAvroSerde::class)
     val kafkaStream = createKafkaStream(streamProperties, config)
     kafkaStream.start()
 
@@ -112,25 +115,31 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 }
 
 fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): KafkaStreams {
-    streamProperties.remove(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)
     val streamsBuilder = StreamsBuilder()
+    val specificSerdeConfig = SpecificAvroSerde<RegisterJournal>().apply {
+        configure(mapOf(
+                "schema.registry.url" to streamProperties["schema.registry.url"]!!
+        ), false)
+    }
 
     val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
             config.kafkaSm2013manuelDigitalManuellTopic,
-            config.kafkaSm2013AutomaticDigitalHandlingTopic))
+            config.kafkaSm2013AutomaticDigitalHandlingTopic), Consumed.with(Serdes.String(), Serdes.String()))
 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
-            config.kafkasm2013oppgaveJournalOpprettetTopic)
-    KafkaConfig.LogRetentionTimeMillisProp()
+            config.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig))
 
     val joinWindow = JoinWindows.of(TimeUnit.HOURS.toMillis(11))
     val joined = Joined.with(
-            Serdes.String(), Serdes.String(), SpecificAvroSerde<RegisterJournal>())
+            Serdes.String(), Serdes.String(), specificSerdeConfig)
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
-        objectMapper.writeValueAsString(JournaledReceivedSykmelding(sm2013.toByteArray(Charsets.UTF_8),
-                journalCreated.journalpostId))
-    }, joinWindow, joined).to(config.kafkasm2013ArenaInput)
+        objectMapper.writeValueAsString(
+                JournaledReceivedSykmelding(
+                        receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
+                        journalpostId = journalCreated.journalpostId.toString()
+                ))
+    }, joinWindow, joined).to(config.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }

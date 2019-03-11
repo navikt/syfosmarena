@@ -4,7 +4,6 @@
   "mqQueueManager": "MQ1LSC03",
   "mqChannel": "Q1_SYFOSMARENA",
   "arenaQueue": "QA.Q1_414.FS06_ARENA",
-  "vaultURL" : "https://vault.adeo.no",
   "kafkaBootstrapServers": "SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443",
   "kafkaSm2013AutomaticPapirmottakTopic": "privat-syfo-smpapir-automatiskBehandling",
   "kafkaSm2013manuellPapirmottakTopic": "privat-syfo-smpapir-manuellBehandling",

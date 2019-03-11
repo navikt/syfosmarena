@@ -13,7 +13,6 @@ data class ApplicationConfig(
     val mqQueueManager: String,
     val mqChannel: String,
     val arenaQueue: String,
-    val vaultURL: String,
     val kafkaSm2013AutomaticPapirmottakTopic: String,
     val kafkaSm2013manuellPapirmottakTopic: String,
     val kafkaSm2013AutomaticDigitalHandlingTopic: String,
