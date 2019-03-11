@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.application.Application
 import io.ktor.routing.routing
@@ -31,6 +30,7 @@ import no.nav.syfo.util.toConsumerConfig
 import no.nav.syfo.util.toStreamsConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
@@ -72,7 +72,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
     val kafkaBaseConfig = loadBaseConfig(config, credentials)
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
-            "${config.applicationName}-consumer", valueDeserializer = KafkaAvroDeserializer::class)
+            "${config.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = SpecificAvroSerde::class)
     val kafkaStream = createKafkaStream(streamProperties, config)
     kafkaStream.start()
