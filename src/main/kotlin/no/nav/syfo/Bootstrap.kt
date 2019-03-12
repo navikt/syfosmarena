@@ -75,6 +75,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
             "${config.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = SpecificAvroSerde::class)
     val kafkaStream = createKafkaStream(streamProperties, config)
+
     kafkaStream.start()
 
     connectionFactory(config).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
@@ -125,7 +126,9 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
             config.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig))
 
-    val joinWindow = JoinWindows.of(TimeUnit.HOURS.toMillis(11))
+    val joinWindow = JoinWindows.of(TimeUnit.DAYS.toMillis(14))
+            .until(TimeUnit.DAYS.toMillis(31))
+
     val joined = Joined.with(
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
