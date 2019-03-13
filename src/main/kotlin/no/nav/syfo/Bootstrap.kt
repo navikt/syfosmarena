@@ -134,10 +134,14 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
+        log.info("Joining message with {} and {}",
+                keyValue("msgId", journalCreated.journalpostId),
+                keyValue("journalpostId", objectMapper.readValue<JournaledReceivedSykmelding>(sm2013).journalpostId)
+        )
         objectMapper.writeValueAsString(
                 JournaledReceivedSykmelding(
                         receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
-                        journalpostId = journalCreated.journalpostId.toString()
+                        journalpostId = journalCreated.journalpostId
                 ))
     }, joinWindow, joined)
             .peek { key, value ->
