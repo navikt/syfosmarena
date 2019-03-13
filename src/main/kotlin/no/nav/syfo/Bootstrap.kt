@@ -2,6 +2,7 @@ package no.nav.syfo
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -56,6 +57,7 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
     registerModule(JavaTimeModule())
     configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
@@ -135,8 +137,8 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         log.info("Joining message with {} and {}",
-                keyValue("msgId", journalCreated.journalpostId),
-                keyValue("journalpostId", objectMapper.readValue<JournaledReceivedSykmelding>(sm2013).journalpostId)
+                keyValue("msgId", objectMapper.readValue<ReceivedSykmelding>(sm2013).msgId),
+                keyValue("journalpostId", journalCreated.journalpostId)
         )
         objectMapper.writeValueAsString(
                 JournaledReceivedSykmelding(
