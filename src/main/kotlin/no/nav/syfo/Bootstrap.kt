@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
+import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.arena.createArenaSykmelding
@@ -138,7 +139,14 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
                         receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
                         journalpostId = journalCreated.journalpostId.toString()
                 ))
-    }, joinWindow, joined).to(config.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
+    }, joinWindow, joined)
+            .peek { key, value ->
+                log.info("Joined message with {} and {}",
+                        keyValue("msgId", key),
+                        keyValue("journalpostId", objectMapper.readValue<JournaledReceivedSykmelding>(value).journalpostId)
+                )
+            }
+            .to(config.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
