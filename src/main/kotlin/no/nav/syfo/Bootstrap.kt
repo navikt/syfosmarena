@@ -94,19 +94,19 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
 
                     blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
                 }
-        }.toList()
+            }.toList()
 
-        runBlocking {
-            Runtime.getRuntime().addShutdownHook(Thread {
-                kafkaStream.close()
-                applicationServer.stop(10, 10, TimeUnit.SECONDS)
-            })
+            runBlocking {
+                Runtime.getRuntime().addShutdownHook(Thread {
+                    kafkaStream.close()
+                    applicationServer.stop(10, 10, TimeUnit.SECONDS)
+                })
 
-            applicationState.initialized = true
-            listeners.forEach { it.join() }
-        }
+                applicationState.initialized = true
+                listeners.forEach { it.join() }
+            }
         } finally {
-        applicationState.running = false
+            applicationState.running = false
         }
     }
 }
