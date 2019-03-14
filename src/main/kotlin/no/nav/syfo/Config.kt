@@ -3,7 +3,6 @@ package no.nav.syfo
 import java.nio.file.Path
 import java.nio.file.Paths
 
-val vaultApplicationPropertiesPath: Path = Paths.get("/var/run/secrets/nais.io/vault/credentials.json")
 
 data class ApplicationConfig(
     val applicationPort: Int,
@@ -20,7 +19,8 @@ data class ApplicationConfig(
     val kafkasm2013oppgaveJournalOpprettetTopic: String,
     val kafkasm2013ArenaInput: String,
     val kafkaBootstrapServers: String,
-    val applicationName: String
+    val applicationName: String,
+    val vaultApplicationPropertiesPath: Path = Paths.get("/var/run/secrets/nais.io/vault/credentials.json")
 )
 data class VaultCredentials(
     val serviceuserUsername: String,

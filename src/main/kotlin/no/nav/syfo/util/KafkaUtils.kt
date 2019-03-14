@@ -24,6 +24,17 @@ fun loadBaseConfig(config: ApplicationConfig, credentials: VaultCredentials): Pr
     it[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
 }
 
+fun Properties.envOverrides() = apply {
+    putAll(System.getenv()
+            .filter { (key, _) ->
+                key.startsWith("KAFKA_")
+            }
+            .map { (key, value) ->
+                key.substring(6).toLowerCase().replace("_", ".") to value
+            }
+            .toMap())
+}
+
 fun Properties.toConsumerConfig(
     groupId: String,
     valueDeserializer: KClass<out Deserializer<out Any>>,

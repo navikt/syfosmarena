@@ -2,7 +2,7 @@ package no.nav.syfo
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import no.nav.common.KafkaEnvironment
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.sak.avro.RegisterJournal
@@ -14,7 +14,6 @@ import org.amshove.kluent.shouldEqual
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.StreamsConfig
@@ -69,7 +68,7 @@ object ArenaStreamsSpek : Spek({
 
     val baseProperties = loadBaseConfig(applicationConfig, vaultCredentials)
     val streamsProperties = baseProperties
-            .toStreamsConfig(applicationConfig.applicationName, GenericAvroSerde::class, Serdes.String()::class)
+            .toStreamsConfig(applicationConfig.applicationName, valueSerde = SpecificAvroSerde::class)
             .overrideForTest()
 
     val streamsApplication = createKafkaStream(streamsProperties, applicationConfig)

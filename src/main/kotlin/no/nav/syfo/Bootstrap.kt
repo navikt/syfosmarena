@@ -27,6 +27,7 @@ import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.sak.avro.RegisterJournal
 import no.nav.syfo.util.arenaSykmeldingMarshaller
 import no.nav.syfo.util.connectionFactory
+import no.nav.syfo.util.envOverrides
 import no.nav.syfo.util.loadBaseConfig
 import no.nav.syfo.util.toConsumerConfig
 import no.nav.syfo.util.toStreamsConfig
@@ -64,9 +65,9 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
-fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
     val config: ApplicationConfig = objectMapper.readValue(File(System.getenv("CONFIG_FILE")))
-    val credentials: VaultCredentials = objectMapper.readValue(vaultApplicationPropertiesPath.toFile())
+    val credentials: VaultCredentials = objectMapper.readValue(config.vaultApplicationPropertiesPath.toFile())
     val applicationState = ApplicationState()
 
     val applicationServer = embeddedServer(Netty, config.applicationPort) {
@@ -74,6 +75,7 @@ fun main(args: Array<String>) = runBlocking(Executors.newFixedThreadPool(2).asCo
     }.start(wait = false)
 
     val kafkaBaseConfig = loadBaseConfig(config, credentials)
+            .envOverrides()
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${config.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(config.applicationName, valueSerde = SpecificAvroSerde::class)

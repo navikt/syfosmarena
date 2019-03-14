@@ -21,12 +21,30 @@ import no.nav.syfo.model.MedisinskVurdering
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.Periode
 import no.nav.syfo.model.Prognose
+import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
+
+fun receivedSykmelding(id: String, sykmelding: Sykmelding = generateSykmelding()) = ReceivedSykmelding(
+        sykmelding = sykmelding,
+        personNrPasient = "123124",
+        personNrLege = "123145",
+        navLogId = "0412",
+        msgId = id,
+        legekontorOrgNr = "",
+        legekontorHerId = "",
+        legekontorReshId = "",
+        legekontorOrgName = "Legevakt",
+        mottattDato = LocalDateTime.now(),
+        signaturDato = LocalDateTime.now(),
+        rulesetVersion = "",
+        fellesformat = ""
+
+)
 
 fun generateSykmelding(
     id: String = UUID.randomUUID().toString(),
