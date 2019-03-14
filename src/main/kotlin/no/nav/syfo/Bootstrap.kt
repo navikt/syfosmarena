@@ -135,7 +135,7 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     val joined = Joined.with(
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
-    sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
+    sm2013InputStream.peek { key, value -> log.info("Joining sykmelding with {}", keyValue("key", key)) }.join(journalCreatedTaskStream.peek { key, value -> log.info("Joining journal created with {} and {}", keyValue("key", key), keyValue("journalpostId", value.journalpostId)) }, { sm2013, journalCreated ->
         log.info("Joining message with {} and {}",
                 keyValue("msgId", objectMapper.readValue<ReceivedSykmelding>(sm2013).msgId),
                 keyValue("journalpostId", journalCreated.journalpostId)
