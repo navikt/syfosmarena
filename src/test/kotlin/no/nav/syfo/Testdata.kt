@@ -63,9 +63,11 @@ fun generateSykmelding(
     behandletTidspunkt: LocalDateTime = LocalDateTime.now(),
     behandler: Behandler = generateBehandler(),
     avsenderSystem: AvsenderSystem = generateAvsenderSystem(),
-    arbeidsgiver: Arbeidsgiver = generateArbeidsgiver()
+    arbeidsgiver: Arbeidsgiver = generateArbeidsgiver(),
+    msgid: String = UUID.randomUUID().toString()
 ) = Sykmelding(
         id = id,
+        msgid = msgid,
         pasientAktoerId = pasientAktoerId,
         medisinskVurdering = medisinskVurdering,
         skjermesForPasient = skjermetForPasient,
