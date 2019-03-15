@@ -140,6 +140,7 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     sm2013InputStream.peek { key, value -> log.info("Joining sykmelding with {}", keyValue("key", key)) }.join(journalCreatedTaskStream.peek { key, value -> log.info("Joining journal created with {} and {}", keyValue("key", key), keyValue("journalpostId", value.journalpostId)) }, { sm2013, journalCreated ->
         log.info("Joining message with {} and {}",
                 keyValue("msgId", objectMapper.readValue<ReceivedSykmelding>(sm2013).msgId),
+                keyValue("sykmeldingId", objectMapper.readValue<ReceivedSykmelding>(sm2013).sykmelding.id),
                 keyValue("journalpostId", journalCreated.journalpostId)
         )
         objectMapper.writeValueAsString(
@@ -150,7 +151,7 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     }, joinWindow, joined)
             .peek { key, value ->
                 log.info("Joined message with {} and {}",
-                        keyValue("msgId", key),
+                        keyValue("sykmeldingId", key),
                         keyValue("journalpostId", objectMapper.readValue<JournaledReceivedSykmelding>(value).journalpostId)
                 )
             }
@@ -169,7 +170,8 @@ suspend fun blockingApplicationLogic(
             var logValues = arrayOf(
                     StructuredArguments.keyValue("smId", "missing"),
                     StructuredArguments.keyValue("organizationNumber", "missing"),
-                    StructuredArguments.keyValue("msgId", "missing")
+                    StructuredArguments.keyValue("msgId", "missing"),
+                    StructuredArguments.keyValue("sykmeldingId", "missing")
             )
 
             val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
@@ -182,7 +184,8 @@ suspend fun blockingApplicationLogic(
                 logValues = arrayOf(
                         StructuredArguments.keyValue("smId", receivedSykmelding.navLogId),
                         StructuredArguments.keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
-                        StructuredArguments.keyValue("msgId", receivedSykmelding.msgId)
+                        StructuredArguments.keyValue("msgId", receivedSykmelding.msgId),
+                        StructuredArguments.keyValue("sykmeldingId", receivedSykmelding.sykmelding.id)
                 )
 
                 log.info("Received a SM2013, going to Arena rules, $logKeys", *logValues)
@@ -197,7 +200,6 @@ suspend fun blockingApplicationLogic(
 
                 log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
 
-                // TODO map rules to arena hendelse
                 when (results.firstOrNull()) {
                     null -> log.info("Message is NOT sendt to arena  $logKeys", *logValues)
                     else -> sendArenaSykmelding(arenaProducer, session,
