@@ -67,7 +67,7 @@ fun generateSykmelding(
     msgid: String = UUID.randomUUID().toString()
 ) = Sykmelding(
         id = id,
-        msgid = msgid,
+        msgId = msgid,
         pasientAktoerId = pasientAktoerId,
         medisinskVurdering = medisinskVurdering,
         skjermesForPasient = skjermetForPasient,
