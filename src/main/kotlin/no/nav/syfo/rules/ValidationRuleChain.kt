@@ -41,6 +41,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
             !sykmelding.meldingTilArbeidsgiver.isNullOrBlank()
     }),
 
+    // Holder det ikke for denne regelen å sjekke om det er en utvidet sykmelding? Lengden på sykmeldingen bør være irrelevant. Dekkes dette av regel 1617?
     @Description("Sykmeldingsperioden har passert tidspunkt for vurdering av aktivitetsmuligheter. Åpne dokumentet for å se behandlers innspill til aktivitetsmuligheter.")
     PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2(1615, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.UTFORT,
             "", "Sykmeldingsperioden har passert tidspunkt for vurdering av aktivitetsmuligheter. Åpne dokumentet for å se behandlers innspill til aktivitetsmuligheter.", { (sykmelding, metadata) ->
@@ -48,6 +49,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
                 .any { (it.fom..it.tom).daysBetween() > 56 } && kotlin.collections.listOf("", "1").contains(metadata.rulesetVersion ?: "")
     }),
 
+    // Tilsvarende for denne. Dekkes denne av regel 1617?
     @Description("Sykmeldingsperioden har passert tidspunkt for vurdering av aktivitetsmuligheter. Åpne dokumentet for å se behandlers innspill til aktivitetsmuligheter.")
     PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2(1615, ArenaHendelseType.INFORMASJON_FRA_SYKMELDING, ArenaHendelseStatus.UTFORT,
             "", "Sykmeldingsperioden har passert tidspunkt for vurdering av aktivitetsmuligheter. Åpne dokumentet for å se behandlers innspill til aktivitetsmuligheter.", { (sykmelding, metadata) ->
