@@ -137,7 +137,9 @@ fun createKafkaStream(streamProperties: Properties, config: ApplicationConfig): 
     val joined = Joined.with(
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
-    sm2013InputStream.peek { key, value -> log.info("Joining sykmelding with {}", keyValue("key", key)) }.join(journalCreatedTaskStream.peek { key, value -> log.info("Joining journal created with {} and {}", keyValue("key", key), keyValue("journalpostId", value.journalpostId)) }, { sm2013, journalCreated ->
+    sm2013InputStream.peek { key, value -> log.info("Joining sykmelding with {}", keyValue("key", key))
+    }.join(journalCreatedTaskStream.peek { key, value -> log.info("Joining journal created with {} and {}",
+            keyValue("key", key), keyValue("journalpostId", value.journalpostId)) }, { sm2013, journalCreated ->
         log.info("Joining message with {} and {}",
                 keyValue("msgId", objectMapper.readValue<ReceivedSykmelding>(sm2013).msgId),
                 keyValue("sykmeldingId", objectMapper.readValue<ReceivedSykmelding>(sm2013).sykmelding.id),
@@ -182,7 +184,7 @@ suspend fun blockingApplicationLogic(
                 val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(it.value())
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
                 logValues = arrayOf(
-                        StructuredArguments.keyValue("smId", receivedSykmelding.navLogId),
+                        StructuredArguments.keyValue("mottakId", receivedSykmelding.navLogId),
                         StructuredArguments.keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
                         StructuredArguments.keyValue("msgId", receivedSykmelding.msgId),
                         StructuredArguments.keyValue("sykmeldingId", receivedSykmelding.sykmelding.id)
