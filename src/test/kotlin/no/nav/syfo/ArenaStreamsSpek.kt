@@ -35,18 +35,18 @@ object ArenaStreamsSpek : Spek({
             topicNames = listOf(smPaperAuto, smPaperManual, sm2013Auto, sm2013Manual, journalCreated, arenaInputTopic)
     )
 
-    val applicationConfig = ApplicationConfig(
+    val env = Environment(
             applicationPort = 8080,
             applicationThreads = 4,
-            mqHost = "",
             mqPort = -1,
-            mqQueueManager = "",
-            mqChannel = "",
+            mqHostname = "",
+            mqGatewayName = "",
+            mqChannelName = "",
             arenaQueue = "",
             kafkaSm2013AutomaticPapirmottakTopic = smPaperAuto,
-            kafkaSm2013manuellPapirmottakTopic = smPaperManual,
+            kafkasm2013ManualHandlingPapirTopic = smPaperManual,
             kafkaSm2013AutomaticDigitalHandlingTopic = sm2013Auto,
-            kafkaSm2013manuelDigitalManuellTopic = sm2013Manual,
+            kafkasm2013ManualHandlingTopic = sm2013Manual,
             kafkasm2013oppgaveJournalOpprettetTopic = journalCreated,
             kafkasm2013ArenaInput = arenaInputTopic,
             kafkaBootstrapServers = kafkaEnvironment.brokersURL,
@@ -66,15 +66,15 @@ object ArenaStreamsSpek : Spek({
         put(StreamsConfig.STATE_DIR_CONFIG, kafkaStreamsStateDir.toAbsolutePath().toString())
     }
 
-    val baseProperties = loadBaseConfig(applicationConfig, vaultCredentials)
+    val baseProperties = loadBaseConfig(env, vaultCredentials)
     val streamsProperties = baseProperties
-            .toStreamsConfig(applicationConfig.applicationName, valueSerde = SpecificAvroSerde::class)
+            .toStreamsConfig(env.applicationName, valueSerde = SpecificAvroSerde::class)
             .overrideForTest()
 
-    val streamsApplication = createKafkaStream(streamsProperties, applicationConfig)
+    val streamsApplication = createKafkaStream(streamsProperties, env)
 
     beforeGroup {
-        cleanupDir(kafkaStreamsStateDir, applicationConfig.applicationName)
+        cleanupDir(kafkaStreamsStateDir, env.applicationName)
         kafkaEnvironment.start()
 
         streamsApplication.start()
@@ -98,7 +98,7 @@ object ArenaStreamsSpek : Spek({
                 .toConsumerConfig("spek-it-consumer", StringDeserializer::class)
                 .overrideForTest())
 
-        outputConsumer.subscribe(listOf(applicationConfig.kafkasm2013ArenaInput))
+        outputConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
         val sykmelding = generateSykmelding()
         val receivedSykmelding = ReceivedSykmelding(
@@ -119,8 +119,8 @@ object ArenaStreamsSpek : Spek({
         )
 
         it("Streams should join together the two topics") {
-            smProducer.send(ProducerRecord(applicationConfig.kafkaSm2013AutomaticDigitalHandlingTopic, sykmelding.id, objectMapper.writeValueAsString(receivedSykmelding)))
-            joarkProducer.send(ProducerRecord(applicationConfig.kafkasm2013oppgaveJournalOpprettetTopic, sykmelding.id, RegisterJournal().apply {
+            smProducer.send(ProducerRecord(env.kafkaSm2013AutomaticDigitalHandlingTopic, sykmelding.id, objectMapper.writeValueAsString(receivedSykmelding)))
+            joarkProducer.send(ProducerRecord(env.kafkasm2013oppgaveJournalOpprettetTopic, sykmelding.id, RegisterJournal().apply {
                 this.journalpostId = "hello"
                 this.journalpostKilde = "wow"
                 this.sakId = "123"

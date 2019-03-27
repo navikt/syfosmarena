@@ -45,19 +45,23 @@ pipeline {
                 sh './gradlew shadowJar'
             }
         }
-         stage('deploy to preprod') {
-             steps {
-                     dockerUtils action: 'createPushImage'
-                     deployApp action: 'kubectlDeploy', cluster: 'preprod-fss'
-                 }
-             }
-         stage('deploy to production') {
-             when { environment name: 'DEPLOY_TO', value: 'production' }
-
-             steps {
-                     deployApp action: 'kubectlDeploy', cluster: 'prod-fss', file: 'naiserator-prod.yaml'
-                 }
-             }
+        stage('create docker image') {
+            steps {
+                dockerUtils action: 'createPushImage'
+            }
+        }
+        stage('deploy to preprod') {
+            steps {
+                deployApp action: 'kubectlDeploy', cluster: 'preprod-fss', placeholderFile: "preprod.env"
+            }
+        }
+        stage('deploy to production') {
+            when { environment name: 'DEPLOY_TO', value: 'production' }
+            steps {
+                deployApp action: 'kubectlDeploy', cluster: 'prod-fss', placeholderFile: "prod.env"
+                githubStatus action: 'tagRelease'
+            }
+        }
         }
         post {
              always {

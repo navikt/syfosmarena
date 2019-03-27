@@ -9,22 +9,23 @@ import no.nav.syfo.util.toProducerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import java.io.File
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.util.UUID
 
 fun main() {
     val mottakCredentials = VaultCredentials("srvsyfosmmottak", "changeit", "", "")
     val sakCredentials = VaultCredentials("srvsyfosmsak", "changeit", "", "")
-    val applicationConfig = objectMapper.readValue<ApplicationConfig>(File("config-local.json"))
 
-    val mottakConfig = loadBaseConfig(applicationConfig, mottakCredentials)
+    val env = objectMapper.readValue<Environment>(Paths.get("local.env").toFile())
+
+    val mottakConfig = loadBaseConfig(env, mottakCredentials)
             .envOverrides()
             .toProducerConfig("produce-message", StringSerializer::class)
             .apply {
                 this["schema.registry.url"] = "http://localhost:8081"
             }
-    val sakConfig = loadBaseConfig(applicationConfig, sakCredentials)
+    val sakConfig = loadBaseConfig(env, sakCredentials)
             .envOverrides()
             .toProducerConfig("produce-message", KafkaAvroSerializer::class)
             .apply {
@@ -47,8 +48,8 @@ fun main() {
     val receivedSykmelding = receivedSykmelding(id, sykmelding)
     val jsonReceivedSykmelding = objectMapper.writeValueAsString(receivedSykmelding)
 
-    mottakProducer.send(ProducerRecord(applicationConfig.kafkaSm2013AutomaticDigitalHandlingTopic, id, jsonReceivedSykmelding))
-    sakProducer.send(ProducerRecord(applicationConfig.kafkasm2013oppgaveJournalOpprettetTopic, id, RegisterJournal().apply {
+    mottakProducer.send(ProducerRecord(env.kafkaSm2013AutomaticDigitalHandlingTopic, id, jsonReceivedSykmelding))
+    sakProducer.send(ProducerRecord(env.kafkasm2013oppgaveJournalOpprettetTopic, id, RegisterJournal().apply {
         this.journalpostId = "hello"
         this.journalpostKilde = "wow"
         this.sakId = "123"
