@@ -11,6 +11,8 @@ import io.ktor.application.Application
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.util.KtorExperimentalAPI
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -48,6 +50,7 @@ import java.time.Duration
 import java.util.Properties
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import javax.jms.Connection
 import javax.jms.MessageProducer
 import javax.jms.Session
 import javax.xml.bind.Marshaller
@@ -86,33 +89,12 @@ fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()
     connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
         connection.start()
 
-        try {
-            val listeners = (1..env.applicationThreads).map {
-                launch {
+        launchListeners(env, consumerProperties, applicationState, connection)
 
-                    val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
-                    val arenaQueue = session.createQueue(env.arenaQueue)
-                    val arenaProducer = session.createProducer(arenaQueue)
-
-                    val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
-                    kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
-
-                    blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
-                }
-            }.toList()
-
-            runBlocking {
-                Runtime.getRuntime().addShutdownHook(Thread {
-                    kafkaStream.close()
-                    applicationServer.stop(10, 10, TimeUnit.SECONDS)
-                })
-
-                applicationState.initialized = true
-                listeners.forEach { it.join() }
-            }
-        } finally {
-            applicationState.running = false
-        }
+        Runtime.getRuntime().addShutdownHook(Thread {
+            kafkaStream.close()
+            applicationServer.stop(10, 10, TimeUnit.SECONDS)
+        })
     }
 }
 
@@ -137,29 +119,45 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     val joined = Joined.with(
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
-    sm2013InputStream.peek { key, value -> log.info("Joining sykmelding with {}", keyValue("key", key))
-    }.join(journalCreatedTaskStream.peek { key, value -> log.info("Joining journal created with {} and {}",
-            keyValue("key", key), keyValue("journalpostId", value.journalpostId)) }, { sm2013, journalCreated ->
-        log.info("Joining message with {} and {}",
-                keyValue("msgId", objectMapper.readValue<ReceivedSykmelding>(sm2013).msgId),
-                keyValue("sykmeldingId", objectMapper.readValue<ReceivedSykmelding>(sm2013).sykmelding.id),
-                keyValue("journalpostId", journalCreated.journalpostId)
-        )
+    sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(
                 JournaledReceivedSykmelding(
                         receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
                         journalpostId = journalCreated.journalpostId
                 ))
     }, joinWindow, joined)
-            .peek { key, value ->
-                log.info("Joined message with {} and {}",
-                        keyValue("sykmeldingId", key),
-                        keyValue("journalpostId", objectMapper.readValue<JournaledReceivedSykmelding>(value).journalpostId)
-                )
-            }
             .to(env.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
+}
+
+@KtorExperimentalAPI
+fun CoroutineScope.launchListeners(
+    env: Environment,
+    consumerProperties: Properties,
+    applicationState: ApplicationState,
+    connection: Connection
+) {
+    try {
+        val listeners = (1..env.applicationThreads).map {
+            launch {
+
+                val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
+                val arenaQueue = session.createQueue(env.arenaQueue)
+                val arenaProducer = session.createProducer(arenaQueue)
+
+                val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
+                kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
+
+                blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+            }
+        }.toList()
+
+        applicationState.initialized = true
+        runBlocking { listeners.forEach { it.join() } }
+    } finally {
+        applicationState.running = false
+    }
 }
 
 suspend fun blockingApplicationLogic(

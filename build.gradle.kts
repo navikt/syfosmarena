@@ -6,7 +6,7 @@ group = "no.nav.syfo"
 version = "1.0.0"
 
 val artemisVersion = "2.6.2"
-val coroutinesVersion = "0.23.4"
+val coroutinesVersion = "1.1.1"
 val fellesformatVersion = "1.0"
 val ibmMqVersion = "9.1.0.0"
 val javaxActivationVersion = "1.1.1"
@@ -40,7 +40,7 @@ plugins {
     java
     kotlin("jvm") version "1.3.21"
     id("org.jmailen.kotlinter") version "1.21.0"
-    id("com.diffplug.gradle.spotless") version "3.14.0"
+    id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
 }
 
