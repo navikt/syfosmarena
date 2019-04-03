@@ -4,12 +4,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import no.nav.common.KafkaEnvironment
+import no.nav.syfo.kafka.loadBaseConfig
+import no.nav.syfo.kafka.toConsumerConfig
+import no.nav.syfo.kafka.toProducerConfig
+import no.nav.syfo.kafka.toStreamsConfig
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.sak.avro.RegisterJournal
-import no.nav.syfo.util.loadBaseConfig
-import no.nav.syfo.util.toConsumerConfig
-import no.nav.syfo.util.toProducerConfig
-import no.nav.syfo.util.toStreamsConfig
 import org.amshove.kluent.shouldEqual
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer

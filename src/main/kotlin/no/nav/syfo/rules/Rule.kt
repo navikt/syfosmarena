@@ -1,5 +1,6 @@
-package no.nav.syfo
+package no.nav.syfo.rules
 
+import no.nav.syfo.RULE_HIT_COUNTER
 import no.nav.syfo.arena.ArenaHendelseStatus
 import no.nav.syfo.arena.ArenaHendelseType
 import no.nav.syfo.model.Sykmelding

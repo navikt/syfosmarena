@@ -2,10 +2,10 @@ package no.nav.syfo
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.syfo.kafka.envOverrides
+import no.nav.syfo.kafka.loadBaseConfig
+import no.nav.syfo.kafka.toProducerConfig
 import no.nav.syfo.sak.avro.RegisterJournal
-import no.nav.syfo.util.envOverrides
-import no.nav.syfo.util.loadBaseConfig
-import no.nav.syfo.util.toProducerConfig
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer

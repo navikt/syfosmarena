@@ -2,9 +2,6 @@ package no.nav.syfo.rules
 
 import no.nav.syfo.arena.ArenaHendelseStatus
 import no.nav.syfo.arena.ArenaHendelseType
-import no.nav.syfo.Description
-import no.nav.syfo.Rule
-import no.nav.syfo.RuleData
 import no.nav.syfo.model.Periode
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,7 +55,7 @@ enum class ValidationRuleChain(override val ruleId: Int?, override val arenaHend
     @Description("Hvis sykmeldingen inneholder melding fra behandler skal meldingen til oppfølging i Arena.")
     MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY(1616, ArenaHendelseType.MELDING_FRA_BEHANDLER, ArenaHendelseStatus.PLANLAGT,
             "", "Melding fra behandler bistandUmiddelbart", { (sykmelding, _) ->
-        sykmelding.meldingTilNAV != null && sykmelding.meldingTilNAV.bistandUmiddelbart
+        sykmelding.meldingTilNAV != null && sykmelding!!.meldingTilNAV!!.bistandUmiddelbart
     }),
 
     @Description("Hvis utdypende opplysninger om medisinske er oppgitt ved 7/8, 17, 39 uker settes merknad")

@@ -20,6 +20,7 @@ val ktorVersion = "1.1.3"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
+val smCommonVersion = "1.0.5"
 val spekVersion = "2.0.0"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -93,6 +94,11 @@ dependencies {
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+    implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-kafka:$smCommonVersion")
+    implementation("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
+    //implementation("no.nav.syfo.sm:syfosm-common-rules:$smCommonVersion")
 
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
     implementation ("no.nav.syfo:syfooppgave-schemas:$syfooppgaveSchemasVersion")

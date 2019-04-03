@@ -7,8 +7,8 @@ import no.nav.helse.arenaSykemelding.LegeType
 import no.nav.helse.arenaSykemelding.MerknadType
 import no.nav.helse.arenaSykemelding.PasientDataType
 import no.nav.helse.arenaSykemelding.PersonType
-import no.nav.syfo.Rule
 import no.nav.syfo.model.ReceivedSykmelding
+import no.nav.syfo.rules.Rule
 import java.time.LocalDate
 import java.time.LocalDateTime
 

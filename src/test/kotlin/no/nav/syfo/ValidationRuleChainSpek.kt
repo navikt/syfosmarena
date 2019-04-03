@@ -3,6 +3,7 @@ package no.nav.syfo
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
+import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import org.amshove.kluent.shouldEqual
