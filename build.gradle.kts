@@ -84,21 +84,20 @@ dependencies {
     implementation ("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
 
     implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
-    implementation("org.apache.kafka:kafka-streams:$kafkaVersion")
+    implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
 
-    implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
-    implementation("io.confluent:kafka-streams-avro-serde:$confluentVersion")
-    implementation("org.apache.avro:avro:$avroVersion")
+    implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
+    implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
+    implementation ("org.apache.avro:avro:$avroVersion")
 
     implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    implementation("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-kafka:$smCommonVersion")
-    implementation("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
-    //implementation("no.nav.syfo.sm:syfosm-common-rules:$smCommonVersion")
+    implementation ("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
+    implementation ("no.nav.syfo.sm:syfosm-common-kafka:$smCommonVersion")
+    implementation ("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
 
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
     implementation ("no.nav.syfo:syfooppgave-schemas:$syfooppgaveSchemasVersion")
@@ -109,14 +108,14 @@ dependencies {
 
     testImplementation ("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion") {
+    testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty") // conflicts with WireMock
     }
     testImplementation ("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion")
     testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
     testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
 
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
+    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
         exclude(group = "org.jetbrains.kotlin")
     }
     testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
