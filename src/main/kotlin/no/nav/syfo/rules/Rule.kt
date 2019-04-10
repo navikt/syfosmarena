@@ -12,8 +12,7 @@ interface Rule<in T> {
     val ruleId: Int?
     val arenaHendelseStatus: ArenaHendelseStatus
     val arenaHendelseType: ArenaHendelseType
-    val meldingFraLege: String
-    val hendelseTekst: String
+    val arenaHendelseTekst: String
     val predicate: (T) -> Boolean
     operator fun invoke(input: T) = predicate(input)
 }

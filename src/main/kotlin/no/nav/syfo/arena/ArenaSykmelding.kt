@@ -37,7 +37,7 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
     }
     arenaHendelse = ArenaSykmelding.ArenaHendelse().apply {
         ruleResults.onEach {
-            hendelse.add(it.toHendelse())
+            hendelse.add(it.toHendelse(receivedSykmelding))
         }
     }
     pasientData = PasientDataType().apply {
@@ -55,9 +55,15 @@ fun Rule<Any>.toMerknad() = MerknadType().apply {
     merknadBeskrivelse = name
 }
 
-fun Rule<Any>.toHendelse() = HendelseType().apply {
+fun Rule<Any>.toHendelse(receivedSykmelding: ReceivedSykmelding) = HendelseType().apply {
     hendelsesTypeKode = arenaHendelseType.type
-    meldingFraLege = meldingFraLege
+    meldingFraLege = when (ruleId) {
+        1609 -> receivedSykmelding.sykmelding.meldingTilArbeidsgiver
+        1616 -> receivedSykmelding.sykmelding.meldingTilNAV?.beskrivBistand
+        1618 -> receivedSykmelding.sykmelding.andreTiltak
+        else -> ""
+    }
+
     hendelseStatus = arenaHendelseStatus.type
-    hendelseTekst = hendelseTekst
+    hendelseTekst = arenaHendelseTekst
 }
