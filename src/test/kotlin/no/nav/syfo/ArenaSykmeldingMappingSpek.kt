@@ -2,6 +2,7 @@ package no.nav.syfo
 
 import no.nav.syfo.arena.createArenaSykmelding
 import no.nav.syfo.model.ReceivedSykmelding
+import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
@@ -50,6 +51,41 @@ object ArenaSykmeldingMappingSpek : Spek({
             val results = listOf(validationRuleChain).flatten()
 
             createArenaSykmelding(receivedSykmelding, results, "12355234").eiaDokumentInfo.dokumentInfo.ediLoggId shouldEqual receivedSykmelding.navLogId
+        }
+
+        it("Should check rule mapping of hendelseStatus") {
+            val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf(
+                    "6.1" to mapOf(
+                            "6.1.1" to SporsmalSvar("Tekst", listOf())
+                    )
+            ))
+
+            val metadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    rulesetVersion = "1")
+
+            val receivedSykmelding = ReceivedSykmelding(
+                    sykmelding = healthInformation,
+                    personNrPasient = "123124",
+                    personNrLege = "123145",
+                    navLogId = "0412",
+                    msgId = "12314-123124-43252-2344",
+                    legekontorOrgNr = "",
+                    legekontorHerId = "",
+                    legekontorReshId = "",
+                    legekontorOrgName = "Legevakt",
+                    mottattDato = LocalDateTime.now(),
+                    signaturDato = LocalDateTime.now(),
+                    rulesetVersion = "",
+                    fellesformat = ""
+
+            )
+
+            val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
+            val results = listOf(validationRuleChain).flatten()
+
+            createArenaSykmelding(receivedSykmelding, results, "12355234").arenaHendelse.hendelse.first().hendelseStatus shouldEqual "UTFORT"
         }
     }
 })

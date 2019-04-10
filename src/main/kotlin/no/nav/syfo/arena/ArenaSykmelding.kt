@@ -9,18 +9,16 @@ import no.nav.helse.arenaSykemelding.PasientDataType
 import no.nav.helse.arenaSykemelding.PersonType
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.rules.Rule
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>, journalpostid: String): ArenaSykmelding = ArenaSykmelding().apply {
     eiaDokumentInfo = EiaDokumentInfoType().apply {
         dokumentInfo = no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
             dokumentType = "SM2"
-            dokumentTypeVersjon = "1"
+            dokumentTypeVersjon = "1.0"
             dokumentreferanse = receivedSykmelding.msgId
             ediLoggId = receivedSykmelding.navLogId
             journalReferanse = journalpostid
-            dokumentDato = LocalDateTime.now()
+            dokumentDato = receivedSykmelding.mottattDato
         }
         behandlingInfo = EiaDokumentInfoType.BehandlingInfo().apply {
             ruleResults.onEach {
@@ -33,11 +31,11 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
             }
         }
         avsenderSystem = EiaDokumentInfoType.AvsenderSystem().apply {
-            systemNavn = "syfosmarena"
+            systemNavn = "EIA"
             systemVersjon = "1.0.0"
         }
     }
-    ArenaSykmelding.ArenaHendelse().apply {
+    arenaHendelse = ArenaSykmelding.ArenaHendelse().apply {
         ruleResults.onEach {
             hendelse.add(it.toHendelse())
         }
@@ -48,7 +46,7 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
         }
     }
     foersteFravaersdag = receivedSykmelding.sykmelding.kontaktMedPasient.kontaktDato
-    identDato = LocalDate.now()
+    identDato = receivedSykmelding.sykmelding.behandletTidspunkt.toLocalDate()
 }
 
 fun Rule<Any>.toMerknad() = MerknadType().apply {
