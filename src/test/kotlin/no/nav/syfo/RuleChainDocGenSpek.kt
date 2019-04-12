@@ -10,7 +10,8 @@ import java.nio.file.Paths
 import kotlin.reflect.KClass
 
 object RuleChainDocGenSpek : Spek({
-    fun <T : Annotation> Any.enumAnnotationValue(type: KClass<out T>, enumName: String): T? = if (javaClass.getField(enumName)?.isAnnotationPresent(type.java) == true) {
+    fun <T : Annotation> Any.enumAnnotationValue(type: KClass<out T>, enumName: String): T? =
+            if (javaClass.getField(enumName)?.isAnnotationPresent(type.java) == true) {
             javaClass.getField(enumName).getAnnotation(type.java)
         } else {
             null
@@ -20,7 +21,8 @@ object RuleChainDocGenSpek : Spek({
         it("Generates a CSV file with rule chain") {
             val basePath = Paths.get("build", "reports")
             Files.createDirectories(basePath)
-            val ruleCSV = arrayOf("Rule name;Rule ID;Description").union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList()).flatten()
+            val ruleCSV = arrayOf("Regel navn;Regel ID;Beskrivelse")
+                    .union(listOf<List<Rule<*>>>(ValidationRuleChain.values().toList()).flatten()
                     .map { rule ->
                         "${rule.name};${rule.ruleId
                                 ?: ""};${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""}"

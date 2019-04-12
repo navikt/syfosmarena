@@ -12,6 +12,7 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
+import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -19,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
-import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.arena.createArenaSykmelding
@@ -27,6 +27,7 @@ import no.nav.syfo.kafka.envOverrides
 import no.nav.syfo.kafka.loadBaseConfig
 import no.nav.syfo.kafka.toConsumerConfig
 import no.nav.syfo.kafka.toStreamsConfig
+import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.mq.connectionFactory
 import no.nav.syfo.rules.RuleMetadata
@@ -70,6 +71,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
 fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+    DefaultExports.initialize()
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
@@ -78,8 +80,7 @@ fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()
         initRouting(applicationState)
     }.start(wait = false)
 
-    val kafkaBaseConfig = loadBaseConfig(env, credentials)
-            .envOverrides()
+    val kafkaBaseConfig = loadBaseConfig(env, credentials).envOverrides()
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = SpecificAvroSerde::class)
