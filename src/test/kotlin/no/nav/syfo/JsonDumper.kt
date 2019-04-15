@@ -28,7 +28,6 @@ fun main() {
             legekontorReshId = "",
             legekontorOrgName = "Legevakt",
             mottattDato = LocalDateTime.now(),
-            signaturDato = LocalDateTime.now(),
             rulesetVersion = "",
             fellesformat = ""
 

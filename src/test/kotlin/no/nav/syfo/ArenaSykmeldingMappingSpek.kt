@@ -41,7 +41,6 @@ object ArenaSykmeldingMappingSpek : Spek({
                     legekontorReshId = "",
                     legekontorOrgName = "Legevakt",
                     mottattDato = LocalDateTime.now(),
-                    signaturDato = LocalDateTime.now(),
                     rulesetVersion = "",
                     fellesformat = ""
 
@@ -76,7 +75,6 @@ object ArenaSykmeldingMappingSpek : Spek({
                     legekontorReshId = "",
                     legekontorOrgName = "Legevakt",
                     mottattDato = LocalDateTime.now(),
-                    signaturDato = LocalDateTime.now(),
                     rulesetVersion = "",
                     fellesformat = ""
 

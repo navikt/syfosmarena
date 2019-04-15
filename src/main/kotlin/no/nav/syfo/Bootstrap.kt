@@ -194,7 +194,7 @@ suspend fun blockingApplicationLogic(
 
                 val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                         receivedDate = receivedSykmelding.mottattDato,
-                        signatureDate = receivedSykmelding.signaturDato,
+                        signatureDate = receivedSykmelding.sykmelding.signaturDato,
                         rulesetVersion = receivedSykmelding.rulesetVersion
                 ))
 
