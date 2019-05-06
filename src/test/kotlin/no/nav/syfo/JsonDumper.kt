@@ -20,6 +20,7 @@ fun main() {
     val receivedSykmelding = ReceivedSykmelding(
             sykmelding = sm,
             personNrPasient = "123124",
+            tlfPasient = "13214",
             personNrLege = "123145",
             navLogId = "0412",
             msgId = "12314-123124-43252-2344",
