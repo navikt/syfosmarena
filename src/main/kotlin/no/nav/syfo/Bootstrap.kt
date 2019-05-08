@@ -83,8 +83,7 @@ fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()
     val kafkaBaseConfig = loadBaseConfig(env, credentials).envOverrides()
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
-    val streamProperties =
-            kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = Serdes.String()::class)
+    val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = SpecificAvroSerde::class)
     val kafkaStream = createKafkaStream(streamProperties, env)
 
     kafkaStream.start()
