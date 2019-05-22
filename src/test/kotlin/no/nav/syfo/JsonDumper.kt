@@ -30,7 +30,8 @@ fun main() {
             legekontorOrgName = "Legevakt",
             mottattDato = LocalDateTime.now(),
             rulesetVersion = "",
-            fellesformat = ""
+            fellesformat = "",
+            tssid = ""
 
     )
 

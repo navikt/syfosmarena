@@ -43,7 +43,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     legekontorOrgName = "Legevakt",
                     mottattDato = LocalDateTime.now(),
                     rulesetVersion = "",
-                    fellesformat = ""
+                    fellesformat = "",
+                    tssid = ""
 
             )
 
@@ -78,7 +79,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     legekontorOrgName = "Legevakt",
                     mottattDato = LocalDateTime.now(),
                     rulesetVersion = "",
-                    fellesformat = ""
+                    fellesformat = "",
+                    tssid = ""
 
             )
 

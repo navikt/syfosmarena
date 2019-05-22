@@ -114,7 +114,8 @@ object ArenaStreamsSpek : Spek({
                 legekontorOrgName = "Legevakt",
                 mottattDato = LocalDateTime.now(),
                 rulesetVersion = "",
-                fellesformat = ""
+                fellesformat = "",
+                tssid = ""
 
         )
 
