@@ -16,11 +16,11 @@ val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.1"
 val kafkaEmbeddedVersion = "2.1.1"
 val kluentVersion = "1.48"
-val ktorVersion = "1.1.3"
+val ktorVersion = "1.2.0"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.0.19"
+val smCommonVersion = "1.0.20"
 val spekVersion = "2.0.2"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -32,15 +32,11 @@ val avroVersion = "1.8.2"
 val confluentVersion = "5.0.0"
 val syfooppgaveSchemasVersion = "1.2-SNAPSHOT"
 
-tasks.withType<Jar> {
-    manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
-}
-
 
 plugins {
     java
-    kotlin("jvm") version "1.3.21"
-    id("org.jmailen.kotlinter") version "1.21.0"
+    kotlin("jvm") version "1.3.31"
+    id("org.jmailen.kotlinter") version "1.26.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
 }
@@ -126,6 +122,10 @@ dependencies {
 
 
 tasks {
+    withType<Jar> {
+        manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
+    }
+
     create("printVersion") {
         println(project.version)
     }

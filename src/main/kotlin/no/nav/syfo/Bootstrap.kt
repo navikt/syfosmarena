@@ -14,6 +14,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -66,12 +67,13 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
+val coroutineContext = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
+
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
-fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
-    DefaultExports.initialize()
+fun main() = runBlocking(coroutineContext) {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
@@ -79,6 +81,8 @@ fun main() = runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()
     val applicationServer = embeddedServer(Netty, env.applicationPort) {
         initRouting(applicationState)
     }.start(wait = false)
+
+    DefaultExports.initialize()
 
     val kafkaBaseConfig = loadBaseConfig(env, credentials).envOverrides()
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
@@ -133,17 +137,23 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
+fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
+        launch {
+            try {
+                action()
+            } finally {
+                applicationState.running = false
+            }
+        }
+
 @KtorExperimentalAPI
-fun CoroutineScope.launchListeners(
+suspend fun CoroutineScope.launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
     connection: Connection
 ) {
-    try {
-        val listeners = (1..env.applicationThreads).map {
-            launch {
-
+        val listeners = 0.until(env.applicationThreads).map {
                 val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
                 val arenaQueue = session.createQueue(env.arenaQueue)
                 val arenaProducer = session.createProducer(arenaQueue)
@@ -151,15 +161,13 @@ fun CoroutineScope.launchListeners(
                 val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
                 kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
+                createListener(applicationState) {
                 blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
             }
         }.toList()
 
         applicationState.initialized = true
-        runBlocking { listeners.forEach { it.join() } }
-    } finally {
-        applicationState.running = false
-    }
+        listeners.forEach { it.join() }
 }
 
 suspend fun blockingApplicationLogic(
