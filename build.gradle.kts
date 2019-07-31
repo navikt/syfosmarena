@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
-version = "1.0.3"
+version = "1.0.4"
 
 val artemisVersion = "2.6.2"
 val coroutinesVersion = "1.1.1"
@@ -16,21 +16,21 @@ val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.1"
 val kafkaEmbeddedVersion = "2.1.1"
 val kluentVersion = "1.48"
-val ktorVersion = "1.2.0"
+val ktorVersion = "1.2.2"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.0.20"
+val smCommonVersion = "1.0.22"
 val spekVersion = "2.0.2"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
-val arenaSykemdlingVersion = "1.0.3-SNAPSHOT"
+val arenaSykemdlingVersion = "2019.07.30-04-23-2a0d1388209441ec05d2e92a821eed4f796a3ae2"
 val avroVersion = "1.8.2"
 val confluentVersion = "5.0.0"
-val syfooppgaveSchemasVersion = "1.2-SNAPSHOT"
+val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
 
 
 plugins {
@@ -51,14 +51,13 @@ buildscript {
 }
 
 repositories {
-    maven (url= "https://repo.adeo.no/repository/maven-snapshots/")
-    maven (url= "https://repo.adeo.no/repository/maven-releases/")
+    mavenCentral()
+    jcenter()
     maven (url= "https://dl.bintray.com/kotlin/ktor")
     maven (url= "https://dl.bintray.com/spekframework/spek-dev")
     maven (url= "http://packages.confluent.io/maven/")
     maven (url= "https://kotlin.bintray.com/kotlinx")
-    mavenCentral()
-    jcenter()
+    maven (url = "https://oss.sonatype.org/content/groups/staging/")
 }
 
 
@@ -96,7 +95,7 @@ dependencies {
     implementation ("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
 
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
-    implementation ("no.nav.syfo:syfooppgave-schemas:$syfooppgaveSchemasVersion")
+    implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
 
     implementation ("javax.xml.bind:jaxb-api:$jaxbApiVersion")
     implementation ("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
