@@ -16,11 +16,12 @@ import io.prometheus.client.hotspot.DefaultExports
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.logstash.logback.argument.StructuredArgument
 import net.logstash.logback.argument.StructuredArguments
+import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.arena.createArenaSykmelding
@@ -191,35 +192,48 @@ suspend fun blockingApplicationLogic(
             kafkaconsumer.poll(Duration.ofMillis(0)).forEach {
                 val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(it.value())
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
-                logValues = arrayOf(
-                        StructuredArguments.keyValue("mottakId", receivedSykmelding.navLogId),
-                        StructuredArguments.keyValue("organizationNumber", receivedSykmelding.legekontorOrgNr),
-                        StructuredArguments.keyValue("msgId", receivedSykmelding.msgId),
-                        StructuredArguments.keyValue("sykmeldingId", receivedSykmelding.sykmelding.id)
+                val loggingMeta = LoggingMeta(
+                        mottakId = receivedSykmelding.navLogId,
+                        orgNr = receivedSykmelding.legekontorOrgNr,
+                        msgId = receivedSykmelding.msgId,
+                        sykmeldingId = receivedSykmelding.sykmelding.id
                 )
 
-                log.info("Received a SM2013, going to Arena rules, $logKeys", *logValues)
-
-                val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
-                        receivedDate = receivedSykmelding.mottattDato,
-                        signatureDate = receivedSykmelding.sykmelding.signaturDato,
-                        rulesetVersion = receivedSykmelding.rulesetVersion
-                ))
-
-                val results = listOf(validationRuleResults).flatten()
-
-                log.info("Rules hit {}, $logKeys", results.map { it.name }, *logValues)
-
-                when (results.firstOrNull()) {
-                    null -> log.info("Message is NOT sendt to arena  $logKeys", *logValues)
-                    else -> sendArenaSykmelding(arenaProducer, session,
-                            createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
-                            logKeys, logValues)
-                }
+                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
             }
             delay(100)
         }
     }
+
+@KtorExperimentalAPI
+suspend fun handleMessage(
+    receivedSykmelding: ReceivedSykmelding,
+    journaledReceivedSykmelding: JournaledReceivedSykmelding,
+    arenaProducer: MessageProducer,
+    session: Session,
+    loggingMeta: LoggingMeta
+) = coroutineScope {
+    wrapExceptions(loggingMeta) {
+        log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
+
+        val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
+                receivedDate = receivedSykmelding.mottattDato,
+                signatureDate = receivedSykmelding.sykmelding.signaturDato,
+                rulesetVersion = receivedSykmelding.rulesetVersion
+        ))
+
+        val results = listOf(validationRuleResults).flatten()
+
+        log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
+
+        when (results.firstOrNull()) {
+            null -> log.info("Message is NOT sendt to arena {}", fields(loggingMeta))
+            else -> sendArenaSykmelding(arenaProducer, session,
+                    createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
+                    loggingMeta)
+        }
+    }
+}
 
 fun Application.initRouting(applicationState: ApplicationState) {
     routing {
@@ -243,10 +257,9 @@ fun sendArenaSykmelding(
     producer: MessageProducer,
     session: Session,
     arenaSykmelding: ArenaSykmelding,
-    logKeys: String,
-    logValues: Array<StructuredArgument>
+    loggingMeta: LoggingMeta
 ) = producer.send(session.createTextMessage().apply {
     text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
     ARENA_EVENT_COUNTER.inc()
-    log.info("Message is sendt to arena $logKeys", *logValues)
+    log.info("Message is sendt to arena {}", fields(loggingMeta))
 })
