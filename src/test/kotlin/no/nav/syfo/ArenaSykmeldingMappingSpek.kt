@@ -57,7 +57,7 @@ object ArenaSykmeldingMappingSpek : Spek({
         it("Should check rule mapping of hendelseStatus") {
             val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf(
                     "6.1" to mapOf(
-                            "6.1.1" to SporsmalSvar("Tekst", listOf())
+                            "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf())
                     )
             ))
 

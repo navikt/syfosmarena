@@ -263,7 +263,7 @@ object ValidationRuleChainSpek : Spek({
 
             val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf(
                     "6.1" to mapOf(
-                            "6.1.1" to SporsmalSvar("Tekst", listOf())
+                            "6.1.1" to SporsmalSvar("Pasient syk?","Tekst", listOf())
                     )
             ))
 
@@ -319,7 +319,7 @@ object ValidationRuleChainSpek : Spek({
 
             val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf(
                     "6.6" to mapOf(
-                            "6.6.1" to SporsmalSvar("Tekst", listOf())
+                            "6.6.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf())
                     )
             ))
 
