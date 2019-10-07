@@ -19,11 +19,11 @@ import javax.jms.MessageProducer
 import javax.jms.Session
 import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.application.ApplicationServer
@@ -64,14 +64,12 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
-val coroutineContext = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
-
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
 @KtorExperimentalAPI
-fun main() = runBlocking(coroutineContext) {
+fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
@@ -130,8 +128,8 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
-fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        launch {
+fun createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
+        GlobalScope.launch {
             try {
                 action()
             } catch (e: TrackableException) {
@@ -142,13 +140,14 @@ fun CoroutineScope.createListener(applicationState: ApplicationState, action: su
         }
 
 @KtorExperimentalAPI
-suspend fun CoroutineScope.launchListeners(
+fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
     credentials: VaultCredentials
 ) {
-    connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
+    createListener(applicationState) {
+        connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
         val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
         val arenaQueue = session.createQueue(env.arenaQueue)
         val arenaProducer = session.createProducer(arenaQueue)
@@ -156,12 +155,11 @@ suspend fun CoroutineScope.launchListeners(
         val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
         kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-        createListener(applicationState) {
-            blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+        blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }
     }
 
-        applicationState.alive = true
+    applicationState.alive = true
 }
 
 @KtorExperimentalAPI
@@ -181,12 +179,11 @@ suspend fun blockingApplicationLogic(
                         msgId = receivedSykmelding.msgId,
                         sykmeldingId = receivedSykmelding.sykmelding.id
                 )
-
                 handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
             }
             delay(100)
         }
-    }
+}
 
 @KtorExperimentalAPI
 suspend fun handleMessage(
