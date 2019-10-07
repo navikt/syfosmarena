@@ -13,6 +13,16 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import java.io.StringWriter
+import java.nio.file.Paths
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import javax.jms.Connection
+import javax.jms.MessageProducer
+import javax.jms.Session
+import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -20,10 +30,8 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.logstash.logback.argument.StructuredArguments
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
-import no.nav.syfo.api.registerNaisApi
 import no.nav.syfo.arena.createArenaSykmelding
 import no.nav.syfo.kafka.envOverrides
 import no.nav.syfo.kafka.loadBaseConfig
@@ -48,16 +56,6 @@ import org.apache.kafka.streams.kstream.Joined
 import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.StringWriter
-import java.nio.file.Paths
-import java.time.Duration
-import java.util.Properties
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import javax.jms.Connection
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.xml.bind.Marshaller
 
 data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
 
@@ -68,20 +66,17 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
-val coroutineContext = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
-
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
-fun main() = runBlocking(coroutineContext) {
+fun main() = {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
 
-    val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState)
-    }.start(wait = false)
+    val applicationServer = ApplicationServer(applicationEngine)
+    applicationServer.start()
 
     DefaultExports.initialize()
 
@@ -98,10 +93,7 @@ fun main() = runBlocking(coroutineContext) {
 
         launchListeners(env, consumerProperties, applicationState, connection)
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            kafkaStream.close()
-            applicationServer.stop(10, 10, TimeUnit.SECONDS)
-        })
+        applicationState.ready = true
     }
 }
 
@@ -138,23 +130,25 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
-fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        launch {
+fun createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
+        GlobalScope.launch {
             try {
                 action()
+            } catch (e: TrackableException) {
+                log.error("En uhåndtert feil oppstod, applikasjonen restarter {}", fields(e.loggingMeta), e.cause)
             } finally {
-                applicationState.running = false
+                applicationState.alive = false
             }
         }
 
 @KtorExperimentalAPI
-suspend fun CoroutineScope.launchListeners(
+fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
     connection: Connection
 ) {
-        val listeners = 0.until(env.applicationThreads).map {
+
                 val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
                 val arenaQueue = session.createQueue(env.arenaQueue)
                 val arenaProducer = session.createProducer(arenaQueue)
@@ -165,10 +159,8 @@ suspend fun CoroutineScope.launchListeners(
                 createListener(applicationState) {
                 blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
             }
-        }.toList()
 
-        applicationState.initialized = true
-        listeners.forEach { it.join() }
+        applicationState.alive = true
 }
 
 suspend fun blockingApplicationLogic(
@@ -177,18 +169,7 @@ suspend fun blockingApplicationLogic(
     arenaProducer: MessageProducer,
     session: Session
 ) {
-        while (applicationState.running) {
-            var logValues = arrayOf(
-                    StructuredArguments.keyValue("smId", "missing"),
-                    StructuredArguments.keyValue("organizationNumber", "missing"),
-                    StructuredArguments.keyValue("msgId", "missing"),
-                    StructuredArguments.keyValue("sykmeldingId", "missing")
-            )
-
-            val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
-                "{}"
-            }
-
+        while (applicationState.ready) {
             kafkaconsumer.poll(Duration.ofMillis(0)).forEach {
                 val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(it.value())
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
@@ -199,7 +180,7 @@ suspend fun blockingApplicationLogic(
                         sykmeldingId = receivedSykmelding.sykmelding.id
                 )
 
-                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session)
             }
             delay(100)
         }
@@ -210,8 +191,7 @@ suspend fun handleMessage(
     receivedSykmelding: ReceivedSykmelding,
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
     arenaProducer: MessageProducer,
-    session: Session,
-    loggingMeta: LoggingMeta
+    session: Session
 ) = coroutineScope {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
@@ -232,19 +212,6 @@ suspend fun handleMessage(
                     createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
                     loggingMeta)
         }
-    }
-}
-
-fun Application.initRouting(applicationState: ApplicationState) {
-    routing {
-        registerNaisApi(
-                readynessCheck = {
-                    applicationState.initialized
-                },
-                livenessCheck = {
-                    applicationState.running
-                }
-        )
     }
 }
 

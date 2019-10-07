@@ -1,13 +1,13 @@
 package no.nav.syfo
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.reflect.KClass
 import no.nav.syfo.rules.Description
 import no.nav.syfo.rules.Rule
 import no.nav.syfo.rules.ValidationRuleChain
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.reflect.KClass
 
 object RuleChainDocGenSpek : Spek({
     fun <T : Annotation> Any.enumAnnotationValue(type: KClass<out T>, enumName: String): T? =

@@ -3,6 +3,9 @@ package no.nav.syfo
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.Properties
 import no.nav.common.KafkaEnvironment
 import no.nav.syfo.kafka.loadBaseConfig
 import no.nav.syfo.kafka.toConsumerConfig
@@ -19,9 +22,6 @@ import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.StreamsConfig
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.Properties
 
 object ArenaStreamsSpek : Spek({
     val smPaperAuto = "it-smpapir-auto"

@@ -2,6 +2,9 @@ package no.nav.syfo
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import java.nio.file.Paths
+import java.time.LocalDate
+import java.util.UUID
 import no.nav.syfo.kafka.envOverrides
 import no.nav.syfo.kafka.loadBaseConfig
 import no.nav.syfo.kafka.toProducerConfig
@@ -9,9 +12,6 @@ import no.nav.syfo.sak.avro.RegisterJournal
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
-import java.nio.file.Paths
-import java.time.LocalDate
-import java.util.UUID
 
 fun main() {
     val mottakCredentials = VaultCredentials("srvsyfosmmottak", "changeit", "", "")

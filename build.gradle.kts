@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransf
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "no.nav.syfo"
-version = "1.0.4"
+version = "1.0.0"
 
 val artemisVersion = "2.6.2"
 val coroutinesVersion = "1.1.1"
@@ -20,14 +20,14 @@ val ktorVersion = "1.2.3"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "2019.09.03-11-07-64032e3b6381665e9f9c0914cef626331399e66d"
-val spekVersion = "2.0.2"
+val smCommonVersion = "2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97"
+val spekVersion = "2.0.5"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
-val arenaSykemdlingVersion = "2019.07.30-04-23-2a0d1388209441ec05d2e92a821eed4f796a3ae2"
+val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
 val avroVersion = "1.8.2"
 val confluentVersion = "5.0.0"
 val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
@@ -35,8 +35,8 @@ val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
 
 plugins {
     java
-    kotlin("jvm") version "1.3.31"
-    id("org.jmailen.kotlinter") version "1.26.0"
+    kotlin("jvm") version "1.3.50"
+    id("org.jmailen.kotlinter") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
 }
@@ -57,7 +57,7 @@ repositories {
     maven (url= "https://dl.bintray.com/spekframework/spek-dev")
     maven (url= "http://packages.confluent.io/maven/")
     maven (url= "https://kotlin.bintray.com/kotlinx")
-    maven (url = "https://oss.sonatype.org/content/groups/staging/")
+    maven (url= "https://oss.sonatype.org/content/groups/staging/")
 }
 
 

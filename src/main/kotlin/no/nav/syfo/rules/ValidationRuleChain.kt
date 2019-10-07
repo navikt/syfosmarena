@@ -1,11 +1,11 @@
 package no.nav.syfo.rules
 
-import no.nav.syfo.arena.ArenaHendelseStatus
-import no.nav.syfo.arena.ArenaHendelseType
-import no.nav.syfo.model.Periode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import no.nav.syfo.arena.ArenaHendelseStatus
+import no.nav.syfo.arena.ArenaHendelseType
+import no.nav.syfo.model.Periode
 
 data class RuleMetadata(
     val signatureDate: LocalDateTime,
