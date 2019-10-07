@@ -20,7 +20,6 @@ import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.logstash.logback.argument.StructuredArguments.fields
@@ -56,8 +55,6 @@ import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
-
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
     registerModule(JavaTimeModule())
@@ -69,6 +66,7 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
+@KtorExperimentalAPI
 fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
@@ -162,6 +160,7 @@ fun launchListeners(
         applicationState.alive = true
 }
 
+@KtorExperimentalAPI
 suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
@@ -169,8 +168,8 @@ suspend fun blockingApplicationLogic(
     session: Session
 ) {
         while (applicationState.ready) {
-            kafkaconsumer.poll(Duration.ofMillis(0)).forEach {
-                val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(it.value())
+            kafkaconsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
+                val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
                 val loggingMeta = LoggingMeta(
                         mottakId = receivedSykmelding.navLogId,
@@ -192,7 +191,7 @@ suspend fun handleMessage(
     arenaProducer: MessageProducer,
     session: Session,
     loggingMeta: LoggingMeta
-) = coroutineScope {
+) {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
 
