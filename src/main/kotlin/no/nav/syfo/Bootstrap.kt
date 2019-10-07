@@ -13,15 +13,17 @@ import java.io.StringWriter
 import java.nio.file.Paths
 import java.time.Duration
 import java.util.Properties
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.jms.MessageProducer
 import javax.jms.Session
 import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.syfo.application.ApplicationServer
@@ -62,12 +64,14 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
+val coroutineContext = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
+
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
 @KtorExperimentalAPI
-fun main() {
+fun main() = runBlocking(coroutineContext) {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
@@ -126,8 +130,8 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
-fun createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        GlobalScope.launch {
+fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
+        launch {
             try {
                 action()
             } catch (e: TrackableException) {
@@ -138,7 +142,7 @@ fun createListener(applicationState: ApplicationState, action: suspend Coroutine
         }
 
 @KtorExperimentalAPI
-fun launchListeners(
+suspend fun CoroutineScope.launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
