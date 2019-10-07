@@ -37,7 +37,6 @@ object ArenaStreamsSpek : Spek({
 
     val env = Environment(
             applicationPort = 8080,
-            applicationThreads = 4,
             mqPort = -1,
             mqHostname = "",
             mqGatewayName = "",
