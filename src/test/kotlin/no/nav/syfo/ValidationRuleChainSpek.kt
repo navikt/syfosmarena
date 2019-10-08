@@ -1,5 +1,7 @@
 package no.nav.syfo
 
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
@@ -9,8 +11,6 @@ import no.nav.syfo.rules.ValidationRuleChain
 import org.amshove.kluent.shouldEqual
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 object ValidationRuleChainSpek : Spek({
 

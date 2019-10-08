@@ -6,7 +6,6 @@ import no.nav.syfo.mq.MqConfig
 
 data class Environment(
     val applicationPort: Int = getEnvVar("APPLICATION_PORT", "8080").toInt(),
-    val applicationThreads: Int = getEnvVar("APPLICATION_THREADS", "1").toInt(),
     val applicationName: String = getEnvVar("NAIS_APP_NAME", "syfosmarena"),
     override val kafkaBootstrapServers: String = getEnvVar("KAFKA_BOOTSTRAP_SERVERS_URL"),
     val kafkaSm2013AutomaticPapirmottakTopic: String = getEnvVar("KAFKA_SMPAPIR_AUTOMATIC_TOPIC", "privat-syfo-smpapir-automatiskBehandling"),

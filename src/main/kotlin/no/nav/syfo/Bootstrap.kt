@@ -7,23 +7,26 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-import io.ktor.application.Application
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import java.io.StringWriter
+import java.nio.file.Paths
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
+import javax.jms.MessageProducer
+import javax.jms.Session
+import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import net.logstash.logback.argument.StructuredArguments
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
-import no.nav.syfo.api.registerNaisApi
+import no.nav.syfo.application.ApplicationServer
+import no.nav.syfo.application.ApplicationState
+import no.nav.syfo.application.createApplicationEngine
 import no.nav.syfo.arena.createArenaSykmelding
 import no.nav.syfo.kafka.envOverrides
 import no.nav.syfo.kafka.loadBaseConfig
@@ -36,7 +39,10 @@ import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
 import no.nav.syfo.sak.avro.RegisterJournal
+import no.nav.syfo.util.LoggingMeta
+import no.nav.syfo.util.TrackableException
 import no.nav.syfo.util.arenaSykmeldingMarshaller
+import no.nav.syfo.util.wrapExceptions
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -48,18 +54,6 @@ import org.apache.kafka.streams.kstream.Joined
 import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.StringWriter
-import java.nio.file.Paths
-import java.time.Duration
-import java.util.Properties
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import javax.jms.Connection
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.xml.bind.Marshaller
-
-data class ApplicationState(var running: Boolean = true, var initialized: Boolean = false)
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -68,20 +62,21 @@ val objectMapper: ObjectMapper = ObjectMapper().apply {
     configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
 }
 
-val coroutineContext = Executors.newFixedThreadPool(2).asCoroutineDispatcher()
-
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
-fun main() = runBlocking(coroutineContext) {
+@KtorExperimentalAPI
+fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val applicationState = ApplicationState()
+    val applicationEngine = createApplicationEngine(
+            env,
+            applicationState)
 
-    val applicationServer = embeddedServer(Netty, env.applicationPort) {
-        initRouting(applicationState)
-    }.start(wait = false)
+    val applicationServer = ApplicationServer(applicationEngine)
+    applicationServer.start()
 
     DefaultExports.initialize()
 
@@ -93,16 +88,9 @@ fun main() = runBlocking(coroutineContext) {
 
     kafkaStream.start()
 
-    connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
-        connection.start()
+    launchListeners(env, consumerProperties, applicationState, credentials)
 
-        launchListeners(env, consumerProperties, applicationState, connection)
-
-        Runtime.getRuntime().addShutdownHook(Thread {
-            kafkaStream.close()
-            applicationServer.stop(10, 10, TimeUnit.SECONDS)
-        })
-    }
+    applicationState.ready = true
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
@@ -138,59 +126,50 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
 
-fun CoroutineScope.createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        launch {
+fun createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
+        GlobalScope.launch {
             try {
                 action()
+            } catch (e: TrackableException) {
+                log.error("En uhåndtert feil oppstod, applikasjonen restarter {}", fields(e.loggingMeta), e.cause)
             } finally {
-                applicationState.running = false
+                applicationState.alive = false
             }
         }
 
 @KtorExperimentalAPI
-suspend fun CoroutineScope.launchListeners(
+fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
-    connection: Connection
+    credentials: VaultCredentials
 ) {
-        val listeners = 0.until(env.applicationThreads).map {
-                val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
-                val arenaQueue = session.createQueue(env.arenaQueue)
-                val arenaProducer = session.createProducer(arenaQueue)
+    createListener(applicationState) {
+        connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
+        val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
+        val arenaQueue = session.createQueue(env.arenaQueue)
+        val arenaProducer = session.createProducer(arenaQueue)
 
-                val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
-                kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
+        val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
+        kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-                createListener(applicationState) {
-                blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
-            }
-        }.toList()
+        blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+        }
+    }
 
-        applicationState.initialized = true
-        listeners.forEach { it.join() }
+    applicationState.alive = true
 }
 
+@KtorExperimentalAPI
 suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
     arenaProducer: MessageProducer,
     session: Session
 ) {
-        while (applicationState.running) {
-            var logValues = arrayOf(
-                    StructuredArguments.keyValue("smId", "missing"),
-                    StructuredArguments.keyValue("organizationNumber", "missing"),
-                    StructuredArguments.keyValue("msgId", "missing"),
-                    StructuredArguments.keyValue("sykmeldingId", "missing")
-            )
-
-            val logKeys = logValues.joinToString(prefix = "(", postfix = ")", separator = ",") {
-                "{}"
-            }
-
-            kafkaconsumer.poll(Duration.ofMillis(0)).forEach {
-                val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(it.value())
+        while (applicationState.ready) {
+            kafkaconsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
+                val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
                 val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
                 val loggingMeta = LoggingMeta(
                         mottakId = receivedSykmelding.navLogId,
@@ -198,12 +177,11 @@ suspend fun blockingApplicationLogic(
                         msgId = receivedSykmelding.msgId,
                         sykmeldingId = receivedSykmelding.sykmelding.id
                 )
-
                 handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
             }
             delay(100)
         }
-    }
+}
 
 @KtorExperimentalAPI
 suspend fun handleMessage(
@@ -212,7 +190,7 @@ suspend fun handleMessage(
     arenaProducer: MessageProducer,
     session: Session,
     loggingMeta: LoggingMeta
-) = coroutineScope {
+) {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
 
@@ -232,19 +210,6 @@ suspend fun handleMessage(
                     createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
                     loggingMeta)
         }
-    }
-}
-
-fun Application.initRouting(applicationState: ApplicationState) {
-    routing {
-        registerNaisApi(
-                readynessCheck = {
-                    applicationState.initialized
-                },
-                livenessCheck = {
-                    applicationState.running
-                }
-        )
     }
 }
 

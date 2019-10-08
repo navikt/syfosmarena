@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nav.syfo.model.ReceivedSykmelding
 import java.time.LocalDate
 import java.time.LocalDateTime
+import no.nav.syfo.model.ReceivedSykmelding
 
 fun main() {
 
