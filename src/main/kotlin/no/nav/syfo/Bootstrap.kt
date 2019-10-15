@@ -9,6 +9,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import java.io.StringReader
 import java.io.StringWriter
 import java.nio.file.Paths
 import java.time.Duration
@@ -24,6 +25,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
+import no.nav.helse.eiFellesformat.XMLEIFellesformat
+import no.nav.helse.msgHead.XMLMsgHead
+import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
@@ -35,13 +39,17 @@ import no.nav.syfo.kafka.toStreamsConfig
 import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.mq.connectionFactory
+import no.nav.syfo.mq.producerForQueue
+import no.nav.syfo.rules.InfotrygdRuleChain
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
 import no.nav.syfo.sak.avro.RegisterJournal
+import no.nav.syfo.services.fetchInfotrygdForesp
 import no.nav.syfo.util.LoggingMeta
 import no.nav.syfo.util.TrackableException
 import no.nav.syfo.util.arenaSykmeldingMarshaller
+import no.nav.syfo.util.fellesformatUnmarshaller
 import no.nav.syfo.util.wrapExceptions
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
@@ -146,14 +154,16 @@ fun launchListeners(
 ) {
     createListener(applicationState) {
         connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
+        connection.start()
         val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
         val arenaQueue = session.createQueue(env.arenaQueue)
         val arenaProducer = session.createProducer(arenaQueue)
+        val infotrygdSporringProducer = session.producerForQueue("queue:///${env.infotrygdSporringQueue}?targetClient=1")
 
         val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
         kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-        blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+        blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session, infotrygdSporringProducer)
         }
     }
 
@@ -165,7 +175,8 @@ suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
     arenaProducer: MessageProducer,
-    session: Session
+    session: Session,
+    infotrygdSporringProducer: MessageProducer
 ) {
         while (applicationState.ready) {
             kafkaconsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
@@ -177,7 +188,7 @@ suspend fun blockingApplicationLogic(
                         msgId = receivedSykmelding.msgId,
                         sykmeldingId = receivedSykmelding.sykmelding.id
                 )
-                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, infotrygdSporringProducer)
             }
             delay(100)
         }
@@ -189,10 +200,20 @@ suspend fun handleMessage(
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
     arenaProducer: MessageProducer,
     session: Session,
-    loggingMeta: LoggingMeta
+    loggingMeta: LoggingMeta,
+    infotrygdSporringProducer: MessageProducer
 ) {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
+
+        val fellesformat = fellesformatUnmarshaller.unmarshal(StringReader(receivedSykmelding.fellesformat)) as XMLEIFellesformat
+        val healthInformation = extractHelseOpplysningerArbeidsuforhet(fellesformat)
+
+        val infotrygdForespResponse = fetchInfotrygdForesp(
+                receivedSykmelding,
+                infotrygdSporringProducer,
+                session,
+                healthInformation)
 
         val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
@@ -200,7 +221,9 @@ suspend fun handleMessage(
                 rulesetVersion = receivedSykmelding.rulesetVersion
         ))
 
-        val results = listOf(validationRuleResults).flatten()
+        val infotrygdRuleRuleResults = InfotrygdRuleChain.values().executeFlow(receivedSykmelding.sykmelding, infotrygdForespResponse)
+
+        val results = listOf(validationRuleResults, infotrygdRuleRuleResults).flatten()
 
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
@@ -228,3 +251,8 @@ fun sendArenaSykmelding(
     ARENA_EVENT_COUNTER.inc()
     log.info("Message is sendt to arena {}", fields(loggingMeta))
 })
+
+fun extractHelseOpplysningerArbeidsuforhet(fellesformat: XMLEIFellesformat): HelseOpplysningerArbeidsuforhet =
+        fellesformat.get<XMLMsgHead>().document[0].refDoc.content.any[0] as HelseOpplysningerArbeidsuforhet
+
+inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T

@@ -7,7 +7,7 @@ version = "1.0.0"
 
 val artemisVersion = "2.6.2"
 val coroutinesVersion = "1.2.2"
-val fellesformatVersion = "1.0"
+val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val ibmMqVersion = "9.1.0.0"
 val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.9.7"
@@ -31,6 +31,11 @@ val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a6
 val avroVersion = "1.8.2"
 val confluentVersion = "5.0.0"
 val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
+val infotrygdForespVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
+val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
+val jaxbTimeAdaptersVersion = "1.1.3"
+val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
+val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 
 
 plugins {
@@ -93,9 +98,17 @@ dependencies {
     implementation ("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
     implementation ("no.nav.syfo.sm:syfosm-common-kafka:$smCommonVersion")
     implementation ("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
+    implementation ("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
 
-    implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
     implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
+    implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
+    implementation ("no.nav.helse.xml:infotrygd-foresp:$infotrygdForespVersion")
+    implementation ("no.nav.helse.xml:sm2013:$sykmeldingVersion")
+    implementation ("no.nav.helse.xml:xmlfellesformat:$fellesformatVersion")
+    implementation ("no.nav.helse.xml:kith-hodemelding:$kithHodemeldingVersion")
+    implementation ("no.nav.helse.xml:kontrollsystemblokk:$kontrollsystemblokk")
+
+    implementation ("com.migesok:jaxb-java-time-adapters:$jaxbTimeAdaptersVersion")
 
     implementation ("javax.xml.bind:jaxb-api:$jaxbApiVersion")
     implementation ("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")

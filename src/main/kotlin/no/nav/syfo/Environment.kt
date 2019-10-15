@@ -18,7 +18,8 @@ data class Environment(
     override val mqPort: Int = getEnvVar("MQ_PORT").toInt(),
     override val mqGatewayName: String = getEnvVar("MQ_GATEWAY_NAME"),
     override val mqChannelName: String = getEnvVar("MQ_CHANNEL_NAME"),
-    val arenaQueue: String = getEnvVar("MQ_ARENA_QUEUE")
+    val arenaQueue: String = getEnvVar("MQ_ARENA_QUEUE"),
+    val infotrygdSporringQueue: String = getEnvVar("INFOTRYGD_SPORRING_QUEUE")
 ) : MqConfig, KafkaConfig
 
 data class VaultCredentials(
