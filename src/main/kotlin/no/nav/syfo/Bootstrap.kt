@@ -154,6 +154,7 @@ fun launchListeners(
 ) {
     createListener(applicationState) {
         connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
+        connection.start()
         val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
         val arenaQueue = session.createQueue(env.arenaQueue)
         val arenaProducer = session.createProducer(arenaQueue)
