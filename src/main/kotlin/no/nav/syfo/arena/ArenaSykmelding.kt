@@ -26,8 +26,12 @@ fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: L
             }
         }
         avsender = EiaDokumentInfoType.Avsender().apply {
-            LegeType().apply {
+            lege = LegeType().apply {
                 legeFnr = receivedSykmelding.personNrLege
+                tssId = when (receivedSykmelding.tssid.isNullOrBlank()) {
+                    true -> "0".toBigInteger()
+                    else -> receivedSykmelding.tssid?.toBigInteger()
+                }
             }
         }
         avsenderSystem = EiaDokumentInfoType.AvsenderSystem().apply {

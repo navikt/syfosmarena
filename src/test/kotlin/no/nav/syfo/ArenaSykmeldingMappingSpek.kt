@@ -89,5 +89,42 @@ object ArenaSykmeldingMappingSpek : Spek({
 
             createArenaSykmelding(receivedSykmelding, results, "12355234").arenaHendelse.hendelse.first().hendelseStatus shouldEqual "UTFORT"
         }
+
+        it("Should check mapping of legeFnr") {
+            val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf(
+                    "6.1" to mapOf(
+                            "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf())
+                    )
+            ))
+
+            val metadata = RuleMetadata(
+                    signatureDate = LocalDateTime.now(),
+                    receivedDate = LocalDateTime.now(),
+                    rulesetVersion = "1")
+
+            val receivedSykmelding = ReceivedSykmelding(
+                    sykmelding = healthInformation,
+                    personNrPasient = "123124",
+                    tlfPasient = "13214",
+                    personNrLege = "123145",
+                    navLogId = "0412",
+                    msgId = "12314-123124-43252-2344",
+                    legekontorOrgNr = "",
+                    legekontorHerId = "",
+                    legekontorReshId = "",
+                    legekontorOrgName = "Legevakt",
+                    mottattDato = LocalDateTime.now(),
+                    rulesetVersion = "",
+                    fellesformat = "",
+                    tssid = ""
+
+            )
+
+            val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
+            val results = listOf(validationRuleChain).flatten()
+
+            createArenaSykmelding(receivedSykmelding, results, "12355234").eiaDokumentInfo.avsender.lege.legeFnr.toString() shouldEqual "123145"
+        }
+
     }
 })
