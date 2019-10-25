@@ -40,7 +40,6 @@ import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.mq.connectionFactory
 import no.nav.syfo.mq.producerForQueue
-import no.nav.syfo.rules.InfotrygdRuleChain
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
@@ -221,9 +220,10 @@ suspend fun handleMessage(
                 rulesetVersion = receivedSykmelding.rulesetVersion
         ))
 
-        val infotrygdRuleRuleResults = InfotrygdRuleChain.values().executeFlow(receivedSykmelding.sykmelding, infotrygdForespResponse)
-
-        val results = listOf(validationRuleResults, infotrygdRuleRuleResults).flatten()
+        // TODO skrur av InfotrygdRuleChain pga ble for mye støy
+        // val infotrygdRuleRuleResults = InfotrygdRuleChain.values().executeFlow(receivedSykmelding.sykmelding, infotrygdForespResponse)
+        // val results = listOf(validationRuleResults, infotrygdRuleRuleResults).flatten()
+        val results = listOf(validationRuleResults).flatten()
 
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 

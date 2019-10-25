@@ -125,6 +125,5 @@ object ArenaSykmeldingMappingSpek : Spek({
 
             createArenaSykmelding(receivedSykmelding, results, "12355234").eiaDokumentInfo.avsender.lege.legeFnr.toString() shouldEqual "123145"
         }
-
     }
 })
