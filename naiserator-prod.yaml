@@ -48,5 +48,3 @@ spec:
       value: SASL_SSL://a01apvl00145.adeo.no:8443,SASL_SSL://a01apvl00146.adeo.no:8443,SASL_SSL://a01apvl00147.adeo.no:8443,SASL_SSL://a01apvl00149.adeo.no:8443
     - name: MQ_ARENA_QUEUE
       value: QA.P414.FS06_ARENA
-    - name: INFOTRYGD_SPORRING_QUEUE
-      value: QA.P278.IT00_FORESPORSEL_XML
