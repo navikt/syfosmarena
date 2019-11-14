@@ -20,7 +20,7 @@ val ktorVersion = "1.2.5"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "2019.09.25-05-44-08e26429f4e37cd57d99ba4d39fc74099a078b97"
+val smCommonVersion = "1.bba46d9"
 val spekVersion = "2.0.8"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -55,6 +55,9 @@ buildscript {
     }
 }
 
+val githubUser: String by project
+val githubPassword: String by project
+
 repositories {
     mavenCentral()
     jcenter()
@@ -62,6 +65,13 @@ repositories {
     maven (url= "https://dl.bintray.com/spekframework/spek-dev")
     maven (url= "http://packages.confluent.io/maven/")
     maven (url= "https://kotlin.bintray.com/kotlinx")
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
+        credentials {
+            username = githubUser
+            password = githubPassword
+        }
+    }
     maven (url= "https://oss.sonatype.org/content/groups/staging/")
 }
 
@@ -95,10 +105,10 @@ dependencies {
     implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    implementation ("no.nav.syfo.sm:syfosm-common-models:$smCommonVersion")
-    implementation ("no.nav.syfo.sm:syfosm-common-kafka:$smCommonVersion")
-    implementation ("no.nav.syfo.sm:syfosm-common-mq:$smCommonVersion")
-    implementation ("no.nav.syfo.sm:syfosm-common-networking:$smCommonVersion")
+    implementation ("no.nav.helse:syfosm-common-models:$smCommonVersion")
+    implementation ("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
+    implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
+    implementation ("no.nav.helse:syfosm-common-networking:$smCommonVersion")
 
     implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")

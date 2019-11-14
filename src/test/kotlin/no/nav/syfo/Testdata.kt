@@ -110,7 +110,7 @@ fun generateMedisinskVurdering(
 
 fun generateDiagnose() = ICPC2.values()[Random.nextInt(ICPC2.values().size)].toDiagnose()
 
-fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue)
+fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue, tekst = text)
 
 fun generatePeriode(
     fom: LocalDate = LocalDate.now(),
@@ -121,7 +121,7 @@ fun generatePeriode(
     gradert: Gradert? = null,
     reisetilskudd: Boolean = false
 ) = Periode(
-    fom = fom,
+        fom = fom,
         tom = tom,
         aktivitetIkkeMulig = aktivitetIkkeMulig,
         avventendeInnspillTilArbeidsgiver = avventendeInnspillTilArbeidsgiver,
@@ -168,7 +168,7 @@ fun generatePrognose(
     erIArbeid: ErIArbeid? = generateErIArbeid(),
     erIkkeIArbeid: ErIkkeIArbeid? = null
 ) = Prognose(
-    arbeidsforEtterPeriode = arbeidsforEtterPeriode,
+        arbeidsforEtterPeriode = arbeidsforEtterPeriode,
         hensynArbeidsplassen = hennsynArbeidsplassen,
         erIArbeid = erIArbeid,
         erIkkeIArbeid = erIkkeIArbeid
@@ -212,7 +212,7 @@ fun generateBehandler(
     adresse: Adresse = generateAdresse(),
     tlf: String? = null
 ) = Behandler(
-    fornavn = fornavn,
+        fornavn = fornavn,
         mellomnavn = mellomnavn,
         etternavn = etternavn,
         aktoerId = aktoerId,

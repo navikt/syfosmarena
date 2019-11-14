@@ -49,7 +49,6 @@ object ArenaStreamsSpek : Spek({
             kafkasm2013oppgaveJournalOpprettetTopic = journalCreated,
             kafkasm2013ArenaInput = arenaInputTopic,
             kafkaBootstrapServers = kafkaEnvironment.brokersURL,
-            infotrygdSporringQueue = "infotrygdsporringMq",
             applicationName = "spek-it"
     )
     val vaultCredentials = VaultCredentials(

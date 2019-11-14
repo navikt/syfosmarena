@@ -39,12 +39,10 @@ import no.nav.syfo.kafka.toStreamsConfig
 import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.mq.connectionFactory
-import no.nav.syfo.mq.producerForQueue
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
 import no.nav.syfo.sak.avro.RegisterJournal
-import no.nav.syfo.services.fetchInfotrygdForesp
 import no.nav.syfo.util.LoggingMeta
 import no.nav.syfo.util.TrackableException
 import no.nav.syfo.util.arenaSykmeldingMarshaller
@@ -95,9 +93,9 @@ fun main() {
 
     kafkaStream.start()
 
-    launchListeners(env, consumerProperties, applicationState, credentials)
-
     applicationState.ready = true
+
+    launchListeners(env, consumerProperties, applicationState, credentials)
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
@@ -153,20 +151,17 @@ fun launchListeners(
 ) {
     createListener(applicationState) {
         connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
-        connection.start()
-        val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
-        val arenaQueue = session.createQueue(env.arenaQueue)
-        val arenaProducer = session.createProducer(arenaQueue)
-        val infotrygdSporringProducer = session.producerForQueue("queue:///${env.infotrygdSporringQueue}?targetClient=1")
+            connection.start()
+            val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
+            val arenaQueue = session.createQueue(env.arenaQueue)
+            val arenaProducer = session.createProducer(arenaQueue)
 
-        val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
-        kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
+            val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
+            kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-        blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session, infotrygdSporringProducer)
+            blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }
     }
-
-    applicationState.alive = true
 }
 
 @KtorExperimentalAPI
@@ -174,23 +169,22 @@ suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
     arenaProducer: MessageProducer,
-    session: Session,
-    infotrygdSporringProducer: MessageProducer
+    session: Session
 ) {
-        while (applicationState.ready) {
-            kafkaconsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
-                val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
-                val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
-                val loggingMeta = LoggingMeta(
-                        mottakId = receivedSykmelding.navLogId,
-                        orgNr = receivedSykmelding.legekontorOrgNr,
-                        msgId = receivedSykmelding.msgId,
-                        sykmeldingId = receivedSykmelding.sykmelding.id
-                )
-                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, infotrygdSporringProducer)
-            }
-            delay(100)
+    while (applicationState.ready) {
+        kafkaconsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
+            val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
+            val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
+            val loggingMeta = LoggingMeta(
+                    mottakId = receivedSykmelding.navLogId,
+                    orgNr = receivedSykmelding.legekontorOrgNr,
+                    msgId = receivedSykmelding.msgId,
+                    sykmeldingId = receivedSykmelding.sykmelding.id
+            )
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
         }
+        delay(100)
+    }
 }
 
 @KtorExperimentalAPI
@@ -199,20 +193,12 @@ suspend fun handleMessage(
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
     arenaProducer: MessageProducer,
     session: Session,
-    loggingMeta: LoggingMeta,
-    infotrygdSporringProducer: MessageProducer
+    loggingMeta: LoggingMeta
 ) {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
 
         val fellesformat = fellesformatUnmarshaller.unmarshal(StringReader(receivedSykmelding.fellesformat)) as XMLEIFellesformat
-        val healthInformation = extractHelseOpplysningerArbeidsuforhet(fellesformat)
-
-        val infotrygdForespResponse = fetchInfotrygdForesp(
-                receivedSykmelding,
-                infotrygdSporringProducer,
-                session,
-                healthInformation)
 
         val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
@@ -220,9 +206,6 @@ suspend fun handleMessage(
                 rulesetVersion = receivedSykmelding.rulesetVersion
         ))
 
-        // TODO skrur av InfotrygdRuleChain pga ble for mye støy
-        // val infotrygdRuleRuleResults = InfotrygdRuleChain.values().executeFlow(receivedSykmelding.sykmelding, infotrygdForespResponse)
-        // val results = listOf(validationRuleResults, infotrygdRuleRuleResults).flatten()
         val results = listOf(validationRuleResults).flatten()
 
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
