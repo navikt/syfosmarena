@@ -48,5 +48,3 @@ spec:
       value: SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443
     - name: MQ_ARENA_QUEUE
       value: QA.Q1_414.FS06_ARENA
-    - name: INFOTRYGD_SPORRING_QUEUE
-      value: QA.Q291.IT00_FORESPORSEL_XML
