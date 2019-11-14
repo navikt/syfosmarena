@@ -10,7 +10,6 @@ import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
-import kafka.server.KafkaConfig
 import java.io.StringReader
 import java.io.StringWriter
 import java.nio.file.Paths
@@ -44,9 +43,7 @@ import no.nav.syfo.mq.connectionFactory
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
-import no.nav.syfo.sak.avro.ProduceTask
 import no.nav.syfo.sak.avro.RegisterJournal
-import no.nav.syfo.sak.avro.RegisterTask
 import no.nav.syfo.util.LoggingMeta
 import no.nav.syfo.util.TrackableException
 import no.nav.syfo.util.arenaSykmeldingMarshaller
@@ -84,7 +81,7 @@ fun main() {
             env,
             applicationState)
 
-    val applicationServer = ApplicationServer(applicationEngine)
+    val applicationServer = ApplicationServer(applicationEngine, applicationState)
     applicationServer.start()
 
     DefaultExports.initialize()
@@ -104,16 +101,24 @@ fun main() {
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
     val streamsBuilder = StreamsBuilder()
+    val specificSerdeConfig = SpecificAvroSerde<RegisterJournal>().apply {
+        configure(mapOf(
+                "schema.registry.url" to streamProperties["schema.registry.url"]!!
+        ), false)
+    }
 
-    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(env.kafkasm2013oppgaveJournalOpprettetTopic)
     val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
             env.kafkasm2013ManualHandlingTopic,
             env.kafkaSm2013AutomaticDigitalHandlingTopic), Consumed.with(Serdes.String(), Serdes.String()))
 
-    KafkaConfig.LogRetentionTimeMillisProp()
+    val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
+            env.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig))
 
     val joinWindow = JoinWindows.of(TimeUnit.DAYS.toMillis(14))
             .until(TimeUnit.DAYS.toMillis(31))
+
+    val joined = Joined.with(
+            Serdes.String(), Serdes.String(), specificSerdeConfig)
 
     sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(
@@ -121,9 +126,8 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
                         receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
                         journalpostId = journalCreated.journalpostId
                 ))
-    }, joinWindow)
-            .to(env.kafkasm2013ArenaInput)
-
+    }, joinWindow, joined)
+            .to(env.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }
