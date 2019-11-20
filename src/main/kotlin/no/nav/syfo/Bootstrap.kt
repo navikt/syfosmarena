@@ -90,13 +90,8 @@ fun main() {
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
-    val kafkaStream = createKafkaStream(streamProperties, env)
 
-    kafkaStream.start()
-
-    applicationState.ready = true
-
-    launchListeners(env, consumerProperties, applicationState, credentials)
+    launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
@@ -148,7 +143,8 @@ fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
-    credentials: VaultCredentials
+    credentials: VaultCredentials,
+    streamProperties: Properties
 ) {
     createListener(applicationState) {
         connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
@@ -157,8 +153,13 @@ fun launchListeners(
             val arenaQueue = session.createQueue(env.arenaQueue)
             val arenaProducer = session.createProducer(arenaQueue)
 
+            val kafkaStream = createKafkaStream(streamProperties, env)
+            kafkaStream.start()
+
             val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
             kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
+
+            applicationState.ready = true
 
             blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }

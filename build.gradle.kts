@@ -40,7 +40,7 @@ val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582
 
 plugins {
     java
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.60"
     id("org.jmailen.kotlinter") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "4.0.4"
