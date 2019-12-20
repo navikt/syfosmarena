@@ -91,7 +91,10 @@ fun main() {
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
 
-    launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
+    // launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
+
+    // skal fjernes!
+    applicationState.ready = true
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
