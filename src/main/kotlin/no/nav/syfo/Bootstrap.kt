@@ -154,12 +154,12 @@ fun launchListeners(
             val arenaProducer = session.createProducer(arenaQueue)
 
             val kafkaStream = createKafkaStream(streamProperties, env)
-            kafkaStream.start()
+            // kafkaStream.start()
 
             val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
             kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-            applicationState.ready = true
+            applicationState.ready = false
 
             blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }
