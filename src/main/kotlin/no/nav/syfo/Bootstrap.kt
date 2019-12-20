@@ -91,7 +91,10 @@ fun main() {
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
 
-    launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
+    // launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
+
+    // skal fjernes!
+    applicationState.ready = true
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
@@ -154,14 +157,14 @@ fun launchListeners(
             val arenaProducer = session.createProducer(arenaQueue)
 
             val kafkaStream = createKafkaStream(streamProperties, env)
-            // kafkaStream.start()
+            kafkaStream.start()
 
             val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
             kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
             applicationState.ready = true
 
-            // blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+            blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }
     }
 }
