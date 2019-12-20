@@ -159,9 +159,9 @@ fun launchListeners(
             val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
             kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
-            applicationState.ready = false
+            applicationState.ready = true
 
-            blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+            // blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
         }
     }
 }
