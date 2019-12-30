@@ -16,11 +16,11 @@ val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.1"
 val kafkaEmbeddedVersion = "2.2.3"
 val kluentVersion = "1.48"
-val ktorVersion = "1.2.5"
+val ktorVersion = "1.2.6"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.bba46d9"
+val smCommonVersion = "1.7bf5e6f"
 val spekVersion = "2.0.8"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -40,10 +40,10 @@ val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582
 
 plugins {
     java
-    kotlin("jvm") version "1.3.60"
-    id("org.jmailen.kotlinter") version "2.1.0"
+    kotlin("jvm") version "1.3.61"
+    id("org.jmailen.kotlinter") version "2.2.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
-    id("com.github.johnrengelman.shadow") version "4.0.4"
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 
