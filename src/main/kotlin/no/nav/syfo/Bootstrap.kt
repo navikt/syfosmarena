@@ -104,7 +104,10 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
 
     val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
             env.kafkasm2013ManualHandlingTopic,
-            env.kafkaSm2013AutomaticDigitalHandlingTopic), Consumed.with(Serdes.String(), Serdes.String()))
+            env.kafkaSm2013AutomaticDigitalHandlingTopic,
+            env.kafkaSm2013AutomaticPapirmottakTopic,
+            env.kafkasm2013ManualHandlingPapirTopic
+    ), Consumed.with(Serdes.String(), Serdes.String()))
 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
             env.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig))
