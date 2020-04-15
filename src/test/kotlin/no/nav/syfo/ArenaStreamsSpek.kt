@@ -24,15 +24,13 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 object ArenaStreamsSpek : Spek({
-    val smPaperAuto = "it-smpapir-auto"
-    val smPaperManual = "it-smpapir-manual"
     val sm2013Auto = "it-sm2013-auto"
     val sm2013Manual = "it-sm2013-manual"
     val journalCreated = "it-sm2013-journalCreated"
     val arenaInputTopic = "it-sm2013-arenaInput"
     val kafkaEnvironment = KafkaEnvironment(
             withSchemaRegistry = true,
-            topicNames = listOf(smPaperAuto, smPaperManual, sm2013Auto, sm2013Manual, journalCreated, arenaInputTopic)
+            topicNames = listOf(sm2013Auto, sm2013Manual, journalCreated, arenaInputTopic)
     )
 
     val env = Environment(
@@ -42,8 +40,6 @@ object ArenaStreamsSpek : Spek({
             mqGatewayName = "",
             mqChannelName = "",
             arenaQueue = "",
-            kafkaSm2013AutomaticPapirmottakTopic = smPaperAuto,
-            kafkasm2013ManualHandlingPapirTopic = smPaperManual,
             kafkaSm2013AutomaticDigitalHandlingTopic = sm2013Auto,
             kafkasm2013ManualHandlingTopic = sm2013Manual,
             kafkasm2013oppgaveJournalOpprettetTopic = journalCreated,
