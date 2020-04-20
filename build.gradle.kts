@@ -6,7 +6,7 @@ group = "no.nav.syfo"
 version = "1.0.0"
 
 val artemisVersion = "2.6.2"
-val coroutinesVersion = "1.3.3"
+val coroutinesVersion = "1.3.4"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val ibmMqVersion = "9.1.0.0"
 val javaxActivationVersion = "1.1.1"
@@ -16,7 +16,7 @@ val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.1"
 val kafkaEmbeddedVersion = "2.2.3"
 val kluentVersion = "1.48"
-val ktorVersion = "1.3.0"
+val ktorVersion = "1.3.2"
 val logbackVersion = "1.2.3"
 val logstashEncoderVersion = "5.1"
 val prometheusVersion = "0.5.0"
@@ -41,7 +41,7 @@ val smCommonDiagnosisCodesVersion = "1.f898112"
 
 plugins {
     java
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.3.72"
     id("org.jmailen.kotlinter") version "2.2.0"
     id("com.diffplug.gradle.spotless") version "3.18.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
@@ -73,7 +73,6 @@ repositories {
             password = githubPassword
         }
     }
-    maven (url= "https://oss.sonatype.org/content/groups/staging/")
 }
 
 
