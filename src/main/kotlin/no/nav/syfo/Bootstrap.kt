@@ -10,15 +10,6 @@ import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
-import java.io.StringReader
-import java.io.StringWriter
-import java.nio.file.Paths
-import java.time.Duration
-import java.util.Properties
-import java.util.concurrent.TimeUnit
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -27,8 +18,6 @@ import kotlinx.coroutines.launch
 import net.logstash.logback.argument.StructuredArguments.fields
 import no.nav.helse.arenaSykemelding.ArenaSykmelding
 import no.nav.helse.eiFellesformat.XMLEIFellesformat
-import no.nav.helse.msgHead.XMLMsgHead
-import no.nav.helse.sm2013.HelseOpplysningerArbeidsuforhet
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
@@ -47,7 +36,6 @@ import no.nav.syfo.sak.avro.RegisterJournal
 import no.nav.syfo.util.LoggingMeta
 import no.nav.syfo.util.TrackableException
 import no.nav.syfo.util.arenaSykmeldingMarshaller
-import no.nav.syfo.util.fellesformatUnmarshaller
 import no.nav.syfo.util.wrapExceptions
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Serdes
@@ -60,6 +48,14 @@ import org.apache.kafka.streams.kstream.Joined
 import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.StringWriter
+import java.nio.file.Paths
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
+import javax.jms.MessageProducer
+import javax.jms.Session
+import javax.xml.bind.Marshaller
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -219,8 +215,6 @@ suspend fun handleMessage(
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
 
-        val fellesformat = fellesformatUnmarshaller.unmarshal(StringReader(receivedSykmelding.fellesformat)) as XMLEIFellesformat
-
         val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
                 signatureDate = receivedSykmelding.sykmelding.signaturDato,
@@ -255,8 +249,5 @@ fun sendArenaSykmelding(
     ARENA_EVENT_COUNTER.inc()
     log.info("Message is sendt to arena {}", fields(loggingMeta))
 })
-
-fun extractHelseOpplysningerArbeidsuforhet(fellesformat: XMLEIFellesformat): HelseOpplysningerArbeidsuforhet =
-        fellesformat.get<XMLMsgHead>().document[0].refDoc.content.any[0] as HelseOpplysningerArbeidsuforhet
 
 inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T
