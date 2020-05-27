@@ -198,11 +198,7 @@ suspend fun blockingApplicationLogic(
                     msgId = receivedSykmelding.msgId,
                     sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            if (receivedSykmelding.sykmelding.id == "50c04985-7b25-47c5-9d90-7178cccbab5e") {
-                log.info("Ignorerer sykmelding som allerede er lagret")
-            } else {
-                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
-            }
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
         }
         delay(100)
     }
