@@ -84,6 +84,7 @@ fun main() {
     DefaultExports.initialize()
 
     val kafkaBaseConfig = loadBaseConfig(env, credentials).envOverrides()
+    kafkaBaseConfig["auto.offset.reset"] = "none"
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
@@ -201,7 +202,7 @@ suspend fun blockingApplicationLogic(
                     msgId = receivedSykmelding.msgId,
                     sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            if (receivedSykmelding.mottattDato.isBefore(LocalDate.now().atStartOfDay())) {
+            if (receivedSykmelding.mottattDato.isBefore(LocalDate.of(2020, 11, 5).atStartOfDay())) {
                 log.info("Behandler ikke gammel melding {}", fields(loggingMeta))
             } else {
                 handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
