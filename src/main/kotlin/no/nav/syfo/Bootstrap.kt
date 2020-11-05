@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory
 import java.io.StringWriter
 import java.nio.file.Paths
 import java.time.Duration
+import java.time.LocalDate
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 import javax.jms.MessageProducer
@@ -200,9 +201,13 @@ suspend fun blockingApplicationLogic(
                     msgId = receivedSykmelding.msgId,
                     sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+            if (receivedSykmelding.mottattDato.isBefore(LocalDate.now().atStartOfDay())) {
+                log.info("Behandler ikke gammel melding {}", fields(loggingMeta))
+            } else {
+                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+            }
         }
-        delay(100)
+        delay(1)
     }
 }
 
