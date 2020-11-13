@@ -10,6 +10,14 @@ import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
+import java.io.StringWriter
+import java.nio.file.Paths
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
+import javax.jms.MessageProducer
+import javax.jms.Session
+import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -48,15 +56,6 @@ import org.apache.kafka.streams.kstream.Joined
 import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.StringWriter
-import java.nio.file.Paths
-import java.time.Duration
-import java.time.LocalDate
-import java.util.Properties
-import java.util.concurrent.TimeUnit
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.xml.bind.Marshaller
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -202,11 +201,7 @@ suspend fun blockingApplicationLogic(
                     msgId = receivedSykmelding.msgId,
                     sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            if (receivedSykmelding.mottattDato.isBefore(LocalDate.of(2020, 11, 5).atStartOfDay())) {
-                log.info("Behandler ikke gammel melding {}", fields(loggingMeta))
-            } else {
-                handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
-            }
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
         }
         delay(1)
     }
