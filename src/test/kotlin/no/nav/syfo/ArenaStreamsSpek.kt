@@ -45,7 +45,10 @@ object ArenaStreamsSpek : Spek({
             kafkasm2013oppgaveJournalOpprettetTopic = journalCreated,
             kafkasm2013ArenaInput = arenaInputTopic,
             kafkaBootstrapServers = kafkaEnvironment.brokersURL,
-            applicationName = "spek-it"
+            applicationName = "spek-it",
+            truststore = "truststore",
+            truststorePassword = "pwd",
+            cluster = "cluster"
     )
     val vaultCredentials = VaultCredentials(
             "unused",
@@ -110,8 +113,8 @@ object ArenaStreamsSpek : Spek({
                 mottattDato = LocalDateTime.now(),
                 rulesetVersion = "",
                 fellesformat = "",
-                tssid = ""
-
+                tssid = "",
+                merknader = null
         )
 
         it("Streams should join together the two topics") {

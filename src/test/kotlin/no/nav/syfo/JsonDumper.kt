@@ -31,8 +31,8 @@ fun main() {
             mottattDato = LocalDateTime.now(),
             rulesetVersion = "",
             fellesformat = "",
-            tssid = ""
-
+            tssid = "",
+            merknader = null
     )
 
     println(ObjectMapper()

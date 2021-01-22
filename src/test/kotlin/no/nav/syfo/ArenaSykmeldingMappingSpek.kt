@@ -44,8 +44,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     mottattDato = LocalDateTime.now(),
                     rulesetVersion = "",
                     fellesformat = "",
-                    tssid = ""
-
+                    tssid = "",
+                    merknader = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -80,8 +80,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     mottattDato = LocalDateTime.now(),
                     rulesetVersion = "",
                     fellesformat = "",
-                    tssid = ""
-
+                    tssid = "",
+                    merknader = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -116,8 +116,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     mottattDato = LocalDateTime.now(),
                     rulesetVersion = "",
                     fellesformat = "",
-                    tssid = ""
-
+                    tssid = "",
+                    merknader = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)

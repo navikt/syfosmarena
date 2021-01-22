@@ -5,22 +5,22 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val artemisVersion = "2.6.2"
-val coroutinesVersion = "1.3.4"
+val artemisVersion = "2.6.4"
+val coroutinesVersion = "1.3.9"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val ibmMqVersion = "9.1.0.0"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.9.7"
+val jacksonVersion = "2.10.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.0.1"
 val kafkaEmbeddedVersion = "2.2.3"
-val kluentVersion = "1.48"
-val ktorVersion = "1.3.2"
+val kluentVersion = "1.51"
+val ktorVersion = "1.4.1"
 val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "5.1"
-val prometheusVersion = "0.5.0"
-val smCommonVersion = "1.84cb553"
+val logstashEncoderVersion = "6.1"
+val prometheusVersion = "0.6.0"
+val smCommonVersion = "1.f409e4d"
 val spekVersion = "2.0.9"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -36,14 +36,13 @@ val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val smCommonDiagnosisCodesVersion = "1.f409e4d"
 
 
 plugins {
     java
     kotlin("jvm") version "1.3.72"
     id("org.jmailen.kotlinter") version "2.2.0"
-    id("com.diffplug.gradle.spotless") version "3.18.0"
+    id("com.diffplug.gradle.spotless") version "3.24.0"
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
@@ -109,7 +108,7 @@ dependencies {
     implementation ("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
     implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
     implementation ("no.nav.helse:syfosm-common-networking:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonDiagnosisCodesVersion")
+    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
     implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
