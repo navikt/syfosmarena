@@ -16,7 +16,10 @@ data class Environment(
     override val mqPort: Int = getEnvVar("MQ_PORT").toInt(),
     override val mqGatewayName: String = getEnvVar("MQ_GATEWAY_NAME"),
     override val mqChannelName: String = getEnvVar("MQ_CHANNEL_NAME"),
-    val arenaQueue: String = getEnvVar("MQ_ARENA_QUEUE")
+    val arenaQueue: String = getEnvVar("MQ_ARENA_QUEUE"),
+    override val truststore: String? = getEnvVar("NAV_TRUSTSTORE_PATH"),
+    override val truststorePassword: String? = getEnvVar("NAV_TRUSTSTORE_PASSWORD"),
+    override val cluster: String = getEnvVar("NAIS_CLUSTER_NAME")
 ) : MqConfig, KafkaConfig
 
 data class VaultCredentials(
