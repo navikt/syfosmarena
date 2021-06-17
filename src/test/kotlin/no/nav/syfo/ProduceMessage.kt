@@ -14,18 +14,18 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
 
 fun main() {
-    val mottakCredentials = VaultCredentials("srvsyfosmmottak", "changeit", "", "")
-    val sakCredentials = VaultCredentials("srvsyfosmsak", "changeit", "", "")
+    val mottakServiceUser = VaultServiceUser("srvsyfosmmottak", "changeit")
+    val sakServiceUser = VaultServiceUser("srvsyfosmsak", "changeit")
 
     val env = objectMapper.readValue<Environment>(Paths.get("local.env").toFile())
 
-    val mottakConfig = loadBaseConfig(env, mottakCredentials)
+    val mottakConfig = loadBaseConfig(env, mottakServiceUser)
             .envOverrides()
             .toProducerConfig("produce-message", StringSerializer::class)
             .apply {
                 this["schema.registry.url"] = "http://localhost:8081"
             }
-    val sakConfig = loadBaseConfig(env, sakCredentials)
+    val sakConfig = loadBaseConfig(env, sakServiceUser)
             .envOverrides()
             .toProducerConfig("produce-message", KafkaAvroSerializer::class)
             .apply {

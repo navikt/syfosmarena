@@ -72,6 +72,7 @@ data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val jo
 fun main() {
     val env = Environment()
     val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
+    val vaultServiceUser = VaultServiceUser()
     val applicationState = ApplicationState()
     val applicationEngine = createApplicationEngine(
             env,
@@ -82,7 +83,7 @@ fun main() {
 
     DefaultExports.initialize()
 
-    val kafkaBaseConfig = loadBaseConfig(env, credentials).envOverrides()
+    val kafkaBaseConfig = loadBaseConfig(env, vaultServiceUser).envOverrides()
     kafkaBaseConfig["auto.offset.reset"] = "none"
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)

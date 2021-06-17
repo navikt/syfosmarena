@@ -2,9 +2,9 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: syfosmarena
-  namespace: default
+  namespace: teamsykmelding
   labels:
-    team: teamsykefravr
+    team: teamsykmelding
 spec:
   image: {{ image }}
   replicas:
@@ -22,7 +22,7 @@ spec:
     path: /is_ready
     initialDelay: 30
     periodSeconds: 5
-    timeout: 5
+    timeout: 1
   prometheus:
     enabled: true
     path: /prometheus
@@ -35,6 +35,11 @@ spec:
       memory: 1024Mi
   vault:
     enabled: true
+    paths:
+      - kvPath: serviceuser/data/dev/srvsyfosmarena
+        mountPath: /secrets/serviceuser
+      - kvPath: /kv/preprod/fss/syfosmarena/teamsykmelding
+        mountPath: /var/run/secrets/nais.io/vault
   env:
     - name: MQ_HOST_NAME
       value: b27apvl173.preprod.local
