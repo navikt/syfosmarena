@@ -50,12 +50,7 @@ object ArenaStreamsSpek : Spek({
             truststorePassword = "pwd",
             cluster = "cluster"
     )
-    val vaultCredentials = VaultCredentials(
-            "unused",
-            "unused",
-            "unused",
-            "unused"
-    )
+    val vaultServiceUser = VaultServiceUser("", "")
 
     fun Properties.overrideForTest(): Properties = apply {
         remove("security.protocol")
@@ -64,7 +59,7 @@ object ArenaStreamsSpek : Spek({
         put(StreamsConfig.STATE_DIR_CONFIG, kafkaStreamsStateDir.toAbsolutePath().toString())
     }
 
-    val baseProperties = loadBaseConfig(env, vaultCredentials)
+    val baseProperties = loadBaseConfig(env, vaultServiceUser)
     val streamsProperties = baseProperties
             .toStreamsConfig(env.applicationName, valueSerde = SpecificAvroSerde::class)
             .overrideForTest()

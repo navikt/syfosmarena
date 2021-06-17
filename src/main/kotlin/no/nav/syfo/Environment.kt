@@ -1,5 +1,8 @@
 package no.nav.syfo
 
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 import no.nav.syfo.kafka.KafkaConfig
 import no.nav.syfo.kafka.KafkaCredentials
 import no.nav.syfo.mq.MqConfig
@@ -22,15 +25,20 @@ data class Environment(
     override val cluster: String = getEnvVar("NAIS_CLUSTER_NAME")
 ) : MqConfig, KafkaConfig
 
-data class VaultCredentials(
-    val serviceuserUsername: String,
-    val serviceuserPassword: String,
-    val mqUsername: String,
-    val mqPassword: String
+data class VaultServiceUser(
+    val serviceuserUsername: String = getFileAsString("/secrets/serviceuser/username"),
+    val serviceuserPassword: String = getFileAsString("/secrets/serviceuser/password")
 ) : KafkaCredentials {
     override val kafkaUsername: String = serviceuserUsername
     override val kafkaPassword: String = serviceuserPassword
 }
 
+data class VaultCredentials(
+    val mqUsername: String,
+    val mqPassword: String
+)
+
 fun getEnvVar(varName: String, defaultValue: String? = null) =
         System.getenv(varName) ?: defaultValue ?: throw RuntimeException("Missing required variable \"$varName\"")
+
+fun getFileAsString(filePath: String) = String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8)
