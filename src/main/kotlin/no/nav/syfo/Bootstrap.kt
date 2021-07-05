@@ -11,7 +11,6 @@ import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
 import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
 import java.io.StringWriter
-import java.nio.file.Paths
 import java.time.Duration
 import java.util.Properties
 import java.util.concurrent.TimeUnit
@@ -71,7 +70,6 @@ data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val jo
 @KtorExperimentalAPI
 fun main() {
     val env = Environment()
-    val credentials = objectMapper.readValue<VaultCredentials>(Paths.get("/var/run/secrets/nais.io/vault/credentials.json").toFile())
     val vaultServiceUser = VaultServiceUser()
     val applicationState = ApplicationState()
     val applicationEngine = createApplicationEngine(
@@ -89,7 +87,7 @@ fun main() {
             "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
 
-    launchListeners(env, consumerProperties, applicationState, credentials, streamProperties)
+    launchListeners(env, consumerProperties, applicationState, vaultServiceUser, streamProperties)
 }
 
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
@@ -142,11 +140,11 @@ fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
     applicationState: ApplicationState,
-    credentials: VaultCredentials,
+    vaultServiceUser: VaultServiceUser,
     streamProperties: Properties
 ) {
     createListener(applicationState) {
-        connectionFactory(env).createConnection(credentials.mqUsername, credentials.mqPassword).use { connection ->
+        connectionFactory(env).createConnection(vaultServiceUser.serviceuserUsername, vaultServiceUser.serviceuserPassword).use { connection ->
             connection.start()
             val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
             val arenaQueue = session.createQueue(env.arenaQueue)

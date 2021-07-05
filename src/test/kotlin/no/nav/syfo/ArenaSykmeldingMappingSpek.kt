@@ -45,7 +45,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     rulesetVersion = "",
                     fellesformat = "",
                     tssid = "",
-                    merknader = null
+                    merknader = null,
+                    partnerreferanse = ""
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -81,7 +82,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     rulesetVersion = "",
                     fellesformat = "",
                     tssid = "",
-                    merknader = null
+                    merknader = null,
+                    partnerreferanse = ""
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -117,7 +119,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                     rulesetVersion = "",
                     fellesformat = "",
                     tssid = "",
-                    merknader = null
+                    merknader = null,
+                    partnerreferanse = ""
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
