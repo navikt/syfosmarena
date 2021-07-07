@@ -44,7 +44,8 @@ fun receivedSykmelding(id: String, sykmelding: Sykmelding = generateSykmelding()
         rulesetVersion = "",
         fellesformat = "",
         tssid = "",
-        merknader = null
+        merknader = null,
+        partnerreferanse = ""
 )
 
 fun generateSykmelding(

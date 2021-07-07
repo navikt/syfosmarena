@@ -33,11 +33,6 @@ data class VaultServiceUser(
     override val kafkaPassword: String = serviceuserPassword
 }
 
-data class VaultCredentials(
-    val mqUsername: String,
-    val mqPassword: String
-)
-
 fun getEnvVar(varName: String, defaultValue: String? = null) =
         System.getenv(varName) ?: defaultValue ?: throw RuntimeException("Missing required variable \"$varName\"")
 

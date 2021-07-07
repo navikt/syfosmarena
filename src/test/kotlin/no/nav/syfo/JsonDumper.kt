@@ -32,7 +32,8 @@ fun main() {
             rulesetVersion = "",
             fellesformat = "",
             tssid = "",
-            merknader = null
+            merknader = null,
+            partnerreferanse = ""
     )
 
     println(ObjectMapper()

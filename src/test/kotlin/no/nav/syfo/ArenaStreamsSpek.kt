@@ -109,7 +109,8 @@ object ArenaStreamsSpek : Spek({
                 rulesetVersion = "",
                 fellesformat = "",
                 tssid = "",
-                merknader = null
+                merknader = null,
+                partnerreferanse = ""
         )
 
         it("Streams should join together the two topics") {

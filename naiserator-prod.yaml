@@ -38,15 +38,13 @@ spec:
     paths:
       - kvPath: serviceuser/data/prod/srvsyfosmarena
         mountPath: /secrets/serviceuser
-      - kvPath: /kv/prod/fss/syfosmarena/teamsykmelding
-        mountPath: /var/run/secrets/nais.io/vault
   env:
     - name: MQ_HOST_NAME
-      value: a01apvl062.adeo.no
+      value: a01apvl270.adeo.no
     - name: MQ_PORT
       value: '1414'
     - name: MQ_GATEWAY_NAME
-      value: MPLSC03
+      value: MPLS03
     - name: MQ_CHANNEL_NAME
       value: P_SYFOSMARENA
     - name: KAFKA_BOOTSTRAP_SERVERS_URL
