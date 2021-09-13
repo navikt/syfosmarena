@@ -113,7 +113,7 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
     sm2013InputStream.filter { _, value ->
-        objectMapper.readValue<ReceivedSykmelding>(value).merknader?.any { it.type == "UNDER_BEHANDLING" } != true
+        value?.let { objectMapper.readValue<ReceivedSykmelding>(value).merknader?.any { it.type == "UNDER_BEHANDLING" } != true } ?: true
     }.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(
             JournaledReceivedSykmelding(
