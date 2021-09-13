@@ -112,14 +112,17 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
     val joined = Joined.with(
             Serdes.String(), Serdes.String(), specificSerdeConfig)
 
-    sm2013InputStream.join(journalCreatedTaskStream, { sm2013, journalCreated ->
+    sm2013InputStream.filter { _, value ->
+        value?.let { objectMapper.readValue<ReceivedSykmelding>(value).merknader?.any { it.type == "UNDER_BEHANDLING" } != true } ?: true
+    }.join(journalCreatedTaskStream, { sm2013, journalCreated ->
         objectMapper.writeValueAsString(
-                JournaledReceivedSykmelding(
-                        receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
-                        journalpostId = journalCreated.journalpostId
-                ))
+            JournaledReceivedSykmelding(
+                receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
+                journalpostId = journalCreated.journalpostId
+            )
+        )
     }, joinWindow, joined)
-            .to(env.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
+        .to(env.kafkasm2013ArenaInput, Produced.with(Serdes.String(), Serdes.String()))
 
     return KafkaStreams(streamsBuilder.build(), streamProperties)
 }

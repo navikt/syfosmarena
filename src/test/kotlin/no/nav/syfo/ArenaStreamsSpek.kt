@@ -11,6 +11,7 @@ import no.nav.syfo.kafka.loadBaseConfig
 import no.nav.syfo.kafka.toConsumerConfig
 import no.nav.syfo.kafka.toProducerConfig
 import no.nav.syfo.kafka.toStreamsConfig
+import no.nav.syfo.model.Merknad
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.sak.avro.RegisterJournal
 import org.amshove.kluent.shouldEqual
@@ -129,6 +130,21 @@ object ArenaStreamsSpek : Spek({
 
             journaledSykmelding.journalpostId shouldEqual "hello"
             journaledSykmelding.receivedSykmelding shouldEqual objectMapper.writeValueAsBytes(receivedSykmelding)
+        }
+        it("Sykmelding under behandling filtreres bort") {
+            val sykmeldingMedMerknad = generateSykmelding()
+            val receivedSykmeldingMedMerknad = receivedSykmelding.copy(sykmelding = sykmeldingMedMerknad, merknader = listOf(Merknad("UNDER_BEHANDLING", "Til manuell behandling")))
+            smProducer.send(ProducerRecord(env.kafkaSm2013AutomaticDigitalHandlingTopic, sykmeldingMedMerknad.id, objectMapper.writeValueAsString(receivedSykmeldingMedMerknad)))
+            joarkProducer.send(ProducerRecord(env.kafkasm2013oppgaveJournalOpprettetTopic, sykmeldingMedMerknad.id, RegisterJournal().apply {
+                this.journalpostId = "hello"
+                this.journalpostKilde = "wow"
+                this.sakId = "123"
+                this.messageId = "432"
+            }))
+
+            val joined = outputConsumer.poll(Duration.ofMillis(1000)).toList()
+
+            joined.size shouldEqual 0
         }
     }
 })
