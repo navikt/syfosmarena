@@ -5,45 +5,46 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val artemisVersion = "2.6.4"
-val coroutinesVersion = "1.3.9"
+val artemisVersion = "2.17.0"
+val coroutinesVersion = "1.5.1"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
-val ibmMqVersion = "9.2.1.0"
+val ibmMqVersion = "9.2.4.0"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.10.2"
+val jacksonVersion = "2.13.0"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
-val kafkaVersion = "2.0.1"
+val kafkaVersion = "2.8.0"
 val kafkaEmbeddedVersion = "2.2.3"
-val kluentVersion = "1.51"
-val ktorVersion = "1.4.1"
-val logbackVersion = "1.2.3"
-val logstashEncoderVersion = "6.1"
-val prometheusVersion = "0.6.0"
-val smCommonVersion = "1.dff6489"
-val spekVersion = "2.0.9"
+val kluentVersion = "1.68"
+val ktorVersion = "1.6.7"
+val logbackVersion = "1.2.8"
+val logstashEncoderVersion = "7.0.1"
+val prometheusVersion = "0.12.0"
+val smCommonVersion = "1.a92720c"
+val spekVersion = "2.0.17"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
-val avroVersion = "1.8.2"
-val confluentVersion = "5.0.0"
+val avroVersion = "1.11.0"
+val confluentVersion = "7.0.1"
 val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
 val infotrygdForespVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
+val kotlinVersion = "1.6.0"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.3.72"
-    id("org.jmailen.kotlinter") version "2.2.0"
-    id("com.diffplug.gradle.spotless") version "3.24.0"
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    kotlin("jvm") version "1.6.0"
+    id("org.jmailen.kotlinter") version "3.6.0"
+    id("com.diffplug.spotless") version "5.16.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 
@@ -60,11 +61,7 @@ val githubPassword: String by project
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven (url= "https://dl.bintray.com/kotlin/ktor")
-    maven (url= "https://dl.bintray.com/spekframework/spek-dev")
     maven (url= "https://packages.confluent.io/maven/")
-    maven (url= "https://kotlin.bintray.com/kotlinx")
     maven {
         url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
         credentials {
@@ -76,7 +73,7 @@ repositories {
 
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation ("io.prometheus:simpleclient_hotspot:$prometheusVersion")
@@ -97,7 +94,6 @@ dependencies {
 
     implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
     implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
-    implementation ("org.apache.avro:avro:$avroVersion")
 
     implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
@@ -107,7 +103,6 @@ dependencies {
     implementation ("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation ("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
     implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
-    implementation ("no.nav.helse:syfosm-common-networking:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
@@ -167,6 +162,10 @@ tasks {
     }
 
     withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "12"
+        kotlinOptions.jvmTarget = "17"
+    }
+
+    "check" {
+        dependsOn("formatKotlin")
     }
 }
