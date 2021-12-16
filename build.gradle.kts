@@ -123,7 +123,6 @@ dependencies {
     testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty") // conflicts with WireMock
     }
-    testImplementation("io.confluent:kafka-schema-registry:$confluentVersion")
     testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
     testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
 
