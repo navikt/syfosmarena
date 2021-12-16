@@ -68,7 +68,6 @@ repositories {
             password = githubPassword
         }
     }
-    maven (url = "https://repository.mulesoft.org/nexus/content/repositories/public/")
 }
 
 
