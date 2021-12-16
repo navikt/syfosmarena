@@ -93,6 +93,7 @@ dependencies {
 
     implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
     implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
+    implementation ("org.apache.avro:avro:$avroVersion")
 
     implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
     implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
