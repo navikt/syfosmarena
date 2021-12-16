@@ -90,6 +90,7 @@ dependencies {
 
     implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
     implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
+    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
     implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
