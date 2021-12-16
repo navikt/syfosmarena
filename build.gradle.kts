@@ -28,7 +28,7 @@ val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
 val avroVersion = "1.11.0"
-val confluentVersion = "7.0.1"
+val confluentVersion = "6.2.2"
 val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
 val infotrygdForespVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
@@ -90,7 +90,6 @@ dependencies {
 
     implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
     implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
-    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
     implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
     implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
