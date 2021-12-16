@@ -14,7 +14,6 @@ val jacksonVersion = "2.13.0"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.8.0"
-val kafkaEmbeddedVersion = "2.2.3"
 val kluentVersion = "1.68"
 val ktorVersion = "1.6.7"
 val logbackVersion = "1.2.8"
@@ -69,6 +68,7 @@ repositories {
             password = githubPassword
         }
     }
+    maven (url = "https://repository.mulesoft.org/nexus/content/repositories/public/")
 }
 
 
@@ -124,7 +124,7 @@ dependencies {
     testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
         exclude(group = "org.eclipse.jetty") // conflicts with WireMock
     }
-    testImplementation ("no.nav:kafka-embedded-env:$kafkaEmbeddedVersion")
+    testImplementation("io.confluent:kafka-schema-registry:$confluentVersion")
     testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
     testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
 
