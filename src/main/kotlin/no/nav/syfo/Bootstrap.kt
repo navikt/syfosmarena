@@ -8,15 +8,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
-import io.ktor.util.KtorExperimentalAPI
 import io.prometheus.client.hotspot.DefaultExports
-import java.io.StringWriter
-import java.time.Duration
-import java.util.Properties
-import java.util.concurrent.TimeUnit
-import javax.jms.MessageProducer
-import javax.jms.Session
-import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -55,6 +47,13 @@ import org.apache.kafka.streams.kstream.Joined
 import org.apache.kafka.streams.kstream.Produced
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.StringWriter
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
+import javax.jms.MessageProducer
+import javax.jms.Session
+import javax.xml.bind.Marshaller
 
 val objectMapper: ObjectMapper = ObjectMapper().apply {
     registerKotlinModule()
@@ -67,14 +66,14 @@ val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val journalpostId: String)
 
-@KtorExperimentalAPI
 fun main() {
     val env = Environment()
     val vaultServiceUser = VaultServiceUser()
     val applicationState = ApplicationState()
     val applicationEngine = createApplicationEngine(
-            env,
-            applicationState)
+        env,
+        applicationState
+    )
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
     applicationServer.start()
@@ -84,7 +83,8 @@ fun main() {
     val kafkaBaseConfig = loadBaseConfig(env, vaultServiceUser).envOverrides()
     kafkaBaseConfig["auto.offset.reset"] = "none"
     val consumerProperties = kafkaBaseConfig.toConsumerConfig(
-            "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class)
+        "${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class
+    )
     val streamProperties = kafkaBaseConfig.toStreamsConfig(env.applicationName, valueSerde = GenericAvroSerde::class)
 
     launchListeners(env, consumerProperties, applicationState, vaultServiceUser, streamProperties)
@@ -93,24 +93,32 @@ fun main() {
 fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStreams {
     val streamsBuilder = StreamsBuilder()
     val specificSerdeConfig = SpecificAvroSerde<RegisterJournal>().apply {
-        configure(mapOf(
+        configure(
+            mapOf(
                 "schema.registry.url" to streamProperties["schema.registry.url"]!!
-        ), false)
+            ),
+            false
+        )
     }
 
-    val sm2013InputStream = streamsBuilder.stream<String, String>(listOf(
+    val sm2013InputStream = streamsBuilder.stream<String, String>(
+        listOf(
             env.kafkasm2013ManualHandlingTopic,
             env.kafkaSm2013AutomaticDigitalHandlingTopic
-    ), Consumed.with(Serdes.String(), Serdes.String()))
+        ),
+        Consumed.with(Serdes.String(), Serdes.String())
+    )
 
     val journalCreatedTaskStream = streamsBuilder.stream<String, RegisterJournal>(
-            env.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig))
+        env.kafkasm2013oppgaveJournalOpprettetTopic, Consumed.with(Serdes.String(), specificSerdeConfig)
+    )
 
-    val joinWindow = JoinWindows.of(TimeUnit.DAYS.toMillis(14))
-            .until(TimeUnit.DAYS.toMillis(31))
+    val joinWindow = JoinWindows.of(Duration.ofDays(14))
+        .grace(Duration.ofDays(31))
 
     val joined = Joined.with(
-            Serdes.String(), Serdes.String(), specificSerdeConfig)
+        Serdes.String(), Serdes.String(), specificSerdeConfig
+    )
 
     sm2013InputStream.filter { _, value ->
         value?.let { objectMapper.readValue<ReceivedSykmelding>(value).merknader?.any { it.type == "UNDER_BEHANDLING" } != true } ?: true
@@ -128,17 +136,16 @@ fun createKafkaStream(streamProperties: Properties, env: Environment): KafkaStre
 }
 
 fun createListener(applicationState: ApplicationState, action: suspend CoroutineScope.() -> Unit): Job =
-        GlobalScope.launch {
-            try {
-                action()
-            } catch (e: TrackableException) {
-                log.error("En uhåndtert feil oppstod, applikasjonen restarter {}", fields(e.loggingMeta), e.cause)
-            } finally {
-                applicationState.alive = false
-            }
+    GlobalScope.launch {
+        try {
+            action()
+        } catch (e: TrackableException) {
+            log.error("En uhåndtert feil oppstod, applikasjonen restarter {}", fields(e.loggingMeta), e.cause)
+        } finally {
+            applicationState.alive = false
         }
+    }
 
-@KtorExperimentalAPI
 fun launchListeners(
     env: Environment,
     consumerProperties: Properties,
@@ -186,7 +193,6 @@ fun launchListeners(
     }
 }
 
-@KtorExperimentalAPI
 suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
@@ -198,10 +204,10 @@ suspend fun blockingApplicationLogic(
             val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
             val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
             val loggingMeta = LoggingMeta(
-                    mottakId = receivedSykmelding.navLogId,
-                    orgNr = receivedSykmelding.legekontorOrgNr,
-                    msgId = receivedSykmelding.msgId,
-                    sykmeldingId = receivedSykmelding.sykmelding.id
+                mottakId = receivedSykmelding.navLogId,
+                orgNr = receivedSykmelding.legekontorOrgNr,
+                msgId = receivedSykmelding.msgId,
+                sykmeldingId = receivedSykmelding.sykmelding.id
             )
             handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
         }
@@ -209,7 +215,6 @@ suspend fun blockingApplicationLogic(
     }
 }
 
-@KtorExperimentalAPI
 suspend fun handleMessage(
     receivedSykmelding: ReceivedSykmelding,
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
@@ -220,11 +225,14 @@ suspend fun handleMessage(
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
 
-        val validationRuleResults = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, RuleMetadata(
+        val validationRuleResults = ValidationRuleChain.values().executeFlow(
+            receivedSykmelding.sykmelding,
+            RuleMetadata(
                 receivedDate = receivedSykmelding.mottattDato,
                 signatureDate = receivedSykmelding.sykmelding.signaturDato,
                 rulesetVersion = receivedSykmelding.rulesetVersion
-        ))
+            )
+        )
 
         val results = listOf(validationRuleResults).flatten()
 
@@ -232,9 +240,11 @@ suspend fun handleMessage(
 
         when (results.firstOrNull()) {
             null -> log.info("Message is NOT sendt to arena {}", fields(loggingMeta))
-            else -> sendArenaSykmelding(arenaProducer, session,
-                    createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
-                    loggingMeta)
+            else -> sendArenaSykmelding(
+                arenaProducer, session,
+                createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
+                loggingMeta
+            )
         }
     }
 }
@@ -249,10 +259,12 @@ fun sendArenaSykmelding(
     session: Session,
     arenaSykmelding: ArenaSykmelding,
     loggingMeta: LoggingMeta
-) = producer.send(session.createTextMessage().apply {
-    text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
-    ARENA_EVENT_COUNTER.inc()
-    log.info("Message is sendt to arena {}", fields(loggingMeta))
-})
+) = producer.send(
+    session.createTextMessage().apply {
+        text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
+        ARENA_EVENT_COUNTER.inc()
+        log.info("Message is sendt to arena {}", fields(loggingMeta))
+    }
+)
 
 inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T
