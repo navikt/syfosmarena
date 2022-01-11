@@ -6,6 +6,7 @@ on:
     paths:
       - 'syfosmarena-app/**'
       - '.github/workflows/deploy.yml'
+      - 'build.gradle.kts'
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/syfosmarena-app:${{ github.sha }}
 

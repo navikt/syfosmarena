@@ -214,7 +214,7 @@ suspend fun blockingApplicationLogic(
                 msgId = receivedSykmelding.msgId,
                 sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, "on-prem")
         }
         delay(1)
 
@@ -227,7 +227,7 @@ suspend fun blockingApplicationLogic(
                 msgId = receivedSykmelding.msgId,
                 sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, "aiven")
         }
         delay(1)
     }
@@ -238,10 +238,11 @@ suspend fun handleMessage(
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
     arenaProducer: MessageProducer,
     session: Session,
-    loggingMeta: LoggingMeta
+    loggingMeta: LoggingMeta,
+    source: String
 ) {
     wrapExceptions(loggingMeta) {
-        log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
+        log.info("Received a SM2013 from $source, going to Arena rules {}", fields(loggingMeta))
 
         val validationRuleResults = ValidationRuleChain.values().executeFlow(
             receivedSykmelding.sykmelding,
