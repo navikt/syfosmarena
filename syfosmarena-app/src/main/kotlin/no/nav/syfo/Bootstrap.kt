@@ -21,6 +21,7 @@ import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
 import no.nav.syfo.arena.createArenaSykmelding
+import no.nav.syfo.kafka.aiven.KafkaUtils
 import no.nav.syfo.kafka.envOverrides
 import no.nav.syfo.kafka.loadBaseConfig
 import no.nav.syfo.kafka.toConsumerConfig
@@ -186,9 +187,12 @@ fun launchListeners(
             val kafkaConsumer = KafkaConsumer<String, String>(consumerProperties)
             kafkaConsumer.subscribe(listOf(env.kafkasm2013ArenaInput))
 
+            val kafkaAivenConsumer = KafkaConsumer<String, String>(KafkaUtils.getAivenKafkaConfig().toConsumerConfig("${env.applicationName}-consumer", valueDeserializer = StringDeserializer::class))
+            kafkaAivenConsumer.subscribe(listOf(env.privatArenaInputTopic))
+
             applicationState.ready = true
 
-            blockingApplicationLogic(applicationState, kafkaConsumer, arenaProducer, session)
+            blockingApplicationLogic(applicationState, kafkaConsumer, kafkaAivenConsumer, arenaProducer, session)
         }
     }
 }
@@ -196,6 +200,7 @@ fun launchListeners(
 suspend fun blockingApplicationLogic(
     applicationState: ApplicationState,
     kafkaconsumer: KafkaConsumer<String, String>,
+    kafkaAivenConsumer: KafkaConsumer<String, String>,
     arenaProducer: MessageProducer,
     session: Session
 ) {
@@ -209,7 +214,20 @@ suspend fun blockingApplicationLogic(
                 msgId = receivedSykmelding.msgId,
                 sykmeldingId = receivedSykmelding.sykmelding.id
             )
-            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta)
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, "on-prem")
+        }
+        delay(1)
+
+        kafkaAivenConsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
+            val journaledReceivedSykmelding: JournaledReceivedSykmelding = objectMapper.readValue(consumerRecord.value())
+            val receivedSykmelding: ReceivedSykmelding = objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
+            val loggingMeta = LoggingMeta(
+                mottakId = receivedSykmelding.navLogId,
+                orgNr = receivedSykmelding.legekontorOrgNr,
+                msgId = receivedSykmelding.msgId,
+                sykmeldingId = receivedSykmelding.sykmelding.id
+            )
+            handleMessage(receivedSykmelding, journaledReceivedSykmelding, arenaProducer, session, loggingMeta, "aiven")
         }
         delay(1)
     }
@@ -220,10 +238,11 @@ suspend fun handleMessage(
     journaledReceivedSykmelding: JournaledReceivedSykmelding,
     arenaProducer: MessageProducer,
     session: Session,
-    loggingMeta: LoggingMeta
+    loggingMeta: LoggingMeta,
+    source: String
 ) {
     wrapExceptions(loggingMeta) {
-        log.info("Received a SM2013, going to Arena rules {}", fields(loggingMeta))
+        log.info("Received a SM2013 from $source, going to Arena rules {}", fields(loggingMeta))
 
         val validationRuleResults = ValidationRuleChain.values().executeFlow(
             receivedSykmelding.sykmelding,

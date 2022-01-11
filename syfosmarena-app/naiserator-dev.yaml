@@ -9,7 +9,7 @@ spec:
   image: {{ image }}
   replicas:
     min: 1
-    max: 3
+    max: 2
     cpuThresholdPercentage: 90
   port: 8080
   liveness:
@@ -36,18 +36,20 @@ spec:
   vault:
     enabled: true
     paths:
-      - kvPath: serviceuser/data/prod/srvsyfosmarena
+      - kvPath: serviceuser/data/dev/srvsyfosmarena
         mountPath: /secrets/serviceuser
+  kafka:
+    pool: nav-dev
   env:
     - name: MQ_HOST_NAME
-      value: a01apvl270.adeo.no
+      value: b27apvl221.preprod.local
     - name: MQ_PORT
-      value: '1414'
+      value: '1413'
     - name: MQ_GATEWAY_NAME
-      value: MPLS03
+      value: MQLS03
     - name: MQ_CHANNEL_NAME
-      value: P_SYFOSMARENA
+      value: Q1_SYFOSMARENA
     - name: KAFKA_BOOTSTRAP_SERVERS_URL
-      value: SASL_SSL://a01apvl00145.adeo.no:8443,SASL_SSL://a01apvl00146.adeo.no:8443,SASL_SSL://a01apvl00147.adeo.no:8443,SASL_SSL://a01apvl00149.adeo.no:8443
+      value: SSL://b27apvl00045.preprod.local:8443,SSL://b27apvl00046.preprod.local:8443,SSL://b27apvl00047.preprod.local:8443
     - name: MQ_ARENA_QUEUE
-      value: QA.P414.FS06_ARENA
+      value: QA.Q1_414.FS06_ARENA
