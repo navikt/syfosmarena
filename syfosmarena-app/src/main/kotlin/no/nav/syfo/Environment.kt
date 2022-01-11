@@ -22,7 +22,8 @@ data class Environment(
     val arenaQueue: String = getEnvVar("MQ_ARENA_QUEUE"),
     override val truststore: String? = getEnvVar("NAV_TRUSTSTORE_PATH"),
     override val truststorePassword: String? = getEnvVar("NAV_TRUSTSTORE_PASSWORD"),
-    override val cluster: String = getEnvVar("NAIS_CLUSTER_NAME")
+    override val cluster: String = getEnvVar("NAIS_CLUSTER_NAME"),
+    val privatArenaInputTopic: String = "teamsykmelding.privat-arena-input"
 ) : MqConfig, KafkaConfig
 
 data class VaultServiceUser(

@@ -3,8 +3,11 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'syfosmarena-app/**'
+      - '.github/workflows/deploy.yml'
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfosmarena:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfosmarena-app:${{ github.sha }}
 
 jobs:
   monitor:
@@ -49,8 +52,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+            ~../.gradle/caches
+            ~../.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/.*gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -85,10 +88,10 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY_TEAMSYKMELDING }}
           CLUSTER: dev-fss
-          RESOURCE: naiserator-dev.yaml
+          RESOURCE: syfosmarena-app/naiserator-dev.yaml
       - name: Deploy to Prod
         uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY_TEAMSYKMELDING }}
           CLUSTER: prod-fss
-          RESOURCE: naiserator-prod.yaml
+          RESOURCE: syfosmarena-app/naiserator-prod.yaml

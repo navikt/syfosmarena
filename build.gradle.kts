@@ -46,7 +46,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-
 buildscript {
     dependencies {
         classpath("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
@@ -58,113 +57,118 @@ buildscript {
 val githubUser: String by project
 val githubPassword: String by project
 
-repositories {
-    mavenCentral()
-    maven (url= "https://packages.confluent.io/maven/")
-    maven {
-        url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
-        credentials {
-            username = githubUser
-            password = githubPassword
+allprojects {
+    group = "no.nav.syfo"
+    version = "1.0.0"
+
+    repositories {
+        mavenCentral()
+        maven (url= "https://packages.confluent.io/maven/")
+        maven {
+            url = uri("https://maven.pkg.github.com/navikt/syfosm-common")
+            credentials {
+                username = githubUser
+                password = githubPassword
+            }
         }
     }
 }
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
+    dependencies {
+        implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+        implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+        implementation ("io.prometheus:simpleclient_hotspot:$prometheusVersion")
+        implementation ("io.prometheus:simpleclient_common:$prometheusVersion")
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation ("io.prometheus:simpleclient_hotspot:$prometheusVersion")
-    implementation ("io.prometheus:simpleclient_common:$prometheusVersion")
+        implementation ("io.ktor:ktor-server-netty:$ktorVersion")
+        implementation ("io.ktor:ktor-client-apache:$ktorVersion")
+        implementation ("io.ktor:ktor-client-auth-basic:$ktorVersion")
+        implementation ("io.ktor:ktor-client-jackson:$ktorVersion")
 
-    implementation ("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation ("io.ktor:ktor-client-apache:$ktorVersion")
-    implementation ("io.ktor:ktor-client-auth-basic:$ktorVersion")
-    implementation ("io.ktor:ktor-client-jackson:$ktorVersion")
+        implementation ("ch.qos.logback:logback-classic:$logbackVersion")
+        implementation ("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation ("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation ("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
+        implementation ("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
 
-    implementation ("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
+        implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
+        implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
 
-    implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
-    implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
+        implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
+        implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
+        implementation ("org.apache.avro:avro:$avroVersion")
 
-    implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
-    implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
-    implementation ("org.apache.avro:avro:$avroVersion")
+        implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
+        implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+        implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
+        implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
-    implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
-    implementation ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+        implementation ("no.nav.helse:syfosm-common-models:$smCommonVersion")
+        implementation ("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
+        implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
+        implementation ("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
-    implementation ("no.nav.helse:syfosm-common-models:$smCommonVersion")
-    implementation ("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
-    implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
+        implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
+        implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
+        implementation ("no.nav.helse.xml:infotrygd-foresp:$infotrygdForespVersion")
+        implementation ("no.nav.helse.xml:sm2013:$sykmeldingVersion")
+        implementation ("no.nav.helse.xml:xmlfellesformat:$fellesformatVersion")
+        implementation ("no.nav.helse.xml:kith-hodemelding:$kithHodemeldingVersion")
+        implementation ("no.nav.helse.xml:kontrollsystemblokk:$kontrollsystemblokk")
 
-    implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
-    implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
-    implementation ("no.nav.helse.xml:infotrygd-foresp:$infotrygdForespVersion")
-    implementation ("no.nav.helse.xml:sm2013:$sykmeldingVersion")
-    implementation ("no.nav.helse.xml:xmlfellesformat:$fellesformatVersion")
-    implementation ("no.nav.helse.xml:kith-hodemelding:$kithHodemeldingVersion")
-    implementation ("no.nav.helse.xml:kontrollsystemblokk:$kontrollsystemblokk")
+        implementation ("com.migesok:jaxb-java-time-adapters:$jaxbTimeAdaptersVersion")
 
-    implementation ("com.migesok:jaxb-java-time-adapters:$jaxbTimeAdaptersVersion")
+        implementation ("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+        implementation ("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
+        implementation ("javax.activation:activation:$javaxActivationVersion")
 
-    implementation ("javax.xml.bind:jaxb-api:$jaxbApiVersion")
-    implementation ("org.glassfish.jaxb:jaxb-runtime:$jaxbRuntimeVersion")
-    implementation ("javax.activation:activation:$javaxActivationVersion")
+        testImplementation ("org.amshove.kluent:kluent:$kluentVersion")
+        testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+        testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
+            exclude(group = "org.eclipse.jetty") // conflicts with WireMock
+        }
+        testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
+        testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
 
-    testImplementation ("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
-    testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
-        exclude(group = "org.eclipse.jetty") // conflicts with WireMock
-    }
-    testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
-    testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
-
-    testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-
-}
-
-
-tasks {
-    withType<Jar> {
-        manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
-    }
-
-    create("printVersion") {
-        println(project.version)
-    }
-
-    withType<ShadowJar> {
-        transform(ServiceFileTransformer::class.java) {
-            setPath("META-INF/cxf")
-            include("bus-extensions.txt")
+        testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
+            exclude(group = "org.jetbrains.kotlin")
+        }
+        testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
+            exclude(group = "org.jetbrains.kotlin")
         }
     }
 
-    withType<Test> {
-        useJUnitPlatform {
-            includeEngines("spek2")
+    tasks {
+        withType<Jar> {
+            manifest.attributes["Main-Class"] = "no.nav.syfo.BootstrapKt"
         }
-        testLogging.showStandardStreams = true
-    }
 
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
+        create("printVersion") {
+            println(project.version)
+        }
 
-    "check" {
-        dependsOn("formatKotlin")
+        withType<ShadowJar> {
+            transform(ServiceFileTransformer::class.java) {
+                setPath("META-INF/cxf")
+                include("bus-extensions.txt")
+            }
+        }
+
+        withType<Test> {
+            useJUnitPlatform {
+                includeEngines("spek2")
+            }
+            testLogging.showStandardStreams = true
+        }
+
+        withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = "17"
+        }
+
+        "check" {
+            dependsOn("formatKotlin")
+        }
     }
 }

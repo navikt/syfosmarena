@@ -1,31 +1,16 @@
-name: Deploy to dev
+name: Deploy stream to dev
 on:
   push:
     branches:
       - '*'
       - '!master'
     paths:
-      - 'syfosmarena-app/**'
-      - '.github/workflows/devdeploy.yml'
+      - 'syfosmarena-stream/**'
+      - '.github/workflows/stream**'
 env:
-  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfosmarena-app:${{ github.sha }}
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/syfosmarena-stream:${{ github.sha }}
 
 jobs:
-  snyk-test:
-    name: Checkout code and analyze dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/gradle-jdk16@master
-        env:
-          ORG_GRADLE_PROJECT_githubUser: x-access-token
-          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: test
-          args: --org=teamsykmelding --severity-threshold=high
   build:
     name: Checkout code and create docker tag
     runs-on: ubuntu-latest
@@ -50,31 +35,24 @@ jobs:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew :syfosmarena-app:test
+          ./gradlew :syfosmarena-stream:test
       - name: Build jar
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./gradlew :syfosmarena-app:shadowJar -x test
+          ./gradlew :syfosmarena-stream:shadowJar -x test
       - name: Build and publish Docker image
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd syfosmarena-app
+          cd syfosmarena-stream
           docker build --tag ${IMAGE} .
           docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
           docker push ${IMAGE}
-  deploy:
-    name: Deploy to dev
-    runs-on: ubuntu-latest
-    needs: [ snyk-test, build ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@master
       - name: Deploy to Preprod
         uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY_TEAMSYKMELDING }}
-          CLUSTER: dev-fss
-          RESOURCE: syfosmarena-app/naiserator-dev.yaml
+          CLUSTER: dev-gcp
+          RESOURCE: syfosmarena-stream/naiserator-dev.yaml
