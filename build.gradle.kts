@@ -27,9 +27,6 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
-val avroVersion = "1.11.0"
-val confluentVersion = "6.2.2"
-val syfooppgaveSchemasVersion = "c8be932543e7356a34690ce7979d494c5d8516d8"
 val infotrygdForespVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val jaxbTimeAdaptersVersion = "1.1.3"
@@ -97,10 +94,6 @@ subprojects {
         implementation ("org.apache.kafka:kafka_2.12:$kafkaVersion")
         implementation ("org.apache.kafka:kafka-streams:$kafkaVersion")
 
-        implementation ("io.confluent:kafka-avro-serializer:$confluentVersion")
-        implementation ("io.confluent:kafka-streams-avro-serde:$confluentVersion")
-        implementation ("org.apache.avro:avro:$avroVersion")
-
         implementation ("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
         implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
         implementation ("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
@@ -111,7 +104,6 @@ subprojects {
         implementation ("no.nav.helse:syfosm-common-mq:$smCommonVersion")
         implementation ("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
-        implementation ("no.nav.syfo.schemas:syfosmoppgave-avro:$syfooppgaveSchemasVersion")
         implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
         implementation ("no.nav.helse.xml:infotrygd-foresp:$infotrygdForespVersion")
         implementation ("no.nav.helse.xml:sm2013:$sykmeldingVersion")
