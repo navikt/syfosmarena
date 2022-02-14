@@ -14,7 +14,7 @@ Application for creating follow up task in arena
 
 #### Requirements
 
-* JDK 11
+* JDK 17
 
 ## Getting started
 ### Getting github-package-registry packages NAV-IT
