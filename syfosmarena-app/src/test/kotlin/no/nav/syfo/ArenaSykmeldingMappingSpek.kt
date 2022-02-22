@@ -51,7 +51,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                 merknader = null,
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
-                legeHprNr = null
+                legeHprNr = null,
+                vedlegg = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -97,7 +98,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                 merknader = null,
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
-                legeHprNr = null
+                legeHprNr = null,
+                vedlegg = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -143,7 +145,8 @@ object ArenaSykmeldingMappingSpek : Spek({
                 merknader = null,
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
-                legeHprNr = null
+                legeHprNr = null,
+                vedlegg = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)

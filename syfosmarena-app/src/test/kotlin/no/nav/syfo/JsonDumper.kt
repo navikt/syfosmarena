@@ -37,7 +37,8 @@ fun main() {
         merknader = null,
         partnerreferanse = "",
         legeHelsepersonellkategori = null,
-        legeHprNr = null
+        legeHprNr = null,
+        vedlegg = null
     )
 
     println(

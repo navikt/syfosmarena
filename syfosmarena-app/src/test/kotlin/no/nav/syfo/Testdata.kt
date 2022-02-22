@@ -47,7 +47,8 @@ fun receivedSykmelding(id: String, sykmelding: Sykmelding = generateSykmelding()
     merknader = null,
     partnerreferanse = "",
     legeHelsepersonellkategori = null,
-    legeHprNr = null
+    legeHprNr = null,
+    vedlegg = null
 )
 
 fun generateSykmelding(
