@@ -105,8 +105,6 @@ fun launchListeners(
             )
             kafkaAivenConsumer.subscribe(listOf(env.privatArenaInputTopic))
 
-            applicationState.ready = true
-
             blockingApplicationLogic(applicationState, kafkaAivenConsumer, arenaProducer, session)
         }
     }
