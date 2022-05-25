@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.arena.createArenaSykmelding
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.model.SporsmalSvar
@@ -7,17 +8,13 @@ import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-object ArenaSykmeldingMappingSpek : Spek({
+class ArenaSykmeldingMappingSpek : FunSpec({
 
-    describe("Testing createArenaSykmelding") {
-
-        it("Should check rule mapping of Arena sykmelding") {
-
+    context("Testing createArenaSykmelding") {
+        test("Should check rule mapping of Arena sykmelding") {
             val healthInformation = generateSykmelding(
                 perioder = listOf(
                     generatePeriode(
@@ -65,7 +62,7 @@ object ArenaSykmeldingMappingSpek : Spek({
             ).eiaDokumentInfo.dokumentInfo.ediLoggId shouldBeEqualTo receivedSykmelding.navLogId
         }
 
-        it("Should check rule mapping of hendelseStatus") {
+        test("Should check rule mapping of hendelseStatus") {
             val healthInformation = generateSykmelding(
                 utdypendeOpplysninger = mapOf(
                     "6.1" to mapOf(
@@ -112,7 +109,7 @@ object ArenaSykmeldingMappingSpek : Spek({
             ).arenaHendelse.hendelse.first().hendelseStatus shouldBeEqualTo "UTFORT"
         }
 
-        it("Should check mapping of legeFnr") {
+        test("Should check mapping of legeFnr") {
             val healthInformation = generateSykmelding(
                 utdypendeOpplysninger = mapOf(
                     "6.1" to mapOf(
