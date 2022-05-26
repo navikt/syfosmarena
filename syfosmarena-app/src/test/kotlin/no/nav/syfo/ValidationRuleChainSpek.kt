@@ -1,5 +1,6 @@
 package no.nav.syfo
 
+import io.kotest.core.spec.style.FunSpec
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
@@ -7,16 +8,13 @@ import no.nav.syfo.rules.RuleData
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import org.amshove.kluent.shouldBeEqualTo
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-object ValidationRuleChainSpek : Spek({
+class ValidationRuleChainSpek : FunSpec({
 
-    describe("Testing validation rules and checking the rule outcomes") {
-
-        it("Should check rule SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS, should trigger rule") {
+    context("Testing validation rules and checking the rule outcomes") {
+        test("Should check rule SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -43,7 +41,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo true
         }
 
-        it("Should check rule SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS, should NOT trigger rule") {
+        test("Should check rule SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, ruleMetadata: RuleMetadata) =
                 RuleData(healthInformation, ruleMetadata)
 
@@ -70,7 +68,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo false
         }
 
-        it("Should check rule SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS, should trigger rule") {
+        test("Should check rule SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -97,7 +95,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo true
         }
 
-        it("Should check rule SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS, should NOT trigger rule") {
+        test("Should check rule SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -124,7 +122,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo false
         }
 
-        it("Should check rule TRAVEL_SUBSIDY_SPECIFIED, should trigger rule") {
+        test("Should check rule TRAVEL_SUBSIDY_SPECIFIED, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -147,7 +145,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.TRAVEL_SUBSIDY_SPECIFIED(ruleData(healthInformation, metadata)) shouldBeEqualTo true
         }
 
-        it("Should check rule TRAVEL_SUBSIDY_SPECIFIED, should NOT trigger rule") {
+        test("Should check rule TRAVEL_SUBSIDY_SPECIFIED, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -170,7 +168,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.TRAVEL_SUBSIDY_SPECIFIED(ruleData(healthInformation, metadata)) shouldBeEqualTo false
         }
 
-        it("Should check rule MESSAGE_TO_EMPLOYER, should trigger rule") {
+        test("Should check rule MESSAGE_TO_EMPLOYER, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -185,7 +183,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.MESSAGE_TO_EMPLOYER(ruleData(healthInformation, metadata)) shouldBeEqualTo true
         }
 
-        it("Should check rule MESSAGE_TO_EMPLOYER, should NOT trigger rule") {
+        test("Should check rule MESSAGE_TO_EMPLOYER, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -200,7 +198,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.MESSAGE_TO_EMPLOYER(ruleData(healthInformation, metadata)) shouldBeEqualTo false
         }
 
-        it("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2, should trigger rule") {
+        test("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -228,7 +226,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo true
         }
 
-        it("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2, should trigger rule") {
+        test("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -256,7 +254,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo false
         }
 
-        it("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2, should trigger rule") {
+        test("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -284,7 +282,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo true
         }
 
-        it("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2, should NOT trigger rule") {
+        test("Should check rule PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -312,7 +310,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo false
         }
 
-        it("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should trigger rule") {
+        test("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -335,7 +333,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo true
         }
 
-        it("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should NOT trigger rule") {
+        test("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -358,7 +356,7 @@ object ValidationRuleChainSpek : Spek({
             ) shouldBeEqualTo false
         }
 
-        it("Should check rule DYNAMIC_QUESTIONS, should trigger rule") {
+        test("Should check rule DYNAMIC_QUESTIONS, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -379,7 +377,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.DYNAMIC_QUESTIONS(ruleData(healthInformation, metadata)) shouldBeEqualTo true
         }
 
-        it("Should check rule DYNAMIC_QUESTIONS, should NOT trigger rule") {
+        test("Should check rule DYNAMIC_QUESTIONS, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -394,7 +392,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.DYNAMIC_QUESTIONS(ruleData(healthInformation, metadata)) shouldBeEqualTo false
         }
 
-        it("Should check rule MEASURES_OTHER_OR_NAV, should trigger rule") {
+        test("Should check rule MEASURES_OTHER_OR_NAV, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -409,7 +407,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.MEASURES_OTHER_OR_NAV(ruleData(healthInformation, metadata)) shouldBeEqualTo true
         }
 
-        it("Should check rule MEASURES_OTHER_OR_NAV, should NOT trigger rule") {
+        test("Should check rule MEASURES_OTHER_OR_NAV, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -424,7 +422,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.MEASURES_OTHER_OR_NAV(ruleData(healthInformation, metadata)) shouldBeEqualTo false
         }
 
-        it("Should check rule DYNAMIC_QUESTIONS_AAP, should trigger rule") {
+        test("Should check rule DYNAMIC_QUESTIONS_AAP, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -445,7 +443,7 @@ object ValidationRuleChainSpek : Spek({
             ValidationRuleChain.DYNAMIC_QUESTIONS_AAP(ruleData(healthInformation, metadata)) shouldBeEqualTo true
         }
 
-        it("Should check rule DYNAMIC_QUESTIONS_AAP, should trigger rule") {
+        test("Should check rule DYNAMIC_QUESTIONS_AAP, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 

@@ -45,10 +45,9 @@ fun main() {
         applicationState
     )
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
-    applicationServer.start()
-    applicationState.ready = true
 
     startKafkaAivenStream(env, applicationState)
+    applicationServer.start()
 }
 
 fun startKafkaAivenStream(env: Environment, applicationState: ApplicationState) {

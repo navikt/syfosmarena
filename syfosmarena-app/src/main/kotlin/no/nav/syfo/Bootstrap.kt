@@ -65,11 +65,11 @@ fun main() {
     )
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
-    applicationServer.start()
 
     DefaultExports.initialize()
 
     launchListeners(env, applicationState, vaultServiceUser)
+    applicationServer.start()
 }
 
 @DelicateCoroutinesApi
@@ -80,6 +80,7 @@ fun createListener(applicationState: ApplicationState, action: suspend Coroutine
         } catch (e: TrackableException) {
             log.error("En uhåndtert feil oppstod, applikasjonen restarter {}", fields(e.loggingMeta), e.cause)
         } finally {
+            applicationState.ready = false
             applicationState.alive = false
         }
     }
@@ -103,8 +104,6 @@ fun launchListeners(
                     .also { it[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "none" }
             )
             kafkaAivenConsumer.subscribe(listOf(env.privatArenaInputTopic))
-
-            applicationState.ready = true
 
             blockingApplicationLogic(applicationState, kafkaAivenConsumer, arenaProducer, session)
         }

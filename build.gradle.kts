@@ -6,21 +6,21 @@ group = "no.nav.syfo"
 version = "1.0.0"
 
 val artemisVersion = "2.17.0"
-val coroutinesVersion = "1.6.0"
+val coroutinesVersion = "1.6.1"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val ibmMqVersion = "9.2.4.0"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.13.2"
+val jacksonVersion = "2.13.3"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.8.0"
 val kluentVersion = "1.68"
-val ktorVersion = "1.6.8"
+val ktorVersion = "2.0.1"
 val logbackVersion = "1.2.11"
-val logstashEncoderVersion = "7.0.1"
+val logstashEncoderVersion = "7.1.1"
 val prometheusVersion = "0.15.0"
 val smCommonVersion = "1.18fb664"
-val spekVersion = "2.0.17"
+val kotestVersion = "5.3.0"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -32,15 +32,15 @@ val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val kotlinVersion = "1.6.0"
+val kotlinVersion = "1.6.21"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.6.0"
-    id("org.jmailen.kotlinter") version "3.6.0"
-    id("com.diffplug.spotless") version "5.16.0"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("jvm") version "1.6.21"
+    id("org.jmailen.kotlinter") version "3.10.0"
+    id("com.diffplug.spotless") version "6.5.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 buildscript {
@@ -80,11 +80,12 @@ subprojects {
         implementation ("io.prometheus:simpleclient_hotspot:$prometheusVersion")
         implementation ("io.prometheus:simpleclient_common:$prometheusVersion")
 
+        implementation ("io.ktor:ktor-server-core:$ktorVersion")
         implementation ("io.ktor:ktor-server-netty:$ktorVersion")
-        implementation ("io.ktor:ktor-client-apache:$ktorVersion")
-        implementation ("io.ktor:ktor-client-auth-basic:$ktorVersion")
-        implementation ("io.ktor:ktor-client-jackson:$ktorVersion")
-        implementation ("io.ktor:ktor-jackson:$ktorVersion")
+        implementation ("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+        implementation ("io.ktor:ktor-server-status-pages:$ktorVersion")
+        implementation ("io.ktor:ktor-server-call-id:$ktorVersion")
+        implementation ("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
         implementation ("ch.qos.logback:logback-classic:$logbackVersion")
         implementation ("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
@@ -118,19 +119,12 @@ subprojects {
         implementation ("javax.activation:activation:$javaxActivationVersion")
 
         testImplementation ("org.amshove.kluent:kluent:$kluentVersion")
-        testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
+        testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
             exclude(group = "org.eclipse.jetty") // conflicts with WireMock
         }
         testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
         testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
-
-        testImplementation ("org.spekframework.spek2:spek-dsl-jvm:$spekVersion") {
-            exclude(group = "org.jetbrains.kotlin")
-        }
-        testRuntimeOnly ("org.spekframework.spek2:spek-runner-junit5:$spekVersion") {
-            exclude(group = "org.jetbrains.kotlin")
-        }
     }
 
     tasks {
@@ -151,7 +145,6 @@ subprojects {
 
         withType<Test> {
             useJUnitPlatform {
-                includeEngines("spek2")
             }
             testLogging.showStandardStreams = true
         }
