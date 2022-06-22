@@ -34,10 +34,9 @@ spec:
       cpu: 100m
       memory: 1024Mi
   vault:
-    enabled: true
-    paths:
-      - kvPath: serviceuser/data/dev/srvsyfosmarena
-        mountPath: /secrets/serviceuser
+    enabled: false
+  envFrom:
+    - secret: syfosmarena-secrets
   kafka:
     pool: nav-dev
   env:
