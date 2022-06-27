@@ -310,7 +310,7 @@ class ValidationRuleChainSpek : FunSpec({
             ) shouldBeEqualTo false
         }
 
-        test("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should trigger rule") {
+        test("Should check rule MESSAGE_TO_NAV, should trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -325,7 +325,7 @@ class ValidationRuleChainSpek : FunSpec({
                 rulesetVersion = "2"
             )
 
-            ValidationRuleChain.MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY(
+            ValidationRuleChain.MESSAGE_TO_NAV(
                 ruleData(
                     healthInformation,
                     metadata
@@ -333,7 +333,30 @@ class ValidationRuleChainSpek : FunSpec({
             ) shouldBeEqualTo true
         }
 
-        test("Should check rule MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY, should NOT trigger rule") {
+        test("Trigger MESSAGE_TO_NAV hvis melding er satt") {
+            fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
+                RuleData(healthInformation, metadata)
+
+            val healthInformation = generateSykmelding(
+                meldingTilNAV =
+                MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = "Melding til NAV")
+            )
+
+            val metadata = RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2"
+            )
+
+            ValidationRuleChain.MESSAGE_TO_NAV(
+                ruleData(
+                    healthInformation,
+                    metadata
+                )
+            ) shouldBeEqualTo true
+        }
+
+        test("Should check rule MESSAGE_TO_NAV, should NOT trigger rule") {
             fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
                 RuleData(healthInformation, metadata)
 
@@ -348,7 +371,7 @@ class ValidationRuleChainSpek : FunSpec({
                 rulesetVersion = "2"
             )
 
-            ValidationRuleChain.MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY(
+            ValidationRuleChain.MESSAGE_TO_NAV(
                 ruleData(
                     healthInformation,
                     metadata
