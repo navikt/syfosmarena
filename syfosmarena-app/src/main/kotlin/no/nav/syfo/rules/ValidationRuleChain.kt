@@ -84,18 +84,18 @@ enum class ValidationRuleChain(
         "Sykmeldingsperioden har passert tidspunkt for vurdering av aktivitetsmuligheter. Åpne dokumentet for å se behandlers innspill til aktivitetsmuligheter.",
         { (sykmelding, metadata) ->
             sykmelding.perioder
-                .any { (it.fom..it.tom).daysBetween() > 49 } && metadata.rulesetVersion == "2"
+                .any { (it.fom..it.tom).daysBetween() > 49 } && (metadata.rulesetVersion == "2" || metadata.rulesetVersion == "3")
         }
     ),
 
     @Description("Hvis sykmeldingen inneholder melding fra behandler skal meldingen til oppfølging i Arena.")
-    MESSAGE_TO_NAV_ASSISTANCE_IMMEDIATLY(
+    MESSAGE_TO_NAV(
         1616,
         ArenaHendelseType.MELDING_FRA_BEHANDLER,
         ArenaHendelseStatus.PLANLAGT,
-        "Melding fra behandler bistandUmiddelbart",
+        "Melding fra behandler",
         { (sykmelding, _) ->
-            sykmelding.meldingTilNAV != null && sykmelding.meldingTilNAV!!.bistandUmiddelbart
+            sykmelding.meldingTilNAV != null && (sykmelding.meldingTilNAV!!.bistandUmiddelbart || !sykmelding.meldingTilNAV!!.beskrivBistand.isNullOrEmpty())
         }
     ),
 
