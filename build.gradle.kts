@@ -5,22 +5,22 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val artemisVersion = "2.17.0"
-val coroutinesVersion = "1.6.1"
+val artemisVersion = "2.21.0"
+val coroutinesVersion = "1.6.4"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
-val ibmMqVersion = "9.2.4.0"
+val ibmMqVersion = "9.2.5.0"
 val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.13.3"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "2.8.0"
 val kluentVersion = "1.68"
-val ktorVersion = "2.0.1"
+val ktorVersion = "2.0.3"
 val logbackVersion = "1.2.11"
-val logstashEncoderVersion = "7.1.1"
+val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.15.0"
 val smCommonVersion = "1.18fb664"
-val kotestVersion = "5.3.0"
+val kotestVersion = "5.4.1"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -32,12 +32,12 @@ val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val kotlinVersion = "1.6.21"
+val kotlinVersion = "1.7.10"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.10"
     id("org.jmailen.kotlinter") version "3.10.0"
     id("com.diffplug.spotless") version "6.5.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -146,7 +146,11 @@ subprojects {
         withType<Test> {
             useJUnitPlatform {
             }
-            testLogging.showStandardStreams = true
+            testLogging {
+                events("skipped", "failed")
+                showStackTraces = true
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+            }
         }
 
         withType<KotlinCompile> {
