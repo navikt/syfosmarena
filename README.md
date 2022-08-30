@@ -1,7 +1,7 @@
 [![Build status](https://github.com/navikt/syfosmarena/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)](https://github.com/navikt/syfosminfotrygd/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)
 
 # SYFO sykemelding Arena
-Application for creating follow up task in arena
+Application for creating follow-up tasks in Arena
 
 ## Technologies used
 * Kotlin
@@ -18,7 +18,7 @@ Application for creating follow up task in arena
 
 ## Getting started
 ### Getting github-package-registry packages NAV-IT
-Some packages used in this repo is uploaded to the Github Package Registry which requires authentication. It can, for example, be solved like this in Gradle:
+Some packages used in this repo is uploaded to the GitHub Package Registry which requires authentication. It can, for example, be solved like this in Gradle:
 ```
 val githubUser: String by project
 val githubPassword: String by project
@@ -72,8 +72,11 @@ Find the newest version of gradle here: https://gradle.org/releases/ Then run th
 
 ```./gradlew wrapper --gradle-version $gradleVersjon```
 
-### Inquiries
-Questions related to the code or the project can be asked as issues here on GitHub
+### Contact
 
-### For NAV employees
-We are available at the Slack channel #team-sykmelding
+This project is maintained by navikt/teamsykmelding
+
+Questions and/or feature requests? Please create an [issue](https://github.com/navikt/syfosmarena/issues).
+
+If you work in [@navikt](https://github.com/navikt) you can reach us at the Slack
+channel [#team-sykmelding](https://nav-it.slack.com/archives/CMA3XV997).
