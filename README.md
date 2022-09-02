@@ -7,10 +7,9 @@ Application for creating follow-up tasks in Arena
 * Kotlin
 * Ktor
 * Gradle
-* Spek
+* Kotest
 * Kafka
 * Mq
-* Vault
 
 #### Requirements
 
@@ -41,6 +40,8 @@ githubPassword=[token]
 ```
 
 Replace `[token]` with a personal access token with scope `read:packages`.
+See githubs guide [creating-a-personal-access-token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) on
+how to create a personal access token.
 
 Alternatively, the variables can be configured via environment variables:
 
