@@ -37,6 +37,9 @@ spec:
     enabled: false
   envFrom:
     - secret: syfosmarena-secrets
+  filesFrom:
+    - mountPath: /var/run/keystore
+      secret: syfosmarena-keystore
   kafka:
     pool: nav-prod
   env:
@@ -50,3 +53,5 @@ spec:
       value: P_SYFOSMARENA
     - name: MQ_ARENA_QUEUE
       value: QA.P414.FS06_ARENA
+    - name: MQ_KEYSTORE_PATH
+      value: /var/run/keystore/syfosmarena-keystore.jks

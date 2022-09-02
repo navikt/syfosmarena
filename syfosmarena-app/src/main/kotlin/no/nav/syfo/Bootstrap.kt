@@ -24,6 +24,7 @@ import no.nav.syfo.kafka.aiven.KafkaUtils
 import no.nav.syfo.kafka.toConsumerConfig
 import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
+import no.nav.syfo.mq.MqTlsUtils
 import no.nav.syfo.mq.connectionFactory
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
@@ -57,7 +58,8 @@ data class JournaledReceivedSykmelding(val receivedSykmelding: ByteArray, val jo
 @DelicateCoroutinesApi
 fun main() {
     val env = Environment()
-    val vaultServiceUser = VaultServiceUser()
+    val serviceUser = ServiceUser()
+    MqTlsUtils.getMqTlsConfig().forEach { key, value -> System.setProperty(key as String, value as String) }
     val applicationState = ApplicationState()
     val applicationEngine = createApplicationEngine(
         env,
@@ -68,7 +70,7 @@ fun main() {
 
     DefaultExports.initialize()
 
-    launchListeners(env, applicationState, vaultServiceUser)
+    launchListeners(env, applicationState, serviceUser)
     applicationServer.start()
 }
 
@@ -89,10 +91,10 @@ fun createListener(applicationState: ApplicationState, action: suspend Coroutine
 fun launchListeners(
     env: Environment,
     applicationState: ApplicationState,
-    vaultServiceUser: VaultServiceUser
+    serviceUser: ServiceUser
 ) {
     createListener(applicationState) {
-        connectionFactory(env).createConnection(vaultServiceUser.serviceuserUsername, vaultServiceUser.serviceuserPassword).use { connection ->
+        connectionFactory(env).createConnection(serviceUser.serviceuserUsername, serviceUser.serviceuserPassword).use { connection ->
             connection.start()
             val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
             val arenaQueue = session.createQueue(env.arenaQueue)
