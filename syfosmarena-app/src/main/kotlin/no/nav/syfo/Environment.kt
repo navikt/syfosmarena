@@ -13,7 +13,7 @@ data class Environment(
     val privatArenaInputTopic: String = "teamsykmelding.privat-arena-input"
 ) : MqConfig
 
-data class VaultServiceUser(
+data class ServiceUser(
     val serviceuserUsername: String = getEnvVar("SERVICEUSER_USERNAME"),
     val serviceuserPassword: String = getEnvVar("SERVICEUSER_PASSWORD")
 )
