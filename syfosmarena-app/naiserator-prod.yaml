@@ -37,6 +37,7 @@ spec:
     enabled: false
   envFrom:
     - secret: syfosmarena-secrets
+    - secret: syfosmarena-keystore-pwd
   filesFrom:
     - mountPath: /var/run/keystore
       secret: syfosmarena-keystore
