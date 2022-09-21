@@ -49,7 +49,8 @@ class ArenaSykmeldingMappingSpek : FunSpec({
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
                 legeHprNr = null,
-                vedlegg = null
+                vedlegg = null,
+                utenlandskSykmelding = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -96,7 +97,8 @@ class ArenaSykmeldingMappingSpek : FunSpec({
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
                 legeHprNr = null,
-                vedlegg = null
+                vedlegg = null,
+                utenlandskSykmelding = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
@@ -143,7 +145,8 @@ class ArenaSykmeldingMappingSpek : FunSpec({
                 partnerreferanse = "",
                 legeHelsepersonellkategori = null,
                 legeHprNr = null,
-                vedlegg = null
+                vedlegg = null,
+                utenlandskSykmelding = null
             )
 
             val validationRuleChain = ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
