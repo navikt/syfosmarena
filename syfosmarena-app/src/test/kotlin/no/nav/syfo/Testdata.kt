@@ -1,6 +1,5 @@
 package no.nav.syfo
 
-import no.nav.syfo.diagnose.Kodeverk
 import no.nav.syfo.model.Adresse
 import no.nav.syfo.model.AktivitetIkkeMulig
 import no.nav.syfo.model.AnnenFraversArsak
@@ -114,9 +113,7 @@ fun generateMedisinskVurdering(
     annenFraversArsak = annenFraversArsak
 )
 
-fun generateDiagnose() = ICPC2.values()[Random.nextInt(ICPC2.values().size)].toDiagnose()
-
-fun Kodeverk.toDiagnose() = Diagnose(system = oid, kode = codeValue, tekst = text)
+fun generateDiagnose() = Diagnose(system = "2.16.578.1.12.4.1.1.7170", kode = "L87", tekst = "Bursitt/tendinitt/synovitt IKA")
 
 fun generatePeriode(
     fom: LocalDate = LocalDate.now(),
@@ -146,7 +143,7 @@ fun generateAktivitetIkkeMulig(
 
 fun generateArbeidsrelatertArsak(
     beskrivelse: String = "test data",
-    arsak: List<ArbeidsrelatertArsakType> = listOf(ArbeidsrelatertArsakType.values()[Random.nextInt(ICPC2.values().size)])
+    arsak: List<ArbeidsrelatertArsakType> = listOf(ArbeidsrelatertArsakType.values()[Random.nextInt(ArbeidsrelatertArsakType.values().size)])
 ) = ArbeidsrelatertArsak(
     beskrivelse = beskrivelse,
     arsak = arsak

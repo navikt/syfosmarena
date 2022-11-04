@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val artemisVersion = "2.21.0"
 val coroutinesVersion = "1.6.4"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val ibmMqVersion = "9.2.5.0"
@@ -18,8 +17,8 @@ val kluentVersion = "1.68"
 val ktorVersion = "2.1.1"
 val logbackVersion = "1.4.0"
 val logstashEncoderVersion = "7.2"
-val prometheusVersion = "0.15.0"
-val smCommonVersion = "1.069b5f9"
+val prometheusVersion = "0.16.0"
+val smCommonVersion = "1.ea531b3"
 val kotestVersion = "5.4.2"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -27,17 +26,16 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
-val infotrygdForespVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val kotlinVersion = "1.7.10"
+val kotlinVersion = "1.7.20"
 
 
 plugins {
     java
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     id("org.jmailen.kotlinter") version "3.10.0"
     id("com.diffplug.spotless") version "6.5.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -106,7 +104,6 @@ subprojects {
         implementation ("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
         implementation ("no.nav.helse.xml:arenaSykmelding-1:$arenaSykemdlingVersion")
-        implementation ("no.nav.helse.xml:infotrygd-foresp:$infotrygdForespVersion")
         implementation ("no.nav.helse.xml:sm2013:$sykmeldingVersion")
         implementation ("no.nav.helse.xml:xmlfellesformat:$fellesformatVersion")
         implementation ("no.nav.helse.xml:kith-hodemelding:$kithHodemeldingVersion")
@@ -123,8 +120,6 @@ subprojects {
         testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
             exclude(group = "org.eclipse.jetty") // conflicts with WireMock
         }
-        testImplementation ("org.apache.activemq:artemis-server:$artemisVersion")
-        testImplementation ("org.apache.activemq:artemis-jms-client:$artemisVersion")
     }
 
     tasks {
