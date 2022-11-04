@@ -1,4 +1,4 @@
-[![Build status](https://github.com/navikt/syfosmarena/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)](https://github.com/navikt/syfosminfotrygd/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)
+[![Build status](https://github.com/navikt/syfosmarena/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)](https://github.com/navikt/syfosmarena/workflows/Deploy%20to%20dev%20and%20prod/badge.svg)
 
 # SYFO sykemelding Arena
 Application for creating follow-up tasks in Arena
