@@ -50,28 +50,41 @@ Alternatively, the variables can be configured via environment variables:
 
 or the command line:
 
-```
+``` bash
 ./gradlew -PgithubUser=x-access-token -PgithubPassword=[token]
 ```
 
 ## Running locally
-`./gradlew run`
+``` bash
+./gradlew run
+```
 
 ### Building the application
 #### Compile and package application
-To build locally and run the integration tests you can simply run `./gradlew shadowJar` or on windows 
+To build locally and run the integration tests you can simply run 
+``` bash
+./gradlew shadowJar
+``` 
+or on windows 
 `gradlew.bat shadowJar`
 
 #### Creating a docker image
-Creating a docker image should be as simple as `docker build -t syfosmarena .`
+Creating a docker image should be as simple as 
+``` bash 
+docker build -t syfosmarena .
+```
 
 #### Running a docker image
-`docker run --rm -it -p 8080:8080 syfosmarena`
+``` bash 
+docker run --rm -it -p 8080:8080 syfosmarena
+```
 
 ### Upgrading the gradle wrapper
 Find the newest version of gradle here: https://gradle.org/releases/ Then run this command:
 
-```./gradlew wrapper --gradle-version $gradleVersjon```
+``` bash 
+./gradlew wrapper --gradle-version $gradleVersjon
+```
 
 ### Contact
 
