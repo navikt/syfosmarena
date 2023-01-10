@@ -7,7 +7,7 @@ Application for creating follow-up tasks in Arena
 * Kotlin
 * Ktor
 * Gradle
-* Kotest
+* Junit
 * Kafka
 * Mq
 
