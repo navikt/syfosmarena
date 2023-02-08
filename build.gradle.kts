@@ -13,11 +13,11 @@ val jacksonVersion = "2.14.1"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "3.2.3"
-val ktorVersion = "2.2.2"
+val ktorVersion = "2.2.3"
 val logbackVersion = "1.4.5"
 val logstashEncoderVersion = "7.2"
 val prometheusVersion = "0.16.0"
-val smCommonVersion = "1.1490275"
+val smCommonVersion = "1.fbf33a9"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
@@ -28,14 +28,14 @@ val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val kotlinVersion = "1.8.0"
+val kotlinVersion = "1.8.10"
 val junitJupiterVersion = "5.9.0"
 
 
 
 plugins {
     java
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.8.10"
     id("org.jmailen.kotlinter") version "3.10.0"
     id("com.diffplug.spotless") version "6.5.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
