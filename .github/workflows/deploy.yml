@@ -72,9 +72,9 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew :syfosmarena-app:shadowJar -x test
-      - name: docker-build-push
+      - name: app-docker-build-push
         uses: nais/docker-build-push@v0
-        id: docker-build-push
+        id: app-docker-build-push
         with:
           team: teamsykmelding
           dockerfile: syfosmarena-app/Dockerfile
@@ -82,7 +82,7 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
     outputs:
-      image: ${{ steps.docker-build-push.outputs.image }}
+      image: ${{ steps.app-docker-build-push.outputs.image }}
   deploy:
     name: Deploy to dev and prod
     runs-on: ubuntu-latest

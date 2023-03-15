@@ -102,7 +102,7 @@ fun startKafkaAivenStream(env: Environment, applicationState: ApplicationState) 
             // if the stream has died there is no reason to keep spinning
             log.error("Aiven: Closing stream because it went into error state")
             stream.close(Duration.ofSeconds(30))
-            log.error("Aiven: Restarter applikasjon")
+            log.error("Aiven: Restarter applikasjonen")
             applicationState.ready = false
             applicationState.alive = false
         }

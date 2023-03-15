@@ -159,7 +159,7 @@ suspend fun handleMessage(
         log.info("Rules hit {}, {}", results.map { it.name }, fields(loggingMeta))
 
         when (results.firstOrNull()) {
-            null -> log.info("Message is NOT sendt to arena {}", fields(loggingMeta))
+            null -> log.info("Message is NOT sendt to Arena {}", fields(loggingMeta))
             else -> sendArenaSykmelding(
                 arenaProducer, session,
                 createArenaSykmelding(receivedSykmelding, results, journaledReceivedSykmelding.journalpostId),
