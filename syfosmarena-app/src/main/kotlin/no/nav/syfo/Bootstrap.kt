@@ -183,7 +183,7 @@ fun sendArenaSykmelding(
     session.createTextMessage().apply {
         text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
         ARENA_EVENT_COUNTER.inc()
-        log.info("Message sendt to arena {}", fields(loggingMeta))
+        log.info("Message sendt to Arena {}", fields(loggingMeta))
     }
 )
 
