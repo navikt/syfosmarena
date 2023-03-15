@@ -76,7 +76,7 @@ fun startKafkaAivenStream(env: Environment, applicationState: ApplicationState) 
     inputStream.join(
         journalOpprettetStream,
         { sm2013, journalKafkaMessage ->
-            log.info("streamed to aiven")
+            log.info("streamed to Aiven")
             objectMapper.writeValueAsString(
                 JournaledReceivedSykmelding(
                     receivedSykmelding = sm2013.toByteArray(Charsets.UTF_8),
