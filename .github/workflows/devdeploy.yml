@@ -65,7 +65,9 @@ jobs:
         id: app-docker-build-push
         with:
           team: teamsykmelding
-          dockerfile: syfosmarena-app/Dockerfile
+          dockerfile: ./syfosmarena-app/Dockerfile
+          docker_context: syfosmarena-app
+          image_suffix: syfosmarena-app
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
 
