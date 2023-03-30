@@ -43,6 +43,14 @@ spec:
       secret: syfosmarena-keystore
   kafka:
     pool: nav-prod
+  accessPolicy:
+    outbound:
+      external:
+        - host: mpls03.adeo.no
+          ports:
+            - name: mq
+              port: 1414
+              protocol: TCP
   env:
     - name: MQ_HOST_NAME
       value: mpls03.adeo.no

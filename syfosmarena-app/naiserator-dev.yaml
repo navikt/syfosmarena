@@ -43,6 +43,14 @@ spec:
       secret: syfosmarena-keystore
   kafka:
     pool: nav-dev
+  accessPolicy:
+      outbound:
+        external:
+          - host: b27apvl221.preprod.local
+            ports:
+              - name: mq
+                port: 1413
+                protocol: TCP
   env:
     - name: MQ_HOST_NAME
       value: b27apvl221.preprod.local
