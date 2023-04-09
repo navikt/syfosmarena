@@ -22,7 +22,7 @@ val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
 val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
-val jaxbRuntimeVersion = "2.4.0-b180830.0438"
+val jaxbRuntimeVersion = "4.0.2"
 val arenaSykemdlingVersion = "2019.09.09-08-50-693492ddc1d3f98e70c1638c94dcb95a66036d12"
 val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
 val jaxbTimeAdaptersVersion = "1.1.3"
@@ -44,7 +44,7 @@ plugins {
 buildscript {
     dependencies {
         classpath("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-        classpath("org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438")
+        classpath("org.glassfish.jaxb:jaxb-runtime:4.0.2")
         classpath("com.sun.activation:javax.activation:1.2.0")
     }
 }
