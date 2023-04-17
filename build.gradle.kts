@@ -7,7 +7,7 @@ version = "1.0.0"
 
 val coroutinesVersion = "1.6.4"
 val fellesformatVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
-val ibmMqVersion = "9.2.5.0"
+val ibmMqVersion = "9.3.2.0"
 val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.14.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
