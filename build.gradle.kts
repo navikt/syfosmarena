@@ -52,9 +52,6 @@ buildscript {
 val githubUser: String by project
 val githubPassword: String by project
 
-allprojects {
-    group = "no.nav.syfo"
-    version = "1.0.0"
 
     repositories {
         mavenCentral()
@@ -66,9 +63,7 @@ allprojects {
             }
         }
     }
-}
-subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
+
 
     dependencies {
         implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
@@ -120,7 +115,6 @@ subprojects {
         testImplementation ("io.ktor:ktor-server-test-host:$ktorVersion") {
             exclude(group = "org.eclipse.jetty") // conflicts with WireMock
         }
-    }
 
     tasks {
         withType<Jar> {
