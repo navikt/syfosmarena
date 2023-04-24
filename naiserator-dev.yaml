@@ -1,0 +1,66 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: syfosmarena
+  namespace: teamsykmelding
+  labels:
+    team: teamsykmelding
+spec:
+  image: {{ image }}
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 90
+  port: 8080
+  liveness:
+    path: /internal/is_alive
+    initialDelay: 10
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/is_ready
+    initialDelay: 30
+    periodSeconds: 5
+    timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1792Mi
+    requests:
+      cpu: 200m
+      memory: 1024Mi
+  vault:
+    enabled: false
+  envFrom:
+    - secret: syfosmarena-secrets
+    - secret: syfosmarena-keystore-pwd
+  filesFrom:
+    - mountPath: /var/run/keystore
+      secret: syfosmarena-keystore
+  kafka:
+    pool: nav-dev
+  accessPolicy:
+      outbound:
+        external:
+          - host: b27apvl221.preprod.local
+            ports:
+              - name: mq
+                port: 1413
+                protocol: TCP
+  env:
+    - name: MQ_HOST_NAME
+      value: b27apvl221.preprod.local
+    - name: MQ_PORT
+      value: '1413'
+    - name: MQ_GATEWAY_NAME
+      value: MQLS03
+    - name: MQ_CHANNEL_NAME
+      value: Q1_SYFOSMARENA
+    - name: MQ_ARENA_QUEUE
+      value: QA.Q1_414.FS06_ARENA
+    - name: MQ_KEYSTORE_PATH
+      value: /var/run/keystore/syfosmarena-keystore.jks
