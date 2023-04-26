@@ -28,7 +28,7 @@ val sykmeldingVersion = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kithHodemeldingVersion = "2019.07.30-12-26-5c924ef4f04022bbb850aaf299eb8e4464c1ca6a"
 val kontrollsystemblokk = "2019.07.29-02-53-86b22e73f7843e422ee500b486dac387a582f2d1"
-val kotlinVersion = "1.8.20"
+val kotlinVersion = "1.8.21"
 val junitJupiterVersion = "5.9.3"
 
 
