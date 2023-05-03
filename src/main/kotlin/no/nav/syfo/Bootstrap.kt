@@ -14,7 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.logstash.logback.argument.StructuredArguments.fields
-import no.nav.helse.arenaSykemelding.ArenaSykmelding
+import no.nav.helse.arena.sykemelding.ArenaSykmelding
 import no.nav.helse.eiFellesformat.XMLEIFellesformat
 import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState

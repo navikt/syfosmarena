@@ -1,18 +1,18 @@
 package no.nav.syfo.arena
 
-import no.nav.helse.arenaSykemelding.ArenaSykmelding
-import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
-import no.nav.helse.arenaSykemelding.HendelseType
-import no.nav.helse.arenaSykemelding.LegeType
-import no.nav.helse.arenaSykemelding.MerknadType
-import no.nav.helse.arenaSykemelding.PasientDataType
-import no.nav.helse.arenaSykemelding.PersonType
+import no.nav.helse.arena.sykemelding.ArenaSykmelding
+import no.nav.helse.arena.sykemelding.EiaDokumentInfoType
+import no.nav.helse.arena.sykemelding.HendelseType
+import no.nav.helse.arena.sykemelding.LegeType
+import no.nav.helse.arena.sykemelding.MerknadType
+import no.nav.helse.arena.sykemelding.PasientDataType
+import no.nav.helse.arena.sykemelding.PersonType
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.rules.Rule
 
 fun createArenaSykmelding(receivedSykmelding: ReceivedSykmelding, ruleResults: List<Rule<Any>>, journalpostid: String): ArenaSykmelding = ArenaSykmelding().apply {
     eiaDokumentInfo = EiaDokumentInfoType().apply {
-        dokumentInfo = no.nav.helse.arenaSykemelding.DokumentInfoType().apply {
+        dokumentInfo = no.nav.helse.arena.sykemelding.DokumentInfoType().apply {
             dokumentType = "SM2"
             dokumentTypeVersjon = "1.0"
             dokumentreferanse = receivedSykmelding.msgId
