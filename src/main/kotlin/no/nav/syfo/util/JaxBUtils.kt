@@ -1,7 +1,7 @@
 package no.nav.syfo.util
 
-import no.nav.helse.arenaSykemelding.ArenaSykmelding
-import no.nav.helse.arenaSykemelding.EiaDokumentInfoType
+import no.nav.helse.arena.sykemelding.ArenaSykmelding
+import no.nav.helse.arena.sykemelding.EiaDokumentInfoType
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
 
