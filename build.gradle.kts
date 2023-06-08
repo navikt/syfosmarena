@@ -24,7 +24,7 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
-val kotlinVersion = "1.8.21"
+val kotlinVersion = "1.8.22"
 val junitJupiterVersion = "5.9.3"
 
 
