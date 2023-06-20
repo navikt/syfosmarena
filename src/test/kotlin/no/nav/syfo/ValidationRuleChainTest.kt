@@ -1,5 +1,7 @@
 package no.nav.syfo
 
+import java.time.LocalDate
+import java.time.LocalDateTime
 import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
@@ -8,8 +10,6 @@ import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 internal class ValidationRuleChainTest {
     @Test
@@ -17,20 +17,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusMonths(3).plusDays(1),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusMonths(3).plusDays(1),
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -48,20 +51,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, ruleMetadata: RuleMetadata) =
             RuleData(healthInformation, ruleMetadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusMonths(3),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusMonths(3),
+                        ),
+                    ),
+            )
 
-        val ruleMetadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val ruleMetadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             false,
@@ -79,20 +85,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(92),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(92),
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -110,20 +119,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(91),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(91),
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             false,
@@ -141,21 +153,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now(),
-                    reisetilskudd = true,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now(),
+                            reisetilskudd = true,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
         assertEquals(
             true,
             ValidationRuleChain.TRAVEL_SUBSIDY_SPECIFIED(ruleData(healthInformation, metadata)),
@@ -167,21 +182,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now(),
-                    reisetilskudd = false,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now(),
+                            reisetilskudd = false,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             false,
@@ -194,13 +212,15 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(meldingTilArbeidsgiver = "Han trenger nav ytelser")
+        val healthInformation =
+            generateSykmelding(meldingTilArbeidsgiver = "Han trenger nav ytelser")
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -215,11 +235,12 @@ internal class ValidationRuleChainTest {
 
         val healthInformation = generateSykmelding()
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             false,
@@ -232,21 +253,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(57),
-                    reisetilskudd = false,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(57),
+                            reisetilskudd = false,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -264,21 +288,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(56),
-                    reisetilskudd = false,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(56),
+                            reisetilskudd = false,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             false,
@@ -296,21 +323,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(50),
-                    reisetilskudd = false,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(50),
+                            reisetilskudd = false,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "2",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2",
+            )
 
         assertEquals(
             true,
@@ -328,21 +358,24 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            perioder = listOf(
-                generatePeriode(
-                    fom = LocalDate.now(),
-                    tom = LocalDate.now().plusDays(49),
-                    reisetilskudd = false,
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                perioder =
+                    listOf(
+                        generatePeriode(
+                            fom = LocalDate.now(),
+                            tom = LocalDate.now().plusDays(49),
+                            reisetilskudd = false,
+                        ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "2",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2",
+            )
 
         assertEquals(
             false,
@@ -360,16 +393,17 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            meldingTilNAV =
-            MeldingTilNAV(bistandUmiddelbart = true, beskrivBistand = ""),
-        )
+        val healthInformation =
+            generateSykmelding(
+                meldingTilNAV = MeldingTilNAV(bistandUmiddelbart = true, beskrivBistand = ""),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "2",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2",
+            )
 
         assertEquals(
             true,
@@ -387,16 +421,18 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            meldingTilNAV =
-            MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = "Melding til NAV"),
-        )
+        val healthInformation =
+            generateSykmelding(
+                meldingTilNAV =
+                    MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = "Melding til NAV"),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "2",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2",
+            )
 
         assertEquals(
             true,
@@ -414,16 +450,17 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            meldingTilNAV =
-            MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = ""),
-        )
+        val healthInformation =
+            generateSykmelding(
+                meldingTilNAV = MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = ""),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "2",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "2",
+            )
 
         assertEquals(
             false,
@@ -441,19 +478,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            utdypendeOpplysninger = mapOf(
-                "6.1" to mapOf(
-                    "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                utdypendeOpplysninger =
+                    mapOf(
+                        "6.1" to
+                            mapOf(
+                                "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
+                            ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -468,11 +509,12 @@ internal class ValidationRuleChainTest {
 
         val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf())
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
         assertEquals(
             false,
             ValidationRuleChain.DYNAMIC_QUESTIONS(ruleData(healthInformation, metadata)),
@@ -486,11 +528,12 @@ internal class ValidationRuleChainTest {
 
         val healthInformation = generateSykmelding(andreTiltak = "han trenget tiltak")
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
 
         assertEquals(
             true,
@@ -505,11 +548,12 @@ internal class ValidationRuleChainTest {
 
         val healthInformation = generateSykmelding()
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
         assertEquals(
             false,
             ValidationRuleChain.MEASURES_OTHER_OR_NAV(ruleData(healthInformation, metadata)),
@@ -521,19 +565,23 @@ internal class ValidationRuleChainTest {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
 
-        val healthInformation = generateSykmelding(
-            utdypendeOpplysninger = mapOf(
-                "6.6" to mapOf(
-                    "6.6.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                ),
-            ),
-        )
+        val healthInformation =
+            generateSykmelding(
+                utdypendeOpplysninger =
+                    mapOf(
+                        "6.6" to
+                            mapOf(
+                                "6.6.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
+                            ),
+                    ),
+            )
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
         assertEquals(
             true,
             ValidationRuleChain.DYNAMIC_QUESTIONS_AAP(ruleData(healthInformation, metadata)),
@@ -547,11 +595,12 @@ internal class ValidationRuleChainTest {
 
         val healthInformation = generateSykmelding(utdypendeOpplysninger = mapOf())
 
-        val metadata = RuleMetadata(
-            signatureDate = LocalDateTime.now(),
-            receivedDate = LocalDateTime.now(),
-            rulesetVersion = "1",
-        )
+        val metadata =
+            RuleMetadata(
+                signatureDate = LocalDateTime.now(),
+                receivedDate = LocalDateTime.now(),
+                rulesetVersion = "1",
+            )
         assertEquals(
             false,
             ValidationRuleChain.DYNAMIC_QUESTIONS_AAP(ruleData(healthInformation, metadata)),
