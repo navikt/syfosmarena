@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.7.1"
+val coroutinesVersion = "1.7.2"
 val syfoXmlCodeGenVersion = "1.0.4"
 val ibmMqVersion = "9.3.3.0"
 val javaxActivationVersion = "1.1.1"
