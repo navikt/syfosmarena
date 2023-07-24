@@ -25,7 +25,7 @@ val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
 val kotlinVersion = "1.9.0"
-val junitJupiterVersion = "5.9.3"
+val junitJupiterVersion = "5.10.0"
 val ktfmtVersion = "0.44"
 
 
