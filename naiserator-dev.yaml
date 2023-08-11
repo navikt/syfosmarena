@@ -71,4 +71,4 @@ spec:
     - name: MQ_KEYSTORE_PATH
       value: /var/run/keystore/syfosmarena-keystore.jks
     - name: SMTSS_API_SCOPE
-      value: api://prod-gcp.teamsykmelding.smtss/.default
+      value: api://dev-gcp.teamsykmelding.smtss/.default
