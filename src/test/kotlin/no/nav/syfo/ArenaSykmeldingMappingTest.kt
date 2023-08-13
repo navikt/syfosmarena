@@ -67,6 +67,7 @@ internal class ArenaSykmeldingMappingTest {
                     receivedSykmelding,
                     results,
                     "12355234",
+                    "",
                 )
                 .eiaDokumentInfo
                 .dokumentInfo
@@ -124,11 +125,7 @@ internal class ArenaSykmeldingMappingTest {
 
         assertEquals(
             "UTFORT",
-            createArenaSykmelding(
-                    receivedSykmelding,
-                    results,
-                    "12355234",
-                )
+            createArenaSykmelding(receivedSykmelding, results, "12355234", "")
                 .arenaHendelse
                 .hendelse
                 .first()
@@ -190,6 +187,7 @@ internal class ArenaSykmeldingMappingTest {
                     receivedSykmelding,
                     results,
                     "12355234",
+                    "",
                 )
                 .eiaDokumentInfo
                 .avsender

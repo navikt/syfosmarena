@@ -25,6 +25,8 @@ import no.nav.syfo.application.ApplicationServer
 import no.nav.syfo.application.ApplicationState
 import no.nav.syfo.application.createApplicationEngine
 import no.nav.syfo.arena.createArenaSykmelding
+import no.nav.syfo.client.HttpClients
+import no.nav.syfo.client.SmtssClient
 import no.nav.syfo.kafka.aiven.KafkaUtils
 import no.nav.syfo.kafka.toConsumerConfig
 import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
@@ -127,11 +129,14 @@ fun launchListeners(
                     )
                 kafkaAivenConsumer.subscribe(listOf(env.privatArenaInputTopic))
 
+                val httpClients = HttpClients(env)
+
                 blockingApplicationLogic(
                     applicationState,
                     kafkaAivenConsumer,
                     arenaProducer,
-                    session
+                    session,
+                    httpClients.smtssClient
                 )
             }
     }
@@ -142,6 +147,7 @@ suspend fun blockingApplicationLogic(
     kafkaAivenConsumer: KafkaConsumer<String, String>,
     arenaProducer: MessageProducer,
     session: Session,
+    smtssClient: SmtssClient,
 ) {
     while (applicationState.ready) {
         kafkaAivenConsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
@@ -162,7 +168,8 @@ suspend fun blockingApplicationLogic(
                 arenaProducer,
                 session,
                 loggingMeta,
-                "aiven"
+                "aiven",
+                smtssClient
             )
         }
         delay(1)
@@ -176,9 +183,18 @@ suspend fun handleMessage(
     session: Session,
     loggingMeta: LoggingMeta,
     source: String,
+    smtssClient: SmtssClient,
 ) {
     wrapExceptions(loggingMeta) {
         log.info("Received a SM2013 from $source, going to Arena rules {}", fields(loggingMeta))
+
+        val tssId =
+            smtssClient.findBestTssIdArena(
+                receivedSykmelding.personNrLege,
+                receivedSykmelding.legekontorOrgName,
+                loggingMeta,
+                receivedSykmelding.sykmelding.id
+            )
 
         val validationRuleResults =
             ValidationRuleChain.values()
@@ -204,7 +220,8 @@ suspend fun handleMessage(
                     createArenaSykmelding(
                         receivedSykmelding,
                         results,
-                        journaledReceivedSykmelding.journalpostId
+                        journaledReceivedSykmelding.journalpostId,
+                        tssId
                     ),
                     loggingMeta,
                 )

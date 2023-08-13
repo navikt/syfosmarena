@@ -43,8 +43,14 @@ spec:
       secret: syfosmarena-keystore
   kafka:
     pool: nav-dev
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
   accessPolicy:
       outbound:
+        rules:
+          - application: smtss
         external:
           - host: b27apvl221.preprod.local
             ports:
@@ -64,3 +70,5 @@ spec:
       value: QA.Q1_414.FS06_ARENA
     - name: MQ_KEYSTORE_PATH
       value: /var/run/keystore/syfosmarena-keystore.jks
+    - name: SMTSS_API_SCOPE
+      value: api://dev-gcp.teamsykmelding.smtss/.default

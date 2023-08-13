@@ -13,7 +13,8 @@ import no.nav.syfo.rules.Rule
 fun createArenaSykmelding(
     receivedSykmelding: ReceivedSykmelding,
     ruleResults: List<Rule<Any>>,
-    journalpostid: String
+    journalpostid: String,
+    tssIdArena: String?
 ): ArenaSykmelding =
     ArenaSykmelding().apply {
         eiaDokumentInfo =
@@ -37,9 +38,9 @@ fun createArenaSykmelding(
                             LegeType().apply {
                                 legeFnr = receivedSykmelding.personNrLege
                                 tssId =
-                                    when (receivedSykmelding.tssid.isNullOrBlank()) {
+                                    when (tssIdArena.isNullOrBlank()) {
                                         true -> "0".toBigInteger()
-                                        else -> receivedSykmelding.tssid?.toBigInteger()
+                                        else -> tssIdArena.toBigInteger()
                                     }
                             }
                     }

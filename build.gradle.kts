@@ -30,7 +30,6 @@ val ktfmtVersion = "0.44"
 
 
 plugins {
-    java
     kotlin("jvm") version "1.9.0"
     id("com.diffplug.spotless") version "6.20.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -67,6 +66,10 @@ val githubPassword: String by project
         implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
         implementation ("io.prometheus:simpleclient_hotspot:$prometheusVersion")
         implementation ("io.prometheus:simpleclient_common:$prometheusVersion")
+
+        implementation("io.ktor:ktor-client-core:$ktorVersion")
+        implementation("io.ktor:ktor-client-apache:$ktorVersion")
+        implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 
         implementation ("io.ktor:ktor-server-core:$ktorVersion")
         implementation ("io.ktor:ktor-server-netty:$ktorVersion")
