@@ -141,10 +141,6 @@ val githubPassword: String by project
             }
         }
 
-        withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = "17"
-        }
-
         spotless {
             kotlin { ktfmt(ktfmtVersion).kotlinlangStyle() }
             check {
