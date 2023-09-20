@@ -7,7 +7,7 @@ version = "1.0.0"
 
 val coroutinesVersion = "1.7.3"
 val syfoXmlCodeGenVersion = "1.0.4"
-val ibmMqVersion = "9.3.3.0"
+val ibmMqVersion = "9.3.3.1"
 val javaxActivationVersion = "1.1.1"
 val jacksonVersion = "2.15.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
