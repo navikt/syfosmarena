@@ -120,7 +120,7 @@ fun launchListeners(
 
                 val kafkaAivenConsumer =
                     KafkaConsumer<String, String>(
-                        KafkaUtils.getAivenKafkaConfig()
+                        KafkaUtils.getAivenKafkaConfig("private-arena-consumer")
                             .toConsumerConfig(
                                 "${env.applicationName}-consumer",
                                 valueDeserializer = StringDeserializer::class
