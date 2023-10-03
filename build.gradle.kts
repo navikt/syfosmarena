@@ -24,7 +24,7 @@ val kotlinVersion = "1.9.10"
 val junitJupiterVersion = "5.10.0"
 val ktfmtVersion = "0.44"
 val commonsCodecVersion = "1.16.0"
-
+val snappyJavaVersion = "1.1.10.5"
 
 plugins {
     id("application")
@@ -83,6 +83,11 @@ dependencies {
     implementation("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
 
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
+    constraints {
+        implementation("org.xerial.snappy:snappy-java:$snappyJavaVersion") {
+            because("override transient from org.apache.kafka:kafka_2.12")
+        }
+    }
     implementation("org.apache.kafka:kafka-streams:$kafkaVersion")
 
     implementation("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:$jacksonVersion")
