@@ -25,6 +25,7 @@ val junitJupiterVersion = "5.10.0"
 val ktfmtVersion = "0.44"
 val commonsCodecVersion = "1.16.0"
 val snappyJavaVersion = "1.1.10.5"
+val jsonVersion = "20231013"
 
 plugins {
     id("application")
@@ -81,6 +82,11 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
     implementation("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
+    constraints {
+        implementation("org.json:json:$jsonVersion") {
+            because("override transient from com.ibm.mq:com.ibm.mq.allclient")
+        }
+    }
 
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
     constraints {
