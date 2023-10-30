@@ -2,7 +2,6 @@ package no.nav.syfo
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import no.nav.syfo.model.MeldingTilNAV
 import no.nav.syfo.model.SporsmalSvar
 import no.nav.syfo.model.Sykmelding
 import no.nav.syfo.rules.RuleData
@@ -380,91 +379,6 @@ internal class ValidationRuleChainTest {
         assertEquals(
             false,
             ValidationRuleChain.PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
-            ),
-        )
-    }
-
-    @Test
-    internal fun `Should check rule MESSAGE_TO_NAV, should trigger rule`() {
-        fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
-            RuleData(healthInformation, metadata)
-
-        val healthInformation =
-            generateSykmelding(
-                meldingTilNAV = MeldingTilNAV(bistandUmiddelbart = true, beskrivBistand = ""),
-            )
-
-        val metadata =
-            RuleMetadata(
-                signatureDate = LocalDateTime.now(),
-                receivedDate = LocalDateTime.now(),
-                rulesetVersion = "2",
-            )
-
-        assertEquals(
-            true,
-            ValidationRuleChain.MESSAGE_TO_NAV(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
-            ),
-        )
-    }
-
-    @Test
-    internal fun `Trigger MESSAGE_TO_NAV hvis melding er satt`() {
-        fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
-            RuleData(healthInformation, metadata)
-
-        val healthInformation =
-            generateSykmelding(
-                meldingTilNAV =
-                    MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = "Melding til NAV"),
-            )
-
-        val metadata =
-            RuleMetadata(
-                signatureDate = LocalDateTime.now(),
-                receivedDate = LocalDateTime.now(),
-                rulesetVersion = "2",
-            )
-
-        assertEquals(
-            true,
-            ValidationRuleChain.MESSAGE_TO_NAV(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
-            ),
-        )
-    }
-
-    @Test
-    internal fun `Should check rule MESSAGE_TO_NAV, should NOT trigger rule`() {
-        fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
-            RuleData(healthInformation, metadata)
-
-        val healthInformation =
-            generateSykmelding(
-                meldingTilNAV = MeldingTilNAV(bistandUmiddelbart = false, beskrivBistand = ""),
-            )
-
-        val metadata =
-            RuleMetadata(
-                signatureDate = LocalDateTime.now(),
-                receivedDate = LocalDateTime.now(),
-                rulesetVersion = "2",
-            )
-
-        assertEquals(
-            false,
-            ValidationRuleChain.MESSAGE_TO_NAV(
                 ruleData(
                     healthInformation,
                     metadata,

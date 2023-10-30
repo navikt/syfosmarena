@@ -86,20 +86,6 @@ enum class ValidationRuleChain(
         },
     ),
     @Description(
-        "Hvis sykmeldingen inneholder melding fra behandler skal meldingen til oppfølging i Arena."
-    )
-    MESSAGE_TO_NAV(
-        1616,
-        ArenaHendelseType.MELDING_FRA_BEHANDLER,
-        ArenaHendelseStatus.PLANLAGT,
-        "Melding fra behandler",
-        { (sykmelding, _) ->
-            sykmelding.meldingTilNAV != null &&
-                (sykmelding.meldingTilNAV!!.bistandUmiddelbart ||
-                    !sykmelding.meldingTilNAV!!.beskrivBistand.isNullOrEmpty())
-        },
-    ),
-    @Description(
         "Hvis utdypende opplysninger om medisinske er oppgitt ved 7/8, 17, 39 uker settes merknad"
     )
     DYNAMIC_QUESTIONS(

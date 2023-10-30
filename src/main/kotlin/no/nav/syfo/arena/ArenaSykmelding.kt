@@ -75,7 +75,6 @@ fun Rule<Any>.toHendelse(receivedSykmelding: ReceivedSykmelding) =
         meldingFraLege =
             when (ruleId) {
                 1609 -> receivedSykmelding.sykmelding.meldingTilArbeidsgiver
-                1616 -> receivedSykmelding.sykmelding.meldingTilNAV?.beskrivBistand
                 1618 -> receivedSykmelding.sykmelding.andreTiltak
                 else -> ""
             }
