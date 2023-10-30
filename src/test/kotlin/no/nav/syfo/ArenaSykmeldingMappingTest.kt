@@ -58,7 +58,8 @@ internal class ArenaSykmeldingMappingTest {
             )
 
         val validationRuleChain =
-            ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
+            ValidationRuleChain.entries.toTypedArray()
+                .executeFlow(receivedSykmelding.sykmelding, metadata)
         val results = listOf(validationRuleChain).flatten()
 
         assertEquals(
@@ -120,7 +121,8 @@ internal class ArenaSykmeldingMappingTest {
             )
 
         val validationRuleChain =
-            ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
+            ValidationRuleChain.entries.toTypedArray()
+                .executeFlow(receivedSykmelding.sykmelding, metadata)
         val results = listOf(validationRuleChain).flatten()
 
         assertEquals(
@@ -178,7 +180,8 @@ internal class ArenaSykmeldingMappingTest {
             )
 
         val validationRuleChain =
-            ValidationRuleChain.values().executeFlow(receivedSykmelding.sykmelding, metadata)
+            ValidationRuleChain.entries.toTypedArray()
+                .executeFlow(receivedSykmelding.sykmelding, metadata)
         val results = listOf(validationRuleChain).flatten()
 
         assertEquals(
