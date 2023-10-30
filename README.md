@@ -22,9 +22,9 @@ This the high level flow of the application and is manually!!!
   graph LR
       syfosmarena-stream --> A[\teamsykmelding.privat-arena-input/]
       A[\teamsykmelding.privat-arena-input/] --> syfosmarena
-      syfosmarena --- arena
-      syfosmarena --- smtss
-      syfosmarena --- Azure-AD
+      syfosmarena ---> arena
+      syfosmarena <---> smtss
+      syfosmarena <---> Azure-AD
 ```
 
 ## Getting started
