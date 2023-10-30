@@ -14,6 +14,18 @@ Application for creating follow-up tasks in Arena
 #### Requirements
 
 * JDK 17
+* 
+## FlowChart
+This the high level flow of the application and is manually!!!
+
+```mermaid
+  graph LR
+      syfosmarena-stream --> A[\teamsykmelding.privat-arena-input/]
+      A[\teamsykmelding.privat-arena-input/] --> syfosmarena
+      syfosmarena --- arena
+      syfosmarena --- smtss
+      syfosmarena --- Azure-AD
+```
 
 ## Getting started
 ## Running locally
