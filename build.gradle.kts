@@ -39,14 +39,6 @@ application {
 }
 
 
-buildscript {
-    dependencies {
-        classpath("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
-        classpath("org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438")
-        classpath("com.sun.activation:javax.activation:1.2.0")
-    }
-}
-
 repositories {
     mavenCentral()
     maven {

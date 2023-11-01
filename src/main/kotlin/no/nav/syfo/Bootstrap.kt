@@ -197,7 +197,8 @@ suspend fun handleMessage(
             )
 
         val validationRuleResults =
-            ValidationRuleChain.values()
+            ValidationRuleChain.entries
+                .toTypedArray()
                 .executeFlow(
                     receivedSykmelding.sykmelding,
                     RuleMetadata(
