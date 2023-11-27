@@ -10,7 +10,7 @@ val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "3.6.0"
 val ktorVersion = "2.3.6"
-val logbackVersion = "1.4.11"
+val logbackVersion = "1.4.12"
 val logstashEncoderVersion = "7.4"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "2.0.6"
@@ -20,7 +20,7 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
-val kotlinVersion = "1.9.20"
+val kotlinVersion = "1.9.21"
 val junitJupiterVersion = "5.10.1"
 val ktfmtVersion = "0.44"
 val commonsCodecVersion = "1.16.0"
@@ -29,8 +29,8 @@ val jsonVersion = "20231013"
 
 plugins {
     id("application")
-    kotlin("jvm") version "1.9.20"
-    id("com.diffplug.spotless") version "6.22.0"
+    kotlin("jvm") version "1.9.21"
+    id("com.diffplug.spotless") version "6.23.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
