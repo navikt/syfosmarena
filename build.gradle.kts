@@ -10,7 +10,7 @@ val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "3.6.0"
 val ktorVersion = "2.3.6"
-val logbackVersion = "1.4.12"
+val logbackVersion = "1.4.14"
 val logstashEncoderVersion = "7.4"
 val prometheusVersion = "0.16.0"
 val smCommonVersion = "2.0.6"
@@ -30,7 +30,7 @@ val jsonVersion = "20231013"
 plugins {
     id("application")
     kotlin("jvm") version "1.9.21"
-    id("com.diffplug.spotless") version "6.23.2"
+    id("com.diffplug.spotless") version "6.23.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
