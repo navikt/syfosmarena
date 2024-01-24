@@ -51,9 +51,7 @@ spec:
       external:
         - host: mpls03.adeo.no
           ports:
-            - name: mq
-              port: 1414
-              protocol: TCP
+            - port: 1414
   env:
     - name: MQ_HOST_NAME
       value: mpls03.adeo.no
