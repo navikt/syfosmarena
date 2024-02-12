@@ -23,9 +23,9 @@ val jaxbTimeAdaptersVersion = "1.1.3"
 val kotlinVersion = "1.9.22"
 val junitJupiterVersion = "5.10.2"
 val ktfmtVersion = "0.44"
-val commonsCodecVersion = "1.16.0"
+val commonsCodecVersion = "1.16.1"
 val snappyJavaVersion = "1.1.10.5"
-val jsonVersion = "20231013"
+val jsonVersion = "20240205"
 
 plugins {
     id("application")
