@@ -96,7 +96,6 @@ dependencies {
     implementation("no.nav.helse:syfosm-common-models:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-kafka:$smCommonVersion")
     implementation("no.nav.helse:syfosm-common-mq:$smCommonVersion")
-    implementation("no.nav.helse:syfosm-common-diagnosis-codes:$smCommonVersion")
 
     implementation("no.nav.helse.xml:arena-sykmelding-1:$syfoXmlCodeGenVersion")
     implementation("no.nav.helse.xml:sm2013:$syfoXmlCodeGenVersion")
