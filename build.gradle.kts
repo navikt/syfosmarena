@@ -20,16 +20,16 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
-val kotlinVersion = "2.0.0"
+val kotlinVersion = "2.0.10"
 val junitJupiterVersion = "5.10.3"
 val ktfmtVersion = "0.44"
 val commonsCodecVersion = "1.17.1"
-val snappyJavaVersion = "1.1.10.5"
+val snappyJavaVersion = "1.1.10.6"
 val jsonVersion = "20240303"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.10"
     id("com.diffplug.spotless") version "6.25.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
