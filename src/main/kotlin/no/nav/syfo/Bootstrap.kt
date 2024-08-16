@@ -7,10 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.prometheus.client.hotspot.DefaultExports
+import jakarta.jms.MessageProducer
+import jakarta.jms.Session
 import java.io.StringWriter
 import java.time.Duration
-import javax.jms.MessageProducer
-import javax.jms.Session
 import javax.xml.bind.Marshaller
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi

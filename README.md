@@ -11,9 +11,14 @@ Application for creating follow-up tasks in Arena
 * Kafka
 * Mq
 
-#### Requirements
+### Prerequisites
+* JDK 21
 
-* JDK 17
+Make sure you have the Java JDK 21 installed
+You can check which version you have installed using this command:
+``` bash
+java -version
+```
 
 ## FlowChart
 This the high level flow of the application and is manually!!!

@@ -24,17 +24,18 @@ val junitJupiterVersion = "5.10.3"
 val ktfmtVersion = "0.44"
 val commonsCodecVersion = "1.17.1"
 val snappyJavaVersion = "1.1.10.6"
-val jsonVersion = "20240303"
 
 plugins {
     id("application")
     kotlin("jvm") version "2.0.10"
     id("com.diffplug.spotless") version "6.25.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-}
+    id("com.gradleup.shadow") version "8.3.0"}
 
 application {
-    mainClass.set("no.nav.syfo.BootstrapKt")
+    mainClass.set("no.nav.syfo.ApplicationKt")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 
@@ -72,12 +73,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
 
-    implementation("com.ibm.mq:com.ibm.mq.allclient:$ibmMqVersion")
-    constraints {
-        implementation("org.json:json:$jsonVersion") {
-            because("override transient from com.ibm.mq:com.ibm.mq.allclient")
-        }
-    }
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:$ibmMqVersion")
+
 
     implementation("org.apache.kafka:kafka_2.12:$kafkaVersion")
     constraints {
