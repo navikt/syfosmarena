@@ -42,10 +42,6 @@ spec:
       memory: 1024Mi
   envFrom:
     - secret: syfosmarena-secrets
-    - secret: syfosmarena-keystore-pwd
-  filesFrom:
-    - mountPath: /var/run/keystore
-      secret: syfosmarena-keystore
   kafka:
     pool: nav-prod
   azure:
@@ -71,7 +67,5 @@ spec:
       value: P_SYFOSMARENA
     - name: MQ_ARENA_QUEUE
       value: QA.P414.FS06_ARENA
-    - name: MQ_KEYSTORE_PATH
-      value: /var/run/keystore/syfosmarena-keystore.jks
     - name: SMTSS_API_SCOPE
       value: api://prod-gcp.teamsykmelding.smtss/.default
