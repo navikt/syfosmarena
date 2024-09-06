@@ -33,6 +33,7 @@ import no.nav.syfo.metrics.ARENA_EVENT_COUNTER
 import no.nav.syfo.model.ReceivedSykmelding
 import no.nav.syfo.mq.MqTlsUtils
 import no.nav.syfo.mq.connectionFactory
+import no.nav.syfo.mq.producerForQueue
 import no.nav.syfo.rules.RuleMetadata
 import no.nav.syfo.rules.ValidationRuleChain
 import no.nav.syfo.rules.executeFlow
@@ -115,8 +116,7 @@ fun launchListeners(
             .use { connection ->
                 connection.start()
                 val session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)
-                val arenaQueue = session.createQueue(env.arenaQueue)
-                val arenaProducer = session.createProducer(arenaQueue)
+                val arenaProducer = session.producerForQueue(env.arenaQueue)
 
                 val kafkaAivenConsumer =
                     KafkaConsumer<String, String>(
