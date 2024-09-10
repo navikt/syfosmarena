@@ -38,8 +38,8 @@ spec:
     limits:
       memory: 1792Mi
     requests:
-      cpu: 200m
-      memory: 1024Mi
+      cpu: 50m
+      memory: 512Mi
   envFrom:
     - secret: syfosmarena-secrets
   kafka:
