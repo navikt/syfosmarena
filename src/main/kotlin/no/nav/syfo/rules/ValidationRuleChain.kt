@@ -95,18 +95,6 @@ enum class ValidationRuleChain(
         "Utdypende opplysninger foreligger.",
         { (sykmelding, _) -> !sykmelding.utdypendeOpplysninger.isEmpty() },
     ),
-    @Description(
-        "Hvis sykmeldingen inneholer tiltakNAV eller andreTiltak, så skal merknad lages og hendelse sendes til Arena"
-    )
-    MEASURES_OTHER_OR_NAV(
-        1618,
-        ArenaHendelseType.INFORMASJON_FRA_SYKMELDING,
-        ArenaHendelseStatus.PLANLAGT,
-        "Informasjon fra behandler til NAV. Åpne dokumentet for å se behandlers innspill til NAV.",
-        { (sykmelding, _) ->
-            sykmelding.tiltakNAV != null || !sykmelding.andreTiltak.isNullOrBlank()
-        },
-    ),
     @Description("Hvis utdypende opplysninger foreligger og pasienten søker om AAP")
     DYNAMIC_QUESTIONS_AAP(
         1620,
