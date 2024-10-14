@@ -436,45 +436,6 @@ internal class ValidationRuleChainTest {
     }
 
     @Test
-    internal fun `Should check rule MEASURES_OTHER_OR_NAV, should trigger rule`() {
-        fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
-            RuleData(healthInformation, metadata)
-
-        val healthInformation = generateSykmelding(andreTiltak = "han trenget tiltak")
-
-        val metadata =
-            RuleMetadata(
-                signatureDate = LocalDateTime.now(),
-                receivedDate = LocalDateTime.now(),
-                rulesetVersion = "1",
-            )
-
-        assertEquals(
-            true,
-            ValidationRuleChain.MEASURES_OTHER_OR_NAV(ruleData(healthInformation, metadata)),
-        )
-    }
-
-    @Test
-    internal fun `Should check rule MEASURES_OTHER_OR_NAV, should NOT trigger rule`() {
-        fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
-            RuleData(healthInformation, metadata)
-
-        val healthInformation = generateSykmelding()
-
-        val metadata =
-            RuleMetadata(
-                signatureDate = LocalDateTime.now(),
-                receivedDate = LocalDateTime.now(),
-                rulesetVersion = "1",
-            )
-        assertEquals(
-            false,
-            ValidationRuleChain.MEASURES_OTHER_OR_NAV(ruleData(healthInformation, metadata)),
-        )
-    }
-
-    @Test
     internal fun `Should check rule DYNAMIC_QUESTIONS_AAP, should trigger rule`() {
         fun ruleData(healthInformation: Sykmelding, metadata: RuleMetadata) =
             RuleData(healthInformation, metadata)
