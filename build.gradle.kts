@@ -28,7 +28,7 @@ val snappyJavaVersion = "1.1.10.7"
 plugins {
     id("application")
     kotlin("jvm") version "2.1.0"
-    id("com.diffplug.spotless") version "7.0.1"
+    id("com.diffplug.spotless") version "7.0.2"
     id("com.gradleup.shadow") version "8.3.5"}
 
 application {
