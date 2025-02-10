@@ -19,17 +19,17 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
-val kotlinVersion = "2.1.0"
+val kotlinVersion = "2.1.10"
 val junitJupiterVersion = "5.11.4"
 val ktfmtVersion = "0.44"
-val commonsCodecVersion = "1.17.2"
+val commonsCodecVersion = "1.18.0"
 val snappyJavaVersion = "1.1.10.7"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
     id("com.diffplug.spotless") version "7.0.2"
-    id("com.gradleup.shadow") version "8.3.5"}
+    id("com.gradleup.shadow") version "8.3.6"}
 
 application {
     mainClass.set("no.nav.syfo.BootstrapKt")
