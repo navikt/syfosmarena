@@ -21,27 +21,6 @@ enum class ValidationRuleChain(
     override val predicate: (RuleData<RuleMetadata>) -> Boolean,
 ) : Rule<RuleData<RuleMetadata>> {
     @Description(
-        "Hvis sykmeldingens sluttdato er mer enn 3 måneder frem i tid skal meldingen til oppfølging i Arena"
-    )
-    SICK_LAVE_END_DATE_MORE_THAN_3_MONTHS(
-        1603,
-        ArenaHendelseType.VURDER_OPPFOLGING,
-        ArenaHendelseStatus.PLANLAGT,
-        "Sykmeldings sluttdato er mer enn 3 måneder frem i tid.",
-        { (sykmelding, ruleMetadata) ->
-            sykmelding.perioder.sortedTOMDate().last().atStartOfDay() >
-                ruleMetadata.signatureDate.plusMonths(3)
-        },
-    ),
-    @Description("Hvis sykmeldingsperioden er over 3 måneder skal meldingen til oppfølging i Arena")
-    SICK_LAVE_PERIODE_MORE_THEN_3_MONTHS(
-        1606,
-        ArenaHendelseType.VURDER_OPPFOLGING,
-        ArenaHendelseStatus.PLANLAGT,
-        "Sykmeldingsperioden er over 3 måneder.",
-        { (sykmelding, _) -> sykmelding.perioder.any { (it.fom..it.tom).daysBetween() > 91 } },
-    ),
-    @Description(
         "Kun reisetilskudd er angitt. Melding sendt til oppfølging i Arena, skal ikke registreres i Infotrygd."
     )
     TRAVEL_SUBSIDY_SPECIFIED(
