@@ -191,7 +191,7 @@ suspend fun handleMessage(
         val tssId =
             smtssClient.findBestTssIdArena(
                 receivedSykmelding.personNrLege,
-                receivedSykmelding.legekontorOrgName,
+                receivedSykmelding.legekontorOrgName ?: "",
                 loggingMeta,
                 receivedSykmelding.sykmelding.id
             )
