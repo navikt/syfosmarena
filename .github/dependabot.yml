@@ -4,11 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 7
     ignore:
       - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
         update-types: ["version-update:semver-major"]
-      
     groups:
       dependencies:
         patterns:
@@ -17,4 +17,5 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 15
+    cooldown:
+      default-days: 7
