@@ -42,7 +42,7 @@ spec:
     limits:
       memory: 1792Mi
     requests:
-      cpu: 70m
+      cpu: 50m
       memory: 512Mi
   envFrom:
     - secret: syfosmarena-secrets
