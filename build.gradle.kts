@@ -3,15 +3,15 @@ version = "1.0.0"
 
 val coroutinesVersion = "1.10.2"
 val syfoXmlCodeGenVersion = "2.0.1"
-val ibmMqVersion = "9.4.3.0"
+val ibmMqVersion = "9.4.4.1"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.19.1"
+val jacksonVersion = "2.20.1"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "3.9.1"
-val ktorVersion = "3.2.2"
-val logbackVersion = "1.5.18"
-val logstashEncoderVersion = "8.1"
+val ktorVersion = "3.3.3"
+val logbackVersion = "1.5.25"
+val logstashEncoderVersion = "9.0"
 val prometheusVersion = "0.16.0"
 val jaxwsApiVersion = "2.3.1"
 val jaxbBasicAntVersion = "1.11.1"
@@ -19,17 +19,17 @@ val javaxAnnotationApiVersion = "1.3.2"
 val jaxwsToolsVersion = "2.3.1"
 val jaxbRuntimeVersion = "2.4.0-b180830.0438"
 val jaxbTimeAdaptersVersion = "1.1.3"
-val kotlinVersion = "2.2.0"
-val junitJupiterVersion = "5.13.3"
+val kotlinVersion = "2.3.0"
+val junitJupiterVersion = "6.0.2"
 val ktfmtVersion = "0.44"
-val commonsCodecVersion = "1.18.0"
-val snappyJavaVersion = "1.1.10.7"
+val commonsCodecVersion = "1.19.0"
+val snappyJavaVersion = "1.1.10.8"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.3.0"
     id("com.diffplug.spotless") version "7.1.0"
-    id("com.gradleup.shadow") version "8.3.8"}
+    id("com.gradleup.shadow") version "9.3.1"}
 
 application {
     mainClass.set("no.nav.syfo.BootstrapKt")
