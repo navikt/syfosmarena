@@ -5,11 +5,11 @@ val coroutinesVersion = "1.10.2"
 val syfoXmlCodeGenVersion = "2.0.1"
 val ibmMqVersion = "9.4.3.0"
 val javaxActivationVersion = "1.1.1"
-val jacksonVersion = "2.19.1"
+val jacksonVersion = "2.20.2"
 val jaxbApiVersion = "2.4.0-b180830.0359"
 val jaxbVersion = "2.3.0.1"
 val kafkaVersion = "3.9.1"
-val ktorVersion = "3.2.2"
+val ktorVersion = "3.4.0"
 val logbackVersion = "1.5.18"
 val logstashEncoderVersion = "8.1"
 val prometheusVersion = "0.16.0"
@@ -22,7 +22,6 @@ val jaxbTimeAdaptersVersion = "1.1.3"
 val kotlinVersion = "2.2.0"
 val junitJupiterVersion = "5.13.3"
 val ktfmtVersion = "0.44"
-val commonsCodecVersion = "1.18.0"
 val snappyJavaVersion = "1.1.10.7"
 
 plugins {
@@ -56,11 +55,6 @@ dependencies {
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
-    constraints {
-        implementation("commons-codec:commons-codec:$commonsCodecVersion") {
-            because("override transient from io.ktor:ktor-client-apache due to security vulnerability https://devhub.checkmarx.com/cve-details/Cxeb68d52e-5509/")
-        }
-    }
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 
     implementation("io.ktor:ktor-server-core:$ktorVersion")
