@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 internal class RuleChainDocGenTest {
     private fun <T : Annotation> Any.enumAnnotationValue(
         type: KClass<out T>,
-        enumName: String
+        enumName: String,
     ): T? =
         if (javaClass.getField(enumName).isAnnotationPresent(type.java)) {
             javaClass.getField(enumName).getAnnotation(type.java)
@@ -32,7 +32,7 @@ internal class RuleChainDocGenTest {
                             rule.ruleId
                                 ?: ""
                         };${rule.enumAnnotationValue(Description::class, rule.name)?.description ?: ""}"
-                    },
+                    }
                 )
         val csvFile = basePath.resolve("rules.csv")
         Files.write(csvFile, ruleCSV, Charsets.UTF_8)

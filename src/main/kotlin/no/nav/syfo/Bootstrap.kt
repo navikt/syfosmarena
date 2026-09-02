@@ -1,11 +1,5 @@
 package no.nav.syfo
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.prometheus.client.hotspot.DefaultExports
 import jakarta.jms.MessageProducer
 import jakarta.jms.Session
@@ -46,20 +40,17 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.jacksonMapperBuilder
+import tools.jackson.module.kotlin.readValue
 
-val objectMapper: ObjectMapper =
-    ObjectMapper().apply {
-        registerKotlinModule()
-        registerModule(JavaTimeModule())
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-    }
+val jsonMapper: JsonMapper = jacksonMapperBuilder().build()
 
 val log: Logger = LoggerFactory.getLogger("no.nav.syfo.syfosmarena")
 
 data class JournaledReceivedSykmelding(
     val receivedSykmelding: ByteArray,
-    val journalpostId: String
+    val journalpostId: String,
 )
 
 @DelicateCoroutinesApi
@@ -70,11 +61,7 @@ fun main() {
         System.setProperty(key as String, value as String)
     }
     val applicationState = ApplicationState()
-    val applicationEngine =
-        createApplicationEngine(
-            env,
-            applicationState,
-        )
+    val applicationEngine = createApplicationEngine(env, applicationState)
 
     val applicationServer = ApplicationServer(applicationEngine, applicationState)
 
@@ -87,7 +74,7 @@ fun main() {
 @DelicateCoroutinesApi
 fun createListener(
     applicationState: ApplicationState,
-    action: suspend CoroutineScope.() -> Unit
+    action: suspend CoroutineScope.() -> Unit,
 ): Job =
     GlobalScope.launch {
         try {
@@ -96,7 +83,7 @@ fun createListener(
             log.error(
                 "En uhåndtert feil oppstod, applikasjonen restarter {}",
                 fields(e.loggingMeta),
-                e.cause
+                e.cause,
             )
         } finally {
             applicationState.ready = false
@@ -123,9 +110,9 @@ fun launchListeners(
                         KafkaUtils.getAivenKafkaConfig("private-arena-consumer")
                             .toConsumerConfig(
                                 "${env.applicationName}-consumer",
-                                valueDeserializer = StringDeserializer::class
+                                valueDeserializer = StringDeserializer::class,
                             )
-                            .also { it[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "none" },
+                            .also { it[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "none" }
                     )
                 kafkaAivenConsumer.subscribe(listOf(env.privatArenaInputTopic))
 
@@ -136,7 +123,7 @@ fun launchListeners(
                     kafkaAivenConsumer,
                     arenaProducer,
                     session,
-                    httpClients.smtssClient
+                    httpClients.smtssClient,
                 )
             }
     }
@@ -152,9 +139,9 @@ suspend fun blockingApplicationLogic(
     while (applicationState.ready) {
         kafkaAivenConsumer.poll(Duration.ofMillis(0)).forEach { consumerRecord ->
             val journaledReceivedSykmelding: JournaledReceivedSykmelding =
-                objectMapper.readValue(consumerRecord.value())
+                jsonMapper.readValue(consumerRecord.value())
             val receivedSykmelding: ReceivedSykmelding =
-                objectMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
+                jsonMapper.readValue(journaledReceivedSykmelding.receivedSykmelding)
             val loggingMeta =
                 LoggingMeta(
                     mottakId = receivedSykmelding.navLogId,
@@ -169,7 +156,7 @@ suspend fun blockingApplicationLogic(
                 session,
                 loggingMeta,
                 "aiven",
-                smtssClient
+                smtssClient,
             )
         }
         delay(1)
@@ -193,7 +180,7 @@ suspend fun handleMessage(
                 receivedSykmelding.personNrLege,
                 receivedSykmelding.legekontorOrgName ?: "",
                 loggingMeta,
-                receivedSykmelding.sykmelding.id
+                receivedSykmelding.sykmelding.id,
             )
 
         val validationRuleResults =
@@ -222,7 +209,7 @@ suspend fun handleMessage(
                         receivedSykmelding,
                         results,
                         journaledReceivedSykmelding.journalpostId,
-                        tssId
+                        tssId,
                     ),
                     loggingMeta,
                 )
@@ -247,7 +234,7 @@ fun sendArenaSykmelding(
             text = arenaSykmeldingMarshaller.toString(arenaSykmelding)
             ARENA_EVENT_COUNTER.inc()
             log.info("Message sendt to Arena {}", fields(loggingMeta))
-        },
+        }
     )
 
 inline fun <reified T> XMLEIFellesformat.get() = this.any.find { it is T } as T

@@ -94,7 +94,7 @@ fun generateDiagnose() =
     Diagnose(
         system = "2.16.578.1.12.4.1.1.7170",
         kode = "L87",
-        tekst = "Bursitt/tendinitt/synovitt IKA"
+        tekst = "Bursitt/tendinitt/synovitt IKA",
     )
 
 fun generatePeriode(
@@ -119,21 +119,13 @@ fun generatePeriode(
 fun generateAktivitetIkkeMulig(
     medisinskArsak: MedisinskArsak? = generateMedisinskArsak(),
     arbeidsrelatertArsak: ArbeidsrelatertArsak? = null,
-) =
-    AktivitetIkkeMulig(
-        medisinskArsak = medisinskArsak,
-        arbeidsrelatertArsak = arbeidsrelatertArsak,
-    )
+) = AktivitetIkkeMulig(medisinskArsak = medisinskArsak, arbeidsrelatertArsak = arbeidsrelatertArsak)
 
 fun generateMedisinskArsak(
     beskrivelse: String = "test data",
     arsak: List<MedisinskArsakType> =
         listOf(MedisinskArsakType.entries[Random.nextInt(MedisinskArsakType.entries.size)]),
-) =
-    MedisinskArsak(
-        beskrivelse = beskrivelse,
-        arsak = arsak,
-    )
+) = MedisinskArsak(beskrivelse = beskrivelse, arsak = arsak)
 
 fun generatePrognose(
     arbeidsforEtterPeriode: Boolean = true,
@@ -204,14 +196,8 @@ fun generateAdresse(
         land = land,
     )
 
-fun generateAvsenderSystem(
-    navn: String = "test",
-    versjon: String = "1.2.3",
-) =
-    AvsenderSystem(
-        navn = navn,
-        versjon = versjon,
-    )
+fun generateAvsenderSystem(navn: String = "test", versjon: String = "1.2.3") =
+    AvsenderSystem(navn = navn, versjon = versjon)
 
 fun generateArbeidsgiver(
     harArbeidsgiver: HarArbeidsgiver = HarArbeidsgiver.EN_ARBEIDSGIVER,

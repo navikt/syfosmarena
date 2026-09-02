@@ -14,7 +14,7 @@ fun createArenaSykmelding(
     receivedSykmelding: ReceivedSykmelding,
     ruleResults: List<Rule<Any>>,
     journalpostid: String,
-    tssIdArena: String?
+    tssIdArena: String?,
 ): ArenaSykmelding =
     ArenaSykmelding().apply {
         eiaDokumentInfo =

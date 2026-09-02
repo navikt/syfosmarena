@@ -17,9 +17,9 @@ class ApplicationServer(
                     applicationState.ready = false
                     this.applicationServer.stop(
                         TimeUnit.SECONDS.toMillis(10),
-                        TimeUnit.SECONDS.toMillis(10)
+                        TimeUnit.SECONDS.toMillis(10),
                     )
-                },
+                }
             )
     }
 
