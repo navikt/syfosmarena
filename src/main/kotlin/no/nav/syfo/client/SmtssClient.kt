@@ -39,7 +39,7 @@ class SmtssClient(
 
     private suspend fun getResponse(
         httpResponse: io.ktor.client.statement.HttpResponse,
-        loggingMeta: LoggingMeta
+        loggingMeta: LoggingMeta,
     ): String? {
         return when (httpResponse.status) {
             HttpStatusCode.OK -> {
@@ -61,6 +61,4 @@ class SmtssClient(
     }
 }
 
-data class TSSident(
-    val tssid: String,
-)
+data class TSSident(val tssid: String)

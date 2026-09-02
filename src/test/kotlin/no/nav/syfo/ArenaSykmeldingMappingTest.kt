@@ -22,8 +22,8 @@ internal class ArenaSykmeldingMappingTest {
                         generatePeriode(
                             fom = LocalDate.now(),
                             tom = LocalDate.now().plusMonths(3).plusDays(1),
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -65,12 +65,7 @@ internal class ArenaSykmeldingMappingTest {
 
         assertEquals(
             receivedSykmelding.navLogId,
-            createArenaSykmelding(
-                    receivedSykmelding,
-                    results,
-                    "12355234",
-                    "",
-                )
+            createArenaSykmelding(receivedSykmelding, results, "12355234", "")
                 .eiaDokumentInfo
                 .dokumentInfo
                 .ediLoggId,
@@ -83,11 +78,8 @@ internal class ArenaSykmeldingMappingTest {
             generateSykmelding(
                 utdypendeOpplysninger =
                     mapOf(
-                        "6.1" to
-                            mapOf(
-                                "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                            ),
-                    ),
+                        "6.1" to mapOf("6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()))
+                    )
             )
 
         val metadata =
@@ -143,11 +135,8 @@ internal class ArenaSykmeldingMappingTest {
             generateSykmelding(
                 utdypendeOpplysninger =
                     mapOf(
-                        "6.1" to
-                            mapOf(
-                                "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                            ),
-                    ),
+                        "6.1" to mapOf("6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()))
+                    )
             )
 
         val metadata =
@@ -189,12 +178,7 @@ internal class ArenaSykmeldingMappingTest {
 
         assertEquals(
             "123145",
-            createArenaSykmelding(
-                    receivedSykmelding,
-                    results,
-                    "12355234",
-                    "",
-                )
+            createArenaSykmelding(receivedSykmelding, results, "12355234", "")
                 .eiaDokumentInfo
                 .avsender
                 .lege

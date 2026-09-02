@@ -24,8 +24,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now(),
                             reisetilskudd = true,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -53,8 +53,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now(),
                             reisetilskudd = false,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -124,8 +124,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now().plusDays(57),
                             reisetilskudd = false,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -138,10 +138,7 @@ internal class ValidationRuleChainTest {
         assertEquals(
             true,
             ValidationRuleChain.PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
+                ruleData(healthInformation, metadata)
             ),
         )
     }
@@ -159,8 +156,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now().plusDays(56),
                             reisetilskudd = false,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -173,10 +170,7 @@ internal class ValidationRuleChainTest {
         assertEquals(
             false,
             ValidationRuleChain.PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_BEFORE_RULESETT_2(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
+                ruleData(healthInformation, metadata)
             ),
         )
     }
@@ -194,8 +188,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now().plusDays(50),
                             reisetilskudd = false,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -208,10 +202,7 @@ internal class ValidationRuleChainTest {
         assertEquals(
             true,
             ValidationRuleChain.PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
+                ruleData(healthInformation, metadata)
             ),
         )
     }
@@ -229,8 +220,8 @@ internal class ValidationRuleChainTest {
                             fom = LocalDate.now(),
                             tom = LocalDate.now().plusDays(49),
                             reisetilskudd = false,
-                        ),
-                    ),
+                        )
+                    )
             )
 
         val metadata =
@@ -243,10 +234,7 @@ internal class ValidationRuleChainTest {
         assertEquals(
             false,
             ValidationRuleChain.PASSED_REVIEW_ACTIVITY_OPPERTUNITIES_AFTER_RULESETT_2(
-                ruleData(
-                    healthInformation,
-                    metadata,
-                ),
+                ruleData(healthInformation, metadata)
             ),
         )
     }
@@ -260,11 +248,8 @@ internal class ValidationRuleChainTest {
             generateSykmelding(
                 utdypendeOpplysninger =
                     mapOf(
-                        "6.1" to
-                            mapOf(
-                                "6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                            ),
-                    ),
+                        "6.1" to mapOf("6.1.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()))
+                    )
             )
 
         val metadata =
@@ -308,11 +293,8 @@ internal class ValidationRuleChainTest {
             generateSykmelding(
                 utdypendeOpplysninger =
                     mapOf(
-                        "6.6" to
-                            mapOf(
-                                "6.6.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()),
-                            ),
-                    ),
+                        "6.6" to mapOf("6.6.1" to SporsmalSvar("Pasient syk?", "Tekst", listOf()))
+                    )
             )
 
         val metadata =

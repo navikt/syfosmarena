@@ -20,7 +20,7 @@ interface Rule<in T> {
 
 inline fun <reified T, reified R : Rule<RuleData<T>>> List<R>.executeFlow(
     sykmelding: Sykmelding,
-    value: T
+    value: T,
 ): List<Rule<Any>> =
     filter { it.predicate(RuleData(sykmelding, value)) }
         .map { it as Rule<Any> }
@@ -28,7 +28,7 @@ inline fun <reified T, reified R : Rule<RuleData<T>>> List<R>.executeFlow(
 
 inline fun <reified T, reified R : Rule<RuleData<T>>> Array<R>.executeFlow(
     sykmelding: Sykmelding,
-    value: T
+    value: T,
 ): List<Rule<Any>> = toList().executeFlow(sykmelding, value)
 
 @Retention(AnnotationRetention.RUNTIME) annotation class Description(val description: String)

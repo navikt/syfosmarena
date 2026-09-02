@@ -1,12 +1,9 @@
 package no.nav.syfo
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import java.time.LocalDate
 import java.time.LocalDateTime
 import no.nav.syfo.model.ReceivedSykmelding
+import tools.jackson.module.kotlin.jacksonMapperBuilder
 
 fun main() {
     val sm =
@@ -16,8 +13,8 @@ fun main() {
                     generatePeriode(
                         fom = LocalDate.now(),
                         tom = LocalDate.now().plusMonths(3).plusDays(1),
-                    ),
-                ),
+                    )
+                )
         )
 
     val receivedSykmelding =
@@ -44,11 +41,5 @@ fun main() {
             utenlandskSykmelding = null,
         )
 
-    println(
-        ObjectMapper()
-            .registerKotlinModule()
-            .registerModule(JavaTimeModule())
-            .apply { configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false) }
-            .writeValueAsString(receivedSykmelding),
-    )
+    println(jacksonMapperBuilder().build().writeValueAsString(receivedSykmelding))
 }
