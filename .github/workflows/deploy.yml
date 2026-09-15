@@ -8,9 +8,9 @@ permissions:
   packages: write
   id-token: write
 
-jobs:
-  jar-app:
-    uses: navikt/teamsykmelding-github-actions-workflows/.github/workflows/jar-app-21.yaml@main
-    secrets: inherit
-    with:
-      app: syfosmarena
+#jobs:
+#  jar-app:
+#    uses: navikt/teamsykmelding-github-actions-workflows/.github/workflows/jar-app-21.yaml@main
+#    secrets: inherit
+#    with:
+#      app: syfosmarena
