@@ -1,7 +1,7 @@
 group = "no.nav.syfo"
 version = "1.0.0"
 
-val coroutinesVersion = "1.10.2"
+val coroutinesVersion = "1.11.0"
 val syfoXmlCodeGenVersion = "2.0.1"
 val ibmMqVersion = "10.0.0.0"
 val javaxActivationVersion = "1.1.1"
@@ -25,9 +25,9 @@ val ktfmtVersion = "0.56"
 
 plugins {
     id("application")
-    kotlin("jvm") version "2.4.10"
-    id("com.diffplug.spotless") version "8.10.1"
-    id("com.gradleup.shadow") version "8.3.8"}
+    kotlin("jvm") version "2.4.20"
+    id("com.diffplug.spotless") version "8.10.2"
+    id("com.gradleup.shadow") version "9.6.1"}
 
 application {
     mainClass.set("no.nav.syfo.BootstrapKt")
